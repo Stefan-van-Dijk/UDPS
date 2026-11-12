@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {IFC,ILS} from '../web/sources.js';
-import {dictionaries,relatedClasses,normalizeClass,classDetails,validateRelation} from '../web/bsdd.js';
+import {dictionaryProducts,dictionaries,relatedClasses,normalizeClass,classDetails,validateRelation} from '../web/bsdd.js';
 import {addMapping} from '../web/mapping.js';
 const uri=ILS+'/test-class',prop=ILS+'/test-property';
 const raw={uri,code:'Raam',name:'Raam',classProperties:[{uri:uri+'/prop/1',propertyUri:prop,propertyCode:'Breedte',name:'Breedte',propertySet:'ILS Ontwerp en Engineering',dataType:'Real',units:['mm']}]};
@@ -19,3 +19,4 @@ test('Class properties use paginated endpoint, not the rate-limited include opti
 test('Incomplete property pages, changing totals and wrong class are rejected',async()=>{for(const fault of ['empty','total','class','duplicate']){await assert.rejects(()=>classDetails(uri,async u=>{const url=new URL(u);if(!url.pathname.includes('/Properties/'))return {ok:true,json:async()=>raw};const offset=Number(url.searchParams.get('Offset'));let page={classUri:uri,offset,count:1,totalCount:2,classProperties:[raw.classProperties[0]]};if(offset){if(fault==='empty'){page.classProperties=[];page.count=0;}if(fault==='total')page.totalCount=3;if(fault==='class')page.classUri=uri+'/wrong';}return {ok:true,json:async()=>page};}));}});
 test('Excluded source properties are explained rather than silently lost',()=>{const d=normalizeClass({...raw,classProperties:[raw.classProperties[0],{name:'NoSet',propertyUri:prop},{name:'Unsafe',propertyUri:'javascript:x',propertySet:'P'}]});assert.equal(d.propertyCount,3);assert.equal(d.properties.length,1);assert.equal(d.rejected.length,2);assert.match(d.rejected[0].reason,/propertyset/);assert.match(d.rejected[1].reason,/URI/);});
 test('An explicitly empty property response is a valid empty class',async()=>{const d=await classDetails(uri,async u=>({ok:true,json:async()=>new URL(u).pathname.includes('/Properties/')?{classUri:uri,offset:0,count:0,totalCount:0,classProperties:null}:raw}));assert.equal(d.propertyCount,0);assert.deepEqual(d.properties,[]);});
+test('Network and timeout failures explain that the source could not be reached',async()=>{await assert.rejects(()=>dictionaryProducts('https://example.org',async()=>{throw new TypeError('Failed to fetch');}),/vanuit deze browser niet bereikbaar/);await assert.rejects(()=>dictionaryProducts('https://example.org',async()=>{throw new DOMException('Timeout','TimeoutError');}),/30 seconden/);});

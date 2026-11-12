@@ -1,6 +1,6 @@
 # UDPS generator
 
-Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.7.1.
+Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.7.2.
 
 ## Werkwijze
 
@@ -119,3 +119,11 @@ De tests controleren zoeken, hiërarchie, beide deurvarianten, herkomst, toevoeg
 De bronverkenner ondersteunt objectklassen, eigenschapgroepen en materialen met een soortfilter. De definitie, eenheid, keuzewaarden en beperkingen van een eigenschap zijn uitklapbaar. Bronmetadata worden bij toevoegen bewaard in `Source_property_constraints` in het project; UDPS zelf legt geen keuzelijsten of validatieregels vast. Bronupdates controleren ook bekeken klassen zonder IFC-relatie.
 
 ETIM, NL-SfB, CCI Construction, LCA en Swedish materials zijn met echte API-antwoorden onderzocht. De [onderzoeksnotitie](docs/bsdd-source-audit.md) bevat concrete voorbeelden, beperkingen en de gevonden LCA-URI-afwijking. De aangepaste verwerking is afgedekt door 63 tests, inclusief de bestaande O&E-route.
+
+## Keuzebediening gecontroleerd (1.7.2)
+
+De gepubliceerde app is in de browser doorlopen: Deur (42), Binnendeur (24), Raam (2), gefilterd selecteren, selecteren/wissen, toevoegen met Revit-naam en opnieuw toevoegen zonder overschrijven. Via IFC zijn IfcWindow en IfcDoor gecombineerd. De browser kon sommige live bSDD-aanvragen niet uitvoeren (`Failed to fetch`), waaronder de LCA-index; deze volledige live routes zijn dus niet als geslaagd aangemerkt. De succesvolle O&E-resultaten kwamen uit de meegeleverde momentopname. De tijdelijke toegevoegde testregel is weer verwijderd.
+
+Verholpen: oude meldingen na een klassewissel, geblokkeerde ophaalknoppen bij wisselen/sluiten tijdens laden, oude soortaantallen bij een mislukte bronwissel en een onjuiste leegmelding wanneer het zoekfilter alle eigenschappen verbergt. Late antwoorden van eerdere keuzes worden genegeerd. Netwerk- en timeoutmeldingen zijn verduidelijkt.
+
+72 tests slagen, waaronder acht tests van de daadwerkelijke UI-eventhandlers met een minimale DOM-adapter en gecontroleerd vertraagde antwoorden. Die tests zijn geen live browsercontrole. Ze omvatten meerdere bronnen en IFC-entiteiten, een gedeeltelijk mislukte bron, verschillende Revit-namen per entiteit, ontbrekende IFC-relaties en het behoud van bestaande koppelingen.
