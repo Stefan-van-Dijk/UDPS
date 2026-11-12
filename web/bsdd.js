@@ -1,4 +1,4 @@
-import {IFC,ILS} from './sources.js?v=1.7.3';
+import {IFC,ILS} from './sources.js?v=1.8.0';
 const API='https://api.bsdd.buildingsmart.org/api/';
 export const defaults=[{uri:ILS,name:'ILS Ontwerp en Engineering 2'},{uri:IFC,name:'IFC 4.3'}];
 export const httpsUri=s=>{try{const u=new URL(s);return u.protocol==='https:'&&!u.username&&!u.password?u.href:'';}catch{return '';}};
@@ -40,3 +40,4 @@ export function ifcReferences(detail,targets){
 }
 export function validateRelation(selection,item,entity){return selection?.entity===entity&&selection?.source&&selection.classes?.some(c=>c.uri===item.classUri)&&selection.detail?.uri===item.classUri&&(!selection.ifcTargets||ifcReferences(selection.detail,selection.ifcTargets).length>0)&&selection.detail.properties.some(p=>p.uri===item.uri&&p.propertySet===item.propertySet&&p.relationUri===item.relationUri);}
 export async function dictionaryProducts(source,fetcher=fetch){let items=[],offset=0,total,version;do{const d=await get('Dictionary/v1/Classes',{Uri:source,Offset:offset,Limit:1000,languageCode:'nl-NL'},fetcher);if(!Array.isArray(d.classes)||d.classesOffset!==offset||!Number.isInteger(d.classesTotalCount)||(total!==undefined&&(total!==d.classesTotalCount||version!==d.version)))throw Error('Onvolledige of gewijzigde bouwproductenlijst.');total=d.classesTotalCount;version=d.version;if(!d.classes.length&&offset<total)throw Error('Bouwproductenpagina ontbreekt.');items.push(...d.classes.map(({uri,code,name,parentClassCode,classType})=>({uri,code,name:name||code,parentClassCode:parentClassCode||'',classType:classType||'Class'})));offset+=d.classes.length;if(offset>20000||offset>total)throw Error('Onjuiste bouwproductenlijst.');}while(offset<total);return {source,version,items,productsSchema:2,checkedAt:new Date().toISOString()};}
+

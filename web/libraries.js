@@ -1,4 +1,4 @@
-import {types,entities} from './core.js?v=1.7.3';
+import {types,entities} from './core.js?v=1.8.0';
 const clean=(value,label)=>{if(typeof value!=='string'||!value.trim()||/[\t\r\n]/.test(value)||value.length>500)throw Error('Ongeldig veld: '+label);return value.trim();};
 export function validateLibrary(input,allowed){
  if(input?.format!=='udps-library'||input.schema!==1||!Array.isArray(input.classes)||!input.classes.length||input.classes.length>10000)throw Error('Verwacht een UDPS-bibliotheek (schema 1) met klassen.');
@@ -14,3 +14,4 @@ export function projectLibrary(project,name,version,id){
  const groups=new Map();for(const row of project.rows){const linked=entities(project).filter(e=>row[e]==='x');if(!linked.length)continue;const className=row.Classification||row.Source_class||'Eigen eigenschappen';for(const entity of linked){const key=JSON.stringify([className,entity]);if(!groups.has(key))groups.set(key,{code:'class-'+(groups.size+1),name:className,ifcEntities:[entity],properties:[]});const props=groups.get(key).properties,existing=props.find(p=>p.code===row.IFC_parameter&&p.propertySet===row.Export_tabblad);if(existing){if(existing.dataType!==row.Data_type)throw Error('Conflicterende datatypes voor '+row.IFC_parameter);continue;}props.push({code:row.IFC_parameter,name:row.IFC_parameter,propertySet:row.Export_tabblad,dataType:row.Data_type});}}
  return validateLibrary({format:'udps-library',schema:1,id,name,version,classes:[...groups.values()]});
 }
+

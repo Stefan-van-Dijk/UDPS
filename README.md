@@ -131,3 +131,20 @@ Verholpen: oude meldingen na een klassewissel, geblokkeerde ophaalknoppen bij wi
 ## Releasebestanden (1.7.3)
 
 Tijdens controle na publicatie toonde de browser de nieuwe HTML-versie met oude JavaScript-bediening. De moduleverwijzingen en stylesheet krijgen daarom vanaf 1.7.3 allemaal dezelfde releaseversie in hun URL. `npm run version:app -- X.Y.Z` verhoogt deze consistent. Een regressietest controleert ook de volledige moduleketen. Alle 73 tests slagen.
+
+
+## 1.8.0 — Centrale eigenschappen en bSDD-relaties
+
+Stap 02 opent met één centrale eigenschap per bron-URI. De knop **Exportregels** behoudt de bestaande tabel. Gelijke namen uit verschillende bronnen worden nooit automatisch samengevoegd. Eigen regels krijgen een blijvende lokale identifier zodra ze in de app worden geopend.
+
+Open een centrale eigenschap om een voorkeursnaam en standaard Revit-parameter, IFC-property, propertyset en datatype vast te leggen. Bestaande afwijkingen blijven behouden; **Ook alle afwijkende toepassingen vervangen** past de standaard bewust op alle toepassingen toe. Bewerken van één IFC-entiteit splitst zo nodig een oude regel met meerdere entiteiten. De overige toepassingen behouden hun waarden. Nieuwe bronkoppelingen van dezelfde centrale eigenschap nemen de opgeslagen Revit-voorkeur over wanneer geen andere Revit-naam is opgegeven; brongebonden propertysets blijven behouden.
+
+**Entiteit toevoegen als eigen afspraak** maakt een expliciete eigen toepassing, ook zonder bevestigde bSDD-relatie. Ook een bronklasse zonder IFC-koppeling kan via de eigenschapsdialoog zo worden toegevoegd. De app registreert de herkomst als bSDD, eigen bibliotheek, eigen afspraak of eerdere koppeling. Controleer zelf of een standaard propertyset op de extra entiteit van toepassing is; een eigen afspraak bewijst geen IFC-conformiteit.
+
+Bij **bSDD-relaties verkennen** worden de definitie, uitgaande én inkomende eigenschapsrelaties en gebruikende klassen via de gepagineerde API opgehaald. Klassen gebruiken het API-contract `uri` / `name`; deze worden voor de UI genormaliseerd. Via een gerelateerde klasse kunnen eigenschappen worden bekeken en toegevoegd. Klasserelaties zoals `HasPart`, `HasReference`, `IsEqualTo`, `IsSimilarTo` en IFC-representaties worden met uitleg getoond. Onderdelen, verwijzingen en vergelijkbare begrippen leiden niet tot automatische overname of gelijkstelling. Deelstoringen worden expliciet gemeld en geslaagde resultaten blijven zichtbaar. Er worden alleen gegevens opgevraagd wanneer de gebruiker relaties laadt.
+
+**Andere projecteigenschap samenbrengen** vereist een eigen inhoudelijke onderbouwing en blokkeert verschillen in datatype, eenheid, keuzewaarden of toepassingsvoorwaarden. Ook bij `IsEqualTo` beslist de gebruiker. Deze controle is geen semantisch bewijs en voert geen conversie van waarden of eenheden uit. De bron-URI's, versies, klasse-eigenschapsrelaties en afzonderlijke exportregels blijven behouden. Inkomende relaties houden hun oorspronkelijke richting.
+
+Alle afspraken en opgehaalde relatieresultaten gaan mee in **Menu → Project bewaren** en de browseropslag. De bestaande bibliotheekexport blijft een bronbibliotheek zonder Revit-namen; gebruik het projectbestand om de volledige parameterafspraken te hergebruiken. De app maakt geen parameters in Revit aan en wijzigt geen Revit-model. Het UDPS-bestand stuurt de IFC-export aan.
+
+Validatie: `npm run check` en `npm test`. De nieuwe regressies behandelen uniformeren met behoud van uitzonderingen, splitsen per entiteit, expliciete eigen IFC-toepassingen, identiteitsbehoud, conflicten, JSON-herladen en volledige/partiële relatie-antwoorden. Live API-bereikbaarheid blijft afhankelijk van bSDD en de browserverbinding.

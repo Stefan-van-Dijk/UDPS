@@ -1,5 +1,5 @@
-import {validateLibrary,librarySource,libraryDetails} from './libraries.js?v=1.7.3';
-import {defaults,dictionaries,relatedClasses,classDetails,relationshipKey,dictionaryProducts} from './bsdd.js?v=1.7.3';
+import {validateLibrary,librarySource,libraryDetails} from './libraries.js?v=1.8.0';
+import {defaults,dictionaries,relatedClasses,classDetails,relationshipKey,dictionaryProducts} from './bsdd.js?v=1.8.0';
 const comparableDetail=d=>{if(!d)return d;const {checkedAt,loadWarning,...content}=d;return content;};
 const mergeCache=(bundled,saved,field)=>{const merged={...bundled,...saved};for(const [uri,value] of Object.entries(bundled))if((value[field]||0)>(saved[uri]?.[field]||0))merged[uri]=value;return merged;};
 let state={schema:1,registry:[],enabled:defaults,relations:{},details:{},libraries:[],products:{}},loading;
@@ -26,3 +26,4 @@ export function applyUpdate(next){state=next;return persist();}
 export function importLibrary(input,allowed){const lib=validateLibrary(input,allowed),source=librarySource(lib);if((state.libraries||[]).some(l=>librarySource(l).uri===source.uri)){throw Error('Deze bibliotheekversie bestaat al. Verhoog het versienummer om wijzigingen in te laden.');}const before=structuredClone(state);state.libraries=[...(state.libraries||[]),lib];state.registry.push(source);state.enabled=state.enabled.filter(s=>s.name.toLowerCase()!==source.name.toLowerCase());state.enabled.push(source);if(!persist()){state=before;throw Error('Onvoldoende browseropslag; bibliotheek niet ingeladen.');}return source;}
 
 export async function loadProducts(source,{refresh=false}={}){const lib=(state.libraries||[]).find(l=>librarySource(l).uri===source);if(lib)return {source,version:lib.version,items:lib.classes.map(c=>({uri:libraryDetails(lib,c).uri,code:c.code,name:c.name,parentClassCode:'',classType:'Class'}))};state.products??={};if(refresh||!state.products[source]||state.products[source].productsSchema!==2){try{state.products[source]=await dictionaryProducts(source);persist();}catch(e){if(!state.products[source])throw e;return {...state.products[source],loadWarning:'Opgeslagen bouwproducten getoond: '+e.message};}}return state.products[source];}
+
