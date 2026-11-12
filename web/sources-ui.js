@@ -1,9 +1,9 @@
-import {availableEntities} from './mapping.js?v=1.7.3';
-import {librarySource,projectLibrary} from './libraries.js?v=1.7.3';
-import {groupSources} from './view.js?v=1.7.3';
-import {IFC,ILS,safeUri,validateCatalog,diffCatalog,fetchList} from './sources.js?v=1.7.3';
-import {httpsUri} from './bsdd.js?v=1.7.3';
-import {initStore,sourceState,loadRegistry,enableSource,disableSource,proposedUpdate,applyUpdate,importLibrary} from './source-store.js?v=1.7.3';
+import {availableEntities} from './mapping.js?v=1.8.0';
+import {librarySource,projectLibrary} from './libraries.js?v=1.8.0';
+import {groupSources} from './view.js?v=1.8.0';
+import {IFC,ILS,safeUri,validateCatalog,diffCatalog,fetchList} from './sources.js?v=1.8.0';
+import {httpsUri} from './bsdd.js?v=1.8.0';
+import {initStore,sourceState,loadRegistry,enableSource,disableSource,proposedUpdate,applyUpdate,importLibrary} from './source-store.js?v=1.8.0';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let catalog={schema:1,ifc:{uri:IFC,items:[]},ils:{uri:ILS,items:[]}},pending=null,api;
 export const getCatalog=()=>catalog;
@@ -28,3 +28,4 @@ $('enabledSources').onchange=ev=>{const b=ev.target.closest('.source-manager-row
 $('refreshSources').onclick=async()=>{pending=null;$('applySources').hidden=true;$('sourceChanges').hidden=true;$('refreshSources').disabled=true;$('sourceStatus').textContent='Bronnen en gebruikte relaties controleren…';try{const [next,related]=await Promise.all([fetchList(IFC,'class').then(ifc=>({...catalog,ifc,checkedAt:new Date().toISOString()})),proposedUpdate()]);pending={next,related};const changes=[...diffCatalog(catalog,next).map(x=>x.source+' · '+x.type+' · '+x.code),...related.changes];$('sourceStatus').textContent=changes.length?changes.length+' wijzigingen gevonden.':'Geen inhoudelijke wijzigingen.';$('changesList').innerHTML=changes.map(x=>`<li>${esc(x)}</li>`).join('')||'<li>Geen wijzigingen.</li>';$('sourceChanges').hidden=false;$('applySources').hidden=false;}catch(e){$('sourceStatus').textContent='Update niet uitgevoerd; bestaande gegevens behouden. '+e.message;}finally{$('refreshSources').disabled=false;}};
 $('applySources').onclick=()=>{if(!pending)return;try{localStorage.setItem('udps-sources-v1',JSON.stringify(pending.next));}catch{$('sourceStatus').textContent='Onvoldoende browseropslag. Update niet toegepast.';return;}catalog=pending.next;const stored=applyUpdate(pending.related.next);pending=null;$('applySources').hidden=true;info();api.render();$('sourceStatus').textContent=stored?'Bronnen bijgewerkt. Projectkoppelingen zijn behouden.':'Bronnen bijgewerkt voor deze sessie; relatiecache past niet in browseropslag.';};
 }
+
