@@ -1,6 +1,6 @@
 # UDPS generator
 
-Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.7.
+Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.7.1.
 
 ## Werkwijze
 
@@ -62,7 +62,7 @@ Eigen bibliotheken werken lokaal en krijgen `urn:udps:library:`-identiteiten. Ze
 
 IFC-codes komen uit `https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3`; ILS uit `https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2`. De meegeleverde catalogus van 12 november 2026 bevat 2163 IFC-records en ILS 2.0.1 met 308 klassen en 127 eigenschappen. Alleen werkelijke IFC-entiteiten zijn selecteerbaar, geen voorgedefinieerde typen.
 
-Eigenschappen worden via gerelateerde bronklassen opgehaald. Alleen enkelvoudige eigenschappen met propertyset worden aangeboden. De app neemt geen eigenschappen van bovenliggende klassen over als bSDD die niet aan de geselecteerde klasse publiceert. Een bron zonder passende IFC-relaties levert geen eigenschappen op. Meerdere bronnen kunnen in dezelfde toevoeging worden gebruikt. Mislukte bronaanvragen worden apart gemeld.
+Eigenschappen worden via gerelateerde bronklassen opgehaald. Alleen enkelvoudige eigenschappen met propertyset worden aangeboden. De app neemt geen eigenschappen van bovenliggende klassen over als bSDD die niet aan de geselecteerde klasse publiceert. Zonder passende IFC-relatie zijn eigenschappen via de bronklasse te bekijken, maar niet automatisch aan een IFC-entiteit toe te voegen. Meerdere bronnen kunnen in dezelfde toevoeging worden gebruikt. Mislukte bronaanvragen worden apart gemeld.
 
 **Updates** controleert de IFC-catalogus en de al geladen relaties van ingeschakelde bSDD-bronnen. Na controle kan de gebruiker de update toepassen. Projectkoppelingen worden niet overschreven. Eigen bibliotheken worden uitsluitend bijgewerkt via een nieuwe versie van hun bestand.
 
@@ -108,8 +108,14 @@ Oude broncaches worden vernieuwd. Een nieuwer meegeleverd cacheformaat vervangt 
 
 **Eigenschappen** opent nu standaard **Via bouwproduct**. Selecteer O&E, zoek op `deur` en kies **Deur**. De app haalt de properties van precies deze klasse op en leidt de IFC-entiteit af uit de gepubliceerde bronrelaties. De relatie wordt gecontroleerd met de IFC 4.3-bronlijst voordat eigenschappen aan het project kunnen worden toegevoegd. Via IFC-entiteit blijft de andere route voor meerdere bronnen en entiteiten.
 
-De productzoeker gebruikt de gepagineerde Dictionary Classes API met ClassType=Class. De meegeleverde O&E-index bevat de 287 zo gepubliceerde klassen op 12 november 2026. Zoeken gebeurt op naam, code en bovenliggende klasse; een exacte naam staat bovenaan. Bij een gekozen product zijn de ouders en directe kinderen aanklikbaar. Bron vernieuwen ververst de productindex en daarna de opgevraagde details en IFC-koppelingen. Zonder bevestigde IFC-relatie zijn de properties wel te bekijken, maar niet te selecteren voor export.
+Sinds 1.7.1 gebruikt de productzoeker de gepagineerde Dictionary Classes API zonder typebeperking. De meegeleverde O&E-index bevat 287 objectklassen en 21 materialen op 12 november 2026. O&E opent standaard met het filter objectklassen. Zoeken gebeurt op naam, code en bovenliggende klasse; een exacte naam staat bovenaan. Bij een gekozen product zijn de ouders en directe kinderen aanklikbaar. Bron vernieuwen ververst de productindex en daarna de opgevraagde details en IFC-koppelingen. Zonder bevestigde IFC-relatie zijn de properties wel te bekijken, maar niet te selecteren voor export.
 
 Live geverifieerde inrichting: BOUWPRODUCT → Deur → Binnendeur, Roldeur, Liftdeur, Schuifpui en Tourniquet. Deur heeft 42 eigen gepubliceerde eigenschappen, verspreid over Attributes, ILS Ontwerp en Engineering, Pset_DoorCommon, Pset_ManufacturerTypeInformation en Qto_BodyGeometryValidation. De dictionary van de eigenschap kan IFC of O&E zijn. Voorbeelden: Brandcriteria, Kleur, Hang- en Sluitwerk, FireRating, AcousticRating, ThermalTransmittance, Manufacturer en ModelReference. Binnendeur heeft een eigen lijst van 24 eigenschappen. De app erft of combineert geen properties op basis van alleen de ouder-kindhiërarchie; bSDD verlangt dat bronbeheerders de gewenste klasse-eigenschappen expliciet publiceren.
 
 De tests controleren zoeken, hiërarchie, beide deurvarianten, herkomst, toevoegen en UDPS-generatie, ongeldige relaties en paginering. De brondata zijn met live API-antwoorden gecontroleerd; visuele browsercontrole blijft in deze werkomgeving onbevestigd.
+
+## Andere bronnen (1.7.1)
+
+De bronverkenner ondersteunt objectklassen, eigenschapgroepen en materialen met een soortfilter. De definitie, eenheid, keuzewaarden en beperkingen van een eigenschap zijn uitklapbaar. Bronmetadata worden bij toevoegen bewaard in `Source_property_constraints` in het project; UDPS zelf legt geen keuzelijsten of validatieregels vast. Bronupdates controleren ook bekeken klassen zonder IFC-relatie.
+
+ETIM, NL-SfB, CCI Construction, LCA en Swedish materials zijn met echte API-antwoorden onderzocht. De [onderzoeksnotitie](docs/bsdd-source-audit.md) bevat concrete voorbeelden, beperkingen en de gevonden LCA-URI-afwijking. De aangepaste verwerking is afgedekt door 63 tests, inclusief de bestaande O&E-route.
