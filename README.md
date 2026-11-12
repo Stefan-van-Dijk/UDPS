@@ -78,3 +78,11 @@ Validatie: `npm test` en `npm run check`. Browsercontrole: ILS → IfcWindow →
 De lijst krijgt voorrang: statistieken staan rechts van de kleine intro en Revit–UDPS–IFC-blokken. Bronnen beheren, importeren, project bewaren en uitleg staan onder Menu. Bronversies worden op bronnaam gegroepeerd; wisselen van versie wijzigt bestaande projectkoppelingen niet.
 
 Propertyset- en IFC-filters zijn multiselecties met Alle/Geen. Binnen een filter geldt OR, tussen de filters en zoeken AND. De IFC-selectie bepaalt ook welke entiteitskolommen zichtbaar zijn. Deze weergavefilters wijzigen geen koppelingen of exportselecties; de statistieken blijven projecttotalen en boven de lijst staat het aantal zichtbare regels.
+
+### Stappen en bulk toevoegen (1.5)
+
+Bronnen beheren staat in stap 01, Parameters & koppelingen in 02, UDPS bekijken in 03. Een gevuld project opent in stap 02. Foutregels worden gearceerd (met foutmelding in de tooltip). Verwijderen kan direct met de zichtbare knop; Ongedaan maken herstelt verwijderde regels in deze sessie.
+
+Broneigenschappen ondersteunen meerdere IFC-entiteiten: laad bijbehorende bronklassen, haal eigenschappen van één of alle klassen op, selecteer afzonderlijke of alle zoekresultaten en voeg ze in één keer toe. Iedere regel behoudt de bronrelatie voor zijn eigen entiteit. Bestaande actieve propertyset/property/entiteit-combinaties worden overgeslagen en gemeld; een ongeldige relatie breekt de toevoeging af zonder gedeeltelijke wijzigingen. Alleen enkelvoudige eigenschappen met propertyset zijn geschikt voor deze UDPS-invoer.
+
+Een Revit-parameter invullen is optioneel bij toevoegen. Nieuwe lege koppelingen krijgen `Mapping_pending=x` en blokkeren export zolang ze actief en niet gekoppeld zijn. De gebruiker kan ze later per regel invullen of uitschakelen. Oude projecten met een lege Revit-parameter behouden hun historische betekenis (de IFC-propertynaam gebruiken).
