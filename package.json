@@ -1,11 +1,11 @@
 {
   "name": "udps-generator",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "check": "node --check web/app.js && node --check web/core.js && node --check web/excel.js && node --check web/sources.js && node --check web/sources-ui.js && node --check web/mapping.js && node --check web/mapping-ui.js && node --check web/bsdd.js && node --check web/source-store.js && node --check web/view.js && node --check web/libraries.js && node --check web/property-loader.js",
+    "check": "node --check web/app.js && node --check web/core.js && node --check web/excel.js && node --check web/sources.js && node --check web/sources-ui.js && node --check web/mapping.js && node --check web/mapping-ui.js && node --check web/bsdd.js && node --check web/source-store.js && node --check web/view.js && node --check web/libraries.js && node --check web/property-loader.js && node --check web/products.js",
     "start": "python3 -m http.server 8080 --directory web"
   }
 }

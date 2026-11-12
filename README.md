@@ -1,11 +1,11 @@
 # UDPS generator
 
-Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.6.2.
+Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.7.
 
 ## Werkwijze
 
 1. **Bronnen & bibliotheken** — selecteer bSDD-woordenboeken of laad eigen bibliotheken. Versies worden per bronnaam gegroepeerd. Updates staan hier, niet ook in het menu.
-2. **Koppelingen** — kies **Via IFC & bronnen**, selecteer één of meerdere IFC-entiteiten en bronnen, laad bronklassen en haal de eigenschappen op. Selecteer afzonderlijke eigenschappen of alle zoekresultaten. Vul de Revit-parameters direct of later per regel in.
+2. **Koppelingen** — kies **Eigenschappen → Via IFC-entiteit**, selecteer één of meerdere IFC-entiteiten en bronnen, laad bronklassen en haal de eigenschappen op. Selecteer afzonderlijke eigenschappen of alle zoekresultaten. Vul de Revit-parameters direct of later per regel in.
 3. **Exporteren** — kies sortering op propertyset, classification/bronklasse of IFC-entiteit, controleer de inhoud en download `UDPS.txt`.
 
 Een gevuld project opent bij stap 02. **Menu → Opnieuw beginnen** maakt een leeg project na bevestiging; bronnen en eigen bibliotheken blijven beschikbaar. Bewaar het project vooraf om de huidige koppelingen te behouden. **Voorbeeldproject laden** opent de 59 regels uit het meegeleverde Excelbestand.
@@ -103,3 +103,13 @@ Predefined typen zoals IfcDoorDOOR zijn bSDD-verwijzingen en worden niet als zel
 HasPart-relaties worden in de broninformatie getoond, maar eigenschappen van bijvoorbeeld Kozijn worden niet stilzwijgend op Raam toegepast. Ook NL-SfB-verwijzingen voegen geen willekeurige eigenschappen toe. Er worden geen extra properties overgenomen uit een dictionary enkel omdat één eigenschap naar die dictionary verwijst.
 
 Oude broncaches worden vernieuwd. Een nieuwer meegeleverd cacheformaat vervangt een ouder browsercacheformaat voor dezelfde bron, zonder de gekozen bronnen of projectregels te wijzigen. De meegeleverde O&E-momentopname is aangevuld met de geverifieerde IfcDoor-route en Binnendeur-details. De migratietest controleert dat ook met een oude lege cache de 17 producten en 24 Binnendeur-properties beschikbaar zijn.
+
+## Bouwproduct als startpunt (1.7)
+
+**Eigenschappen** opent nu standaard **Via bouwproduct**. Selecteer O&E, zoek op `deur` en kies **Deur**. De app haalt de properties van precies deze klasse op en leidt de IFC-entiteit af uit de gepubliceerde bronrelaties. De relatie wordt gecontroleerd met de IFC 4.3-bronlijst voordat eigenschappen aan het project kunnen worden toegevoegd. Via IFC-entiteit blijft de andere route voor meerdere bronnen en entiteiten.
+
+De productzoeker gebruikt de gepagineerde Dictionary Classes API met ClassType=Class. De meegeleverde O&E-index bevat de 287 zo gepubliceerde klassen op 12 november 2026. Zoeken gebeurt op naam, code en bovenliggende klasse; een exacte naam staat bovenaan. Bij een gekozen product zijn de ouders en directe kinderen aanklikbaar. Bron vernieuwen ververst de productindex en daarna de opgevraagde details en IFC-koppelingen. Zonder bevestigde IFC-relatie zijn de properties wel te bekijken, maar niet te selecteren voor export.
+
+Live geverifieerde inrichting: BOUWPRODUCT → Deur → Binnendeur, Roldeur, Liftdeur, Schuifpui en Tourniquet. Deur heeft 42 eigen gepubliceerde eigenschappen, verspreid over Attributes, ILS Ontwerp en Engineering, Pset_DoorCommon, Pset_ManufacturerTypeInformation en Qto_BodyGeometryValidation. De dictionary van de eigenschap kan IFC of O&E zijn. Voorbeelden: Brandcriteria, Kleur, Hang- en Sluitwerk, FireRating, AcousticRating, ThermalTransmittance, Manufacturer en ModelReference. Binnendeur heeft een eigen lijst van 24 eigenschappen. De app erft of combineert geen properties op basis van alleen de ouder-kindhiërarchie; bSDD verlangt dat bronbeheerders de gewenste klasse-eigenschappen expliciet publiceren.
+
+De tests controleren zoeken, hiërarchie, beide deurvarianten, herkomst, toevoegen en UDPS-generatie, ongeldige relaties en paginering. De brondata zijn met live API-antwoorden gecontroleerd; visuele browsercontrole blijft in deze werkomgeving onbevestigd.
