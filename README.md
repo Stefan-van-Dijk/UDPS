@@ -1,88 +1,81 @@
-# UDPS
-Webapp voor het beheren van Revit-parameterkoppelingen en het genereren van User Defined Property Sets (UDPS) voor IFC-export. Gebaseerd op de Excel-generator van Jasper Kempen en Stefan van Dijk.
+# UDPS generator
 
-## Gebruik
+Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.6.
 
-De webapp staat in `web/` en heeft geen buildstap of externe JavaScript-afhankelijkheden.
+## Werkwijze
 
-- De 59 bronregels zijn ingeladen; 58 staan aan.
-- `IfcWindowsw` is gecorrigeerd naar `IfcWindow`, met behoud van de koppelingen.
+1. **Bronnen & bibliotheken** — selecteer bSDD-woordenboeken of laad eigen bibliotheken. Versies worden per bronnaam gegroepeerd. Updates staan hier, niet ook in het menu.
+2. **Koppelingen** — kies **Via IFC & bronnen**, selecteer één of meerdere IFC-entiteiten en bronnen, laad bronklassen en haal de eigenschappen op. Selecteer afzonderlijke eigenschappen of alle zoekresultaten. Vul de Revit-parameters direct of later per regel in.
+3. **Exporteren** — kies sortering op propertyset, classification/bronklasse of IFC-entiteit, controleer de inhoud en download `UDPS.txt`.
+
+Een gevuld project opent bij stap 02. **Menu → Opnieuw beginnen** maakt een leeg project na bevestiging; bronnen en eigen bibliotheken blijven beschikbaar. Bewaar het project vooraf om de huidige koppelingen te behouden. **Voorbeeldproject laden** opent de 59 regels uit het meegeleverde Excelbestand.
+
+Het menu bevat project importeren, project bewaren, opnieuw beginnen, voorbeeldproject en uitleg. Importeer een JSON-project of een `.xlsx`/`.xlsm` met de tabel `ILS_Gevel`. VBA wordt niet uitgevoerd. `IfcWindowsw` wordt gecorrigeerd naar `IfcWindow`.
+
+## Lijst en export
+
 - Bewerk Revit-parameter, IFC-property, propertyset en datatype direct in de tabel.
-- Selecteer per regel de IFC-entiteiten. Filters beperken alleen de weergave, niet de export.
-- Bekijk de definitie en download een tabgescheiden UTF-8 `.txt` (BOM en CRLF).
-- Bewaar een JSON-project om wijzigingen over te zetten of te archiveren.
-- Importeer JSON of een `.xlsx`/`.xlsm` met de tabel `ILS_Gevel`. VBA wordt niet uitgevoerd.
+- Propertyset- en IFC-filters zijn multiselecties: OR binnen één filter, AND tussen filters en zoektekst. Niet-geselecteerde IFC-kolommen worden verborgen. Filters veranderen de exportselectie niet.
+- Foutregels zijn gearceerd, met toelichting in de tooltip. Verwijderen kan per regel; Ongedaan maken herstelt verwijderingen tijdens de sessie.
+- Nieuwe bronregels zonder Revit-naam blijven zichtbaar maar blokkeren export zolang ze actief zijn. Bestaande historische lege namen behouden hun betekenis: de IFC-propertynaam gebruiken.
+- Dezelfde eigenschap mag per IFC-entiteit een andere Revit-parameter gebruiken. Een reeds actieve propertyset/property/entiteit-combinatie wordt bij bulk toevoegen overgeslagen en gemeld. Er worden geen dubbele exportdefinities aangemaakt.
+- Iedere nieuwe bronkoppeling wordt getoetst aan de bronklasse en de IFC-relatie. Bestaande eigen of geïmporteerde regels worden niet automatisch heringedeeld.
 
-De app verwerkt bestanden lokaal in de browser. Er is geen uploadserver, account of synchronisatie tussen apparaten. Browseropslag kan worden gewist; bewaar daarom een projectbestand.
+De export is tabgescheiden UTF-8 met BOM en CRLF, vaste toepassing `I/T` en bestandsnaam `UDPS.txt`. Lege blokken worden altijd overgeslagen. De header vermeldt de makers; hij bevat geen formaatvoorbeeld.
 
-## Lokaal starten
+De sortering wijzigt de inhoud niet. Bij propertyset en entiteit worden complete blokken op de gekozen sleutel gesorteerd. Classification gebruikt `Classification`, indien aanwezig, anders `Source_class`. Een blok met meerdere bronklassen wordt op zijn alfabetisch eerste klasse geplaatst; de properties binnen dat blok worden op klasse gesorteerd. Blokken zonder klasse volgen achteraan. Zo blijft iedere propertyset/entiteit-combinatie één geldig blok.
 
-Met Python 3 en Node.js 22:
+Het meegeleverde project heeft 58 actieve regels, 416 koppelingen en 45 gevulde blokken. Twee regels gebruiken dezelfde IFC-property `3.7 Materiaal` voor materiaal binnen en buiten, op negen entiteiten. Deze conflicten blijven behouden en blokkeren export totdat de gebruiker ze oplost.
 
-```sh
-npm start
-# Open http://localhost:8080
-npm run check
-npm test
+## Eigen bibliotheken
+
+Onder stap 01 kun je een bibliotheek inladen, een geladen bibliotheek weer downloaden, een voorbeeld downloaden of het huidige project als bibliotheek exporteren. Een projectexport bevat alle regels met een IFC-relatie, ook uitgeschakelde regels; Revit-namen en actieve selecties blijven alleen in het projectbestand. Meerdere identieke eigenschapsdefinities worden samengevoegd. Conflicterende datatypes worden afgewezen.
+
+Het JSON-formaat is:
+
+```json
+{
+  "format": "udps-library",
+  "schema": 1,
+  "id": "rollecate-gevel",
+  "name": "Rollecate Gevel",
+  "version": "1.0",
+  "classes": [{
+    "code": "kozijn",
+    "name": "Kozijn",
+    "ifcEntities": ["IfcWindow", "IfcDoor"],
+    "properties": [{
+      "code": "Afwerking",
+      "name": "Afwerking",
+      "propertySet": "Pset_Gevel",
+      "dataType": "Text"
+    }]
+  }]
+}
 ```
 
-Open de HTML niet rechtstreeks via `file://`: JavaScriptmodules vereisen een webserver.
+IFC-entiteiten worden bij import gecontroleerd tegen de bSDD-catalogus. Klassecodes en propertyset/property-combinaties binnen een klasse moeten uniek zijn. Datatypes volgen de UDPS-lijst. Import accepteert maximaal 10 MB, 10.000 klassen en 10.000 eigenschapsdefinities. Een reeds ingeladen combinatie van id en versie wordt niet overschreven: gebruik voor wijzigingen een nieuwe versie. De nieuwe versie wordt geselecteerd; bestaande projectkoppelingen blijven bij de oude versie.
 
-## Publiceren op GitHub Pages
+Eigen bibliotheken werken lokaal en krijgen `urn:udps:library:`-identiteiten. Ze doen zich niet voor als gepubliceerde bSDD-bronnen. Projectbestanden bewaren de koppelingen; neem eigen bibliotheekbestanden apart mee wanneer je op een ander apparaat verder wilt werken.
 
-Ga naar **Settings → Pages → Build and deployment**. Voor een eenvoudige branch-publicatie kun je de inhoud van `web/` als website plaatsen. De meegeleverde `pages.yml` gebruikt GitHub Actions: kies **Source: GitHub Actions** en start daarna de workflow **Publiceer webapp** via **Actions → Run workflow**. De workflow test de code voor publicatie. GitHub toont de uiteindelijke website-URL bij Pages en de deployment.
+## bSDD-bronnen en updates
 
-Je kunt de bestanden `index.html`, `style.css`, `app.js`, `core.js`, `excel.js`, `sources.js`, `sources-ui.js`, `catalog.json` en `data.js` plus de map `assets/` uit `web/` ook samen naar een eigen webserver uploaden. `initial.json` is de leesbare bronkopie.
+IFC-codes komen uit `https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3`; ILS uit `https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2`. De meegeleverde catalogus van 12 november 2026 bevat 2163 IFC-records en ILS 2.0.1 met 308 klassen en 127 eigenschappen. Alleen werkelijke IFC-entiteiten zijn selecteerbaar, geen voorgedefinieerde typen.
 
-## Verschillen ten opzichte van de Excelmacro
+Eigenschappen worden via gerelateerde bronklassen opgehaald. Alleen enkelvoudige eigenschappen met propertyset worden aangeboden. De app neemt geen eigenschappen van bovenliggende klassen over als bSDD die niet aan de geselecteerde klasse publiceert. Een bron zonder passende IFC-relaties levert geen eigenschappen op. Meerdere bronnen kunnen in dezelfde toevoeging worden gebruikt. Mislukte bronaanvragen worden apart gemeld.
 
-De selectievoorwaarden (`x`), volgorde van propertysets/entiteiten en de parameterregels volgen de macro. De export bevat 45 gevulde blokken en 416 koppelingen, met vaste toepassing `I/T` en bestandsnaam `UDPS.txt`. De commentaarheader is aangepast voor de webversie. Lege blokken worden altijd overgeslagen. Propertysetnamen worden exact vergeleken, zodat gelijkende namen niet samenvallen zoals bij een substringcontrole.
+**Updates** controleert de IFC-catalogus en de al geladen relaties van ingeschakelde bSDD-bronnen. Na controle kan de gebruiker de update toepassen. Projectkoppelingen worden niet overschreven. Eigen bibliotheken worden uitsluitend bijgewerkt via een nieuwe versie van hun bestand.
 
-De bron bevat twee mappings met dezelfde IFC-property `3.7 Materiaal` binnen `ILS Ontwerp en Engineering` (materiaal binnen en buiten). Beide blijven behouden; de app waarschuwt hiervoor. Beoordeel deze mappings voor gebruik in Revit.
+`web/relations.json` bevat een gedeeltelijke momentopname met de woordenboekenlijst en enkele geverifieerde ILS-relaties. Niet aanwezige relaties worden live geladen en gecachet. Netwerkfouten, CORS en HTTP 429 worden gemeld; de app verzint geen vervangende relaties. Live gebruik vereist toegang tot `api.bsdd.buildingsmart.org`.
 
-Een browser kan de automatische netwerkmap- en Excel-opslaghandelingen uit VBA niet overnemen. Downloads en projectback-ups vervangen deze stappen. Type-export kan IFC-type-entiteiten vereisen, afhankelijk van de gebruikte exporter. Validatie is geen volledige IFC-schemavalidatie en daadwerkelijke Revit-export moet in je eigen omgeving worden gecontroleerd.
+## Opslag, licenties en verificatie
 
-## Herkomst en licentie
+Bestanden worden lokaal in de browser verwerkt. Er is geen uploadserver, account of apparaatsynchronisatie. Browseropslag kan worden gewist; bewaar projecten en eigen bibliotheken als bestanden. Openbare bSDD-aanvragen gebruiken de geselecteerde IFC-code en bron-URI, niet je Revit-mappings.
 
-Gebaseerd op de generator van Jasper Kempen en Stefan van Dijk, Rollecate. De repository gebruikt de bestaande MIT-licentie. De huidige copyrightvermelding is ongewijzigd behouden; laat de rechthebbende organisatie en exacte juridische naam vaststellen voordat deze worden aangepast.
+De repository behoudt zijn bestaande MIT-licentie en copyrightvermelding. Brondata en logo hebben hun eigen rechten: IFC vermeldt CC BY-ND 4.0, ILS vermeldt “No license (rights reserved)”. Bronhouders zijn buildingSMART International en digiGO. Het Rollecate-logo komt van `https://www.rollecate.nl/img/logo-rollecate.svg`. Montserrat wordt via Google Fonts geladen met lokale fallback.
 
+De app heeft geen buildstap of externe JavaScript-afhankelijkheden. Start met `npm start` en open `http://localhost:8080`. Open geen losse `file://`-URL: modules vereisen een webserver. Controleer met `npm run check` en `npm test`.
 
-## Bronnen en updates (webversie 1.1)
+GitHub Pages publiceert automatisch na een push op main, na de controles in de workflow. Zelf hosten kan door de volledige map `web/` over te nemen.
 
-IFC-kolommen linken op exacte `code` naar de URI uit het buildingSMART IFC 4.3-woordenboek. Er worden geen IFC-versies automatisch omgezet. ILS-klassen en -eigenschappen komen uit `https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2` via de bSDD Dictionary API. De meegeleverde momentopname is opgehaald op 12 november 2026: IFC 4.3, ILS 2.0.1; beide bronnen melden status Preview. ILS bevat 308 klassen en 127 eigenschappen. Alle 2163 IFC-bronrecords zijn opgehaald met paginering (de API geeft maximaal 1000 records per pagina).
-
-Klik **Koppel ILS** op een parameterregel en selecteer de bron-eigenschap. De URI is de identiteit; code en bronversie worden meegenomen in het JSON-project. Namen, datatype en Revit-mapping worden nooit automatisch veranderd. De oude Excelnamen worden niet op basis van een gelijkenis automatisch aan ILS 2.0 gekoppeld. Klassen zijn doorzoekbaar als referentie; een klasse is geen eigenschap en kan niet als propertybinding worden gekozen.
-
-**Controleren op updates** haalt de drie volledige collecties opnieuw op en toont toegevoegde, gewijzigde en verdwenen records. **Bronupdate toepassen** vervangt uitsluitend de lokale broncatalogus. Mislukte, gedeeltelijke of tijdens het ophalen veranderde antwoorden worden niet toegepast. Bij een verdwenen gekoppelde URI verschijnt “Niet meer in bron”; de mapping blijft behouden. Updates gelden voor dezelfde opgegeven dictionary-URI. Een nieuwe versie onder een andere URI vereist een bewuste migratie.
-
-De bronlijsten worden lokaal gecachet. Openbare bSDD-verzoeken bevatten geen projectdata. Bij netwerk-/CORS-problemen blijft de meegeleverde of laatst opgeslagen catalogus beschikbaar en verschijnt een foutmelding. De live updatefunctie moet in de gebruikte browser toegang tot api.bsdd.buildingsmart.org hebben.
-
-Brondata en logo vallen niet onder de MIT-softwarelicentie: IFC vermeldt CC BY-ND 4.0; ILS vermeldt “No license (rights reserved)”. Bronvermeldingen: buildingSMART International en digiGO. Het Rollecate-logo is afkomstig van https://www.rollecate.nl/img/logo-rollecate.svg. De stylesheet gebruikt de kleuren en typografie van rollecate.nl. Montserrat wordt via Google Fonts geladen, met lokale fallback.
-
-Publicatie via GitHub Pages start vanaf deze versie automatisch na een push op main. De workflow blijft ook handmatig te starten.
-
-### Broninvoer (1.3)
-
-Via **+ Broneigenschap** kies je eerst een IFC-entiteit, vervolgens een bSDD-woordenboek en een daaraan gerelateerde bronklasse. Alleen de enkelvoudige eigenschappen die bSDD voor die klasse publiceert, met een propertyset, worden aangeboden. De eigenschap-URI, bronklasse, bronwoordenboek en versie blijven in het JSON-project bewaard. Naam, propertyset en datatype volgen de klasse-eigenschap; de gebruiker vult de Revit-parameter in. Een datatypevertaling en exportdetails blijven aanpasbaar. Bestaande invulling blijft zichtbaar. Andere IFC-entiteiten of Revit-parameters kunnen via een aanvullende regel worden gekoppeld.
-
-**Bronnen beheren** laat woordenboeken uit de publieke bSDD-lijst toevoegen/verbergen. ILS O&E en IFC zijn standaard beschikbaar. De lijst kan worden vernieuwd. Eigenschappen en relaties worden pas bij selectie opgehaald en lokaal gecachet. Verbergen verwijdert geen projectdata. **Updates** vergelijkt de IFC-catalogus en geladen klasserelaties van ingeschakelde bronnen, waarna de gebruiker de update kan toepassen; projectkoppelingen worden nooit overschreven.
-
-De gedeeltelijke momentopname in `web/relations.json` bevat de bSDD-woordenboekenlijst en enkele geverifieerde ILS-klasserelaties. Niet opgenomen klassen worden live geladen. Een mislukte aanvraag (netwerk, CORS of HTTP 429) toont een fout en verzint geen relaties of lege successen. Niet alle bronnen hebben IFC-relaties of UDPS-geschikte eigenschappen. Klassen erven in bSDD niet automatisch eigenschappen van hun bovenliggende klasse; de app voegt zulke eigenschappen ook niet zelf toe. Brondata houden de eigen licenties; de MIT-licentie van de app geldt niet voor die data.
-
-Nieuwe bronkoppelingen worden bij toevoegen en bij aanvinken van extra IFC-entiteiten tegen de gepubliceerde klassekoppeling gecontroleerd. Bestaande eigen/geïmporteerde regels worden niet automatisch semantisch heringedeeld. **+ Entiteit** blijft beperkt tot IFC-codes uit de geladen bSDD-catalogus. Dubbele properties binnen dezelfde propertyset en entiteit blokkeren export; het oorspronkelijke bestand bevat zo'n conflict voor `3.7 Materiaal` op negen entiteiten en wordt niet automatisch aangepast.
-
-Validatie: `npm test` en `npm run check`. Browsercontrole: ILS → IfcWindow → Raam → eigenschap toevoegen, bestaande invulling, bronregistratie en netwerkfoutafhandeling. De testbrowser kon nieuwe live relaties niet laden (`Failed to fetch`); API-opvragingen leverden deels gegevens en deels HTTP 429. Daardoor is de live route voor alle andere woordenboeken niet volledig bevestigd.
-
-### Compacte werkweergave (1.4)
-
-De lijst krijgt voorrang: statistieken staan rechts van de kleine intro en Revit–UDPS–IFC-blokken. Bronnen beheren, importeren, project bewaren en uitleg staan onder Menu. Bronversies worden op bronnaam gegroepeerd; wisselen van versie wijzigt bestaande projectkoppelingen niet.
-
-Propertyset- en IFC-filters zijn multiselecties met Alle/Geen. Binnen een filter geldt OR, tussen de filters en zoeken AND. De IFC-selectie bepaalt ook welke entiteitskolommen zichtbaar zijn. Deze weergavefilters wijzigen geen koppelingen of exportselecties; de statistieken blijven projecttotalen en boven de lijst staat het aantal zichtbare regels.
-
-### Stappen en bulk toevoegen (1.5)
-
-Bronnen beheren staat in stap 01, Parameters & koppelingen in 02, UDPS bekijken in 03. Een gevuld project opent in stap 02. Foutregels worden gearceerd (met foutmelding in de tooltip). Verwijderen kan direct met de zichtbare knop; Ongedaan maken herstelt verwijderde regels in deze sessie.
-
-Broneigenschappen ondersteunen meerdere IFC-entiteiten: laad bijbehorende bronklassen, haal eigenschappen van één of alle klassen op, selecteer afzonderlijke of alle zoekresultaten en voeg ze in één keer toe. Iedere regel behoudt de bronrelatie voor zijn eigen entiteit. Bestaande actieve propertyset/property/entiteit-combinaties worden overgeslagen en gemeld; een ongeldige relatie breekt de toevoeging af zonder gedeeltelijke wijzigingen. Alleen enkelvoudige eigenschappen met propertyset zijn geschikt voor deze UDPS-invoer.
-
-Een Revit-parameter invullen is optioneel bij toevoegen. Nieuwe lege koppelingen krijgen `Mapping_pending=x` en blokkeren export zolang ze actief en niet gekoppeld zijn. De gebruiker kan ze later per regel invullen of uitschakelen. Oude projecten met een lege Revit-parameter behouden hun historische betekenis (de IFC-propertynaam gebruiken).
+Versie 1.6: 39 tests controleren onder meer bronrelaties, meervoudige koppelingen, library roundtrips, importvalidatie, lege projecten en exportvolgordes. De visuele browsercontrole kon in deze werkomgeving niet worden afgerond door een browserblokkade. Nieuwe live bSDD-relaties waren bij eerdere browsercontrole deels onbereikbaar (`Failed to fetch` / HTTP 429). Daadwerkelijke Revit-export is niet in deze omgeving beschikbaar; controleer de definitie in de gebruikte IFC-exporter.
