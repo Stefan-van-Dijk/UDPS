@@ -1,0 +1,1 @@
+{"name":"udps-generator","version":"1.0.0","private":true,"type":"module","scripts":{"test":"node --test tests/*.test.js","check":"node --check web/app.js && node --check web/core.js && node --check web/excel.js","start":"python3 -m http.server 8080 --directory web"}}
