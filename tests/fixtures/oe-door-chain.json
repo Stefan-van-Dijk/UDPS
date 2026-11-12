@@ -1,0 +1,511 @@
+{
+  "retrievedAt": "2026-11-12",
+  "source": "https://api.bsdd.buildingsmart.org/api/",
+  "ifc": {
+    "childClassReferences": [
+      {
+        "uri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/IfcDoorBOOM_BARRIER",
+        "name": "Boom Barrier",
+        "code": "IfcDoorBOOM_BARRIER"
+      },
+      {
+        "uri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/IfcDoorDOOR",
+        "name": "Door",
+        "code": "IfcDoorDOOR"
+      },
+      {
+        "uri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/IfcDoorGATE",
+        "name": "Gate",
+        "code": "IfcDoorGATE"
+      },
+      {
+        "uri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/IfcDoorTRAPDOOR",
+        "name": "Trapdoor",
+        "code": "IfcDoorTRAPDOOR"
+      },
+      {
+        "uri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/IfcDoorTURNSTILE",
+        "name": "Turnstile",
+        "code": "IfcDoorTURNSTILE"
+      }
+    ],
+    "code": "IfcDoor",
+    "uri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/IfcDoor"
+  },
+  "related": {
+    "classes": [
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208",
+        "code": "Binnendeur",
+        "name": "Binnendeur",
+        "classType": "Class",
+        "referenceCode": "Binnendeur",
+        "parentClassCode": "Deur",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/83831ff7-5aeb-48bf-a7f2-37d5fa86d797",
+        "code": "Dakluik",
+        "name": "Dakluik",
+        "classType": "Class",
+        "referenceCode": "Dakluik",
+        "parentClassCode": "Luik",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/17210fef-5033-4055-ace5-f29f60fb7093",
+        "code": "Deur",
+        "name": "Deur",
+        "classType": "Class",
+        "referenceCode": "Deur",
+        "parentClassCode": "BOUWPRODUCT",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/ff79d367-4e4a-4f46-a692-1a91e47dcb8d",
+        "code": "Draaihek",
+        "name": "Draaihek",
+        "classType": "Class",
+        "referenceCode": "Draaihek",
+        "parentClassCode": "Poort",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/1536c477-59ca-484f-b784-964ad6f3d154",
+        "code": "Garagedeur",
+        "name": "Garagedeur",
+        "classType": "Class",
+        "referenceCode": "Garagedeur",
+        "parentClassCode": "Roldeur",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/f9fdce8b-3292-49b6-92a5-6acc4033895d",
+        "code": "Liftdeur",
+        "name": "Liftdeur",
+        "classType": "Class",
+        "referenceCode": "Liftdeur",
+        "parentClassCode": "Deur",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c9609b68-a84b-4d74-97d2-66e9a66c7b31",
+        "code": "Luik",
+        "name": "Luik",
+        "classType": "Class",
+        "referenceCode": "Luik",
+        "parentClassCode": "OVERIGE BOUWPRODUCT",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/4108a5a9-3acc-42cf-ae2e-df3e8e49c0d9",
+        "code": "Overheaddeur",
+        "name": "Overheaddeur",
+        "classType": "Class",
+        "referenceCode": "Overheaddeur",
+        "parentClassCode": "Roldeur",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/8efd0807-d049-483f-a847-c5e94a88c0ae",
+        "code": "Plafondluik",
+        "name": "Plafondluik",
+        "classType": "Class",
+        "referenceCode": "Plafondluik",
+        "parentClassCode": "Luik",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/63408ad1-1952-4296-8049-0822cb5c4a61",
+        "code": "Poort",
+        "name": "Poort",
+        "classType": "Class",
+        "referenceCode": "Poort",
+        "parentClassCode": "OVERIGE BOUWPRODUCT",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/ce569e7d-03e1-495a-a5fe-e3875a301814",
+        "code": "Roldeur",
+        "name": "Roldeur",
+        "classType": "Class",
+        "referenceCode": "Roldeur",
+        "parentClassCode": "Deur",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/038b820e-a3cc-43ee-bb3f-f8dfc3cd484d",
+        "code": "Schuifpui",
+        "name": "Schuifpui",
+        "classType": "Class",
+        "referenceCode": "Schuifpui",
+        "parentClassCode": "Deur",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/4d78efbb-f389-4d99-b18a-51267cdc287d",
+        "code": "Sectionaaldeur",
+        "name": "Sectionaaldeur",
+        "classType": "Class",
+        "referenceCode": "Sectionaaldeur",
+        "parentClassCode": "Roldeur",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/dfaccd35-354f-4bc9-b77f-2529a769f39a",
+        "code": "Slagboom",
+        "name": "Slagboom",
+        "classType": "Class",
+        "referenceCode": "Slagboom",
+        "parentClassCode": "OVERIGE BOUWPRODUCT",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/3890c8f8-d340-4184-be0c-84d807587b12",
+        "code": "Tourniquet",
+        "name": "Tourniquet",
+        "classType": "Class",
+        "referenceCode": "Tourniquet",
+        "parentClassCode": "Deur",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/8446a9f6-aaad-40df-bb39-524b014fa8dc",
+        "code": "Vloerluik",
+        "name": "Vloerluik",
+        "classType": "Class",
+        "referenceCode": "Vloerluik",
+        "parentClassCode": "Luik",
+        "descriptionPart": ""
+      },
+      {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/0b049db2-c073-463f-a078-14850357e28b",
+        "code": "Wandluik",
+        "name": "Wandluik",
+        "classType": "Class",
+        "referenceCode": "Wandluik",
+        "parentClassCode": "Luik",
+        "descriptionPart": ""
+      }
+    ],
+    "classesTotalCount": 17,
+    "classesOffset": 0,
+    "classesCount": 17,
+    "code": "ils-ontwerp-en-engineering-2",
+    "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+    "name": "ILS Ontwerp en Engineering 2",
+    "version": "2.0.1",
+    "organizationCodeOwner": "digitalbuildingdata.tech",
+    "organizationNameOwner": "digiGO",
+    "defaultLanguageCode": "nl-NL",
+    "isLatestVersion": true,
+    "isVerified": false,
+    "isPrivate": false,
+    "license": "No license (rights reserved)",
+    "licenseUrl": "https://technical.buildingsmart.org/services/bsdd/license/",
+    "status": "Preview",
+    "moreInfoUrl": "https://www.digigo.nu/ilsen-en-richtlijnen/ils-ontwerp-en-engineering/",
+    "releaseDate": "2026-10-27T22:06:29Z",
+    "lastUpdatedUtc": "2026-10-27T22:06:29Z"
+  },
+  "product": {
+    "relatedIfcEntityNames": [
+      "IfcDoorDOOR"
+    ],
+    "classRelations": [
+      {
+        "relationType": "HasReference",
+        "relatedClassUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/IfcDoorDOOR",
+        "relatedClassName": "Door"
+      }
+    ],
+    "dictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+    "code": "Binnendeur",
+    "name": "Binnendeur",
+    "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208"
+  },
+  "properties": {
+    "classUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208",
+    "classProperties": [
+      {
+        "name": "Name",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/381eceac-3c19-5a5b-8a1d-e4647b529ba9",
+        "dataType": "String",
+        "propertyCode": "Name",
+        "propertyDictionaryName": "IFC",
+        "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+        "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/Name",
+        "propertySet": "Attributes",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Object Type",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/c004201e-bc19-5682-84a9-738b1dfe5254",
+        "dataType": "String",
+        "propertyCode": "ObjectType",
+        "propertyDictionaryName": "IFC",
+        "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+        "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/ObjectType",
+        "propertySet": "Attributes",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Operation Type",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/41177c09-010e-574b-90f8-1a3f367c5d96",
+        "dataType": "String",
+        "propertyCode": "OperationType",
+        "propertyDictionaryName": "IFC",
+        "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+        "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/OperationType",
+        "propertySet": "Attributes",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Brandcriteria",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/11ef5828-8603-5d39-b175-76709abb71b0",
+        "dataType": "String",
+        "propertyCode": "Brandcriteria",
+        "propertyDictionaryName": "ILS Ontwerp en Engineering 2",
+        "propertyDictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "propertyUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e69687d3-81dd-4790-8077-b854d7201286",
+        "propertySet": "ILS Ontwerp en Engineering",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Draairichting (DIN)",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/4f822bdc-e247-5ef4-8686-40258269b3c2",
+        "dataType": "String",
+        "propertyCode": "Draairichting (DIN)",
+        "propertyDictionaryName": "ILS Ontwerp en Engineering 2",
+        "propertyDictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "propertyUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/39849cae-ca6a-4e11-9b99-e32a554a8f29",
+        "propertySet": "ILS Ontwerp en Engineering",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Dranger (elektrisch)",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/19db97be-1254-5b1f-8ff1-4107bb267a7c",
+        "dataType": "Boolean",
+        "propertyCode": "Dranger (elektrisch)",
+        "propertyDictionaryName": "ILS Ontwerp en Engineering 2",
+        "propertyDictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "propertyUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/94247568-141c-4e76-93bd-ed841ca87f2b",
+        "propertySet": "ILS Ontwerp en Engineering",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Hang- en Sluitwerk",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/1ce3abce-de78-522a-a907-a05aa22c6352",
+        "dataType": "String",
+        "propertyCode": "Hang- en Sluitwerk",
+        "propertyDictionaryName": "ILS Ontwerp en Engineering 2",
+        "propertyDictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "propertyUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/73e2d8a4-dbee-4c3f-8f9a-69ae1a7da9bb",
+        "propertySet": "ILS Ontwerp en Engineering",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Kleur Binnenzijde",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/e085ba4f-2947-5d06-95da-fffb5f17cf68",
+        "dataType": "String",
+        "propertyCode": "Kleur Binnenzijde",
+        "propertyDictionaryName": "ILS Ontwerp en Engineering 2",
+        "propertyDictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "propertyUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/dfe722f1-0961-413e-93a0-820c303bee9f",
+        "propertySet": "ILS Ontwerp en Engineering",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Kleur Buitenzijde",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/4612d7e5-6356-57b0-b8ea-3b6368d4d5cb",
+        "dataType": "String",
+        "propertyCode": "Kleur Buitenzijde",
+        "propertyDictionaryName": "ILS Ontwerp en Engineering 2",
+        "propertyDictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "propertyUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/6d2c99da-02ae-4a5b-b82d-45d49735a039",
+        "propertySet": "ILS Ontwerp en Engineering",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Leveranciersmerk",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/66698c7d-cae8-5e57-a8ab-ca420bfdf3aa",
+        "dataType": "String",
+        "propertyCode": "Leveranciersmerk",
+        "propertyDictionaryName": "ILS Ontwerp en Engineering 2",
+        "propertyDictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "propertyUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/0868afda-a78b-481c-8a78-245b21c44164",
+        "propertySet": "ILS Ontwerp en Engineering",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Linieare Warmtedoorgangscoëfficiënt",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/cad79454-df36-58ca-9a9b-c529b51ad9b9",
+        "dataType": "Real",
+        "propertyCode": "Linieare Warmtedoorgangscoëfficiënt",
+        "propertyDictionaryName": "ILS Ontwerp en Engineering 2",
+        "propertyDictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "propertyUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e425a5b1-03f2-436a-8745-3dd53fa0aae8",
+        "propertySet": "ILS Ontwerp en Engineering",
+        "propertyValueKind": "Single",
+        "units": [
+          "W/(m·K)"
+        ]
+      },
+      {
+        "name": "Luchtgeluidisolatie Grootheid",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/1fb403ee-ff62-55f3-8791-cafd3005f0b5",
+        "dataType": "String",
+        "propertyCode": "Luchtgeluidisolatie Grootheid",
+        "propertyDictionaryName": "ILS Ontwerp en Engineering 2",
+        "propertyDictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "propertyUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/013a1950-cd6b-46fe-97c8-492f9905d155",
+        "propertySet": "ILS Ontwerp en Engineering",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Merk",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/5833532c-b876-5fb7-9552-615576fd2919",
+        "dataType": "String",
+        "propertyCode": "Merk",
+        "propertyDictionaryName": "ILS Ontwerp en Engineering 2",
+        "propertyDictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "propertyUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/a826093b-82f7-4fee-a5d0-535aefbe92e7",
+        "propertySet": "ILS Ontwerp en Engineering",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Paniekbalk",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/303b7ac4-0e2e-5f75-b305-576ca7c15d4a",
+        "dataType": "Boolean",
+        "propertyCode": "Paniekbalk",
+        "propertyDictionaryName": "ILS Ontwerp en Engineering 2",
+        "propertyDictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "propertyUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/bafd9fd2-a648-4c08-8472-001c9b02cd96",
+        "propertySet": "ILS Ontwerp en Engineering",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Rookcriteria",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/92399457-1223-50fc-94f7-edcea5ae20f3",
+        "dataType": "String",
+        "propertyCode": "Rookcriteria",
+        "propertyDictionaryName": "ILS Ontwerp en Engineering 2",
+        "propertyDictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "propertyUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/611db06f-9536-4178-9c32-543450fa3d06",
+        "propertySet": "ILS Ontwerp en Engineering",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Rookwerendheid",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/c9de7407-d755-5259-86e4-5d5d5df1bbef",
+        "dataType": "String",
+        "propertyCode": "Rookwerendheid",
+        "propertyDictionaryName": "ILS Ontwerp en Engineering 2",
+        "propertyDictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "propertyUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e401d7f4-6cc6-4edf-b4fc-cc6023160743",
+        "propertySet": "ILS Ontwerp en Engineering",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Fire Rating",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/2076d643-1d7c-5b74-b5a8-35e6df188939",
+        "dataType": "String",
+        "propertyCode": "FireRating",
+        "propertyDictionaryName": "IFC",
+        "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+        "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/FireRating",
+        "propertySet": "Pset_DoorCommon",
+        "propertyValueKind": "Single",
+        "units": [
+          "min"
+        ]
+      },
+      {
+        "name": "Is External",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/9042ac2f-14e4-5d4a-8b95-e39b82f2854c",
+        "dataType": "Boolean",
+        "propertyCode": "IsExternal",
+        "propertyDictionaryName": "IFC",
+        "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+        "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/IsExternal",
+        "propertySet": "Pset_DoorCommon",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Acoustic Rating",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/f76f237d-facf-5274-b5a2-ab815e3b834f",
+        "dataType": "String",
+        "propertyCode": "AcousticRating",
+        "propertyDictionaryName": "IFC",
+        "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+        "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/AcousticRating",
+        "propertySet": "Pset_DoorCommon",
+        "propertyValueKind": "Single",
+        "units": [
+          "dB"
+        ]
+      },
+      {
+        "name": "Fire Exit",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/520e42ac-bb75-5aae-bf55-a25e2cc84d61",
+        "dataType": "Boolean",
+        "propertyCode": "FireExit",
+        "propertyDictionaryName": "IFC",
+        "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+        "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/FireExit",
+        "propertySet": "Pset_DoorCommon",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Thermal Transmittance",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/e298aac3-0189-5bfa-8db4-c776c5316774",
+        "dataType": "Real",
+        "propertyCode": "ThermalTransmittance",
+        "propertyDictionaryName": "IFC",
+        "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+        "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/ThermalTransmittance",
+        "propertySet": "Pset_DoorCommon",
+        "propertyValueKind": "Single",
+        "units": [
+          "W/(m²·K)"
+        ]
+      },
+      {
+        "name": "Security Rating",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/790b5031-4abc-55ee-950b-1c316478da44",
+        "dataType": "String",
+        "propertyCode": "SecurityRating",
+        "propertyDictionaryName": "IFC",
+        "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+        "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/SecurityRating",
+        "propertySet": "Pset_DoorCommon",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Manufacturer",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/bd1d0f90-15bd-5eb0-9f7d-cf0a3f33294a",
+        "dataType": "String",
+        "propertyCode": "Manufacturer",
+        "propertyDictionaryName": "IFC",
+        "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+        "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/Manufacturer",
+        "propertySet": "Pset_ManufacturerTypeInformation",
+        "propertyValueKind": "Single"
+      },
+      {
+        "name": "Model Reference",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c42920ba-874b-4d11-90a2-afc09653d208/prop/69c27956-e56f-547f-952a-b0bb6c643872",
+        "dataType": "String",
+        "propertyCode": "ModelReference",
+        "propertyDictionaryName": "IFC",
+        "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+        "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/ModelReference",
+        "propertySet": "Pset_ManufacturerTypeInformation",
+        "propertyValueKind": "Single"
+      }
+    ],
+    "totalCount": 24,
+    "offset": 0,
+    "count": 24
+  }
+}

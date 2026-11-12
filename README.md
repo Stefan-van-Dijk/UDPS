@@ -1,6 +1,6 @@
 # UDPS generator
 
-Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.6.1.
+Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.6.2.
 
 ## Werkwijze
 
@@ -87,3 +87,19 @@ Het aparte blok Naar export is verwijderd; exporteren staat uitsluitend in stap 
 Een mislukte bronklasse verhindert niet meer dat andere geslaagde klassen in de keuzelijst verschijnen. Ophaalresultaten tonen per bronklasse het aantal eigenschappen, beschikbare resultaten, netwerkfouten en uitgesloten eigenschappen met reden (bijvoorbeeld geen propertyset, Range of Complex). Geen gerelateerde bronklassen wordt afzonderlijk gemeld.
 
 Live API-controle op 12 november 2026: IFC 4.3 IfcWindow retourneert 230 eigenschappen, waarvan 219 Single en 11 Range/Complex. ILS 2.0.1 Raam retourneert twee eigenschappen: Name en Object Type. Verschillen tussen bronnen zijn niet automatisch een appfout. De generator verzint geen ontbrekende bronrelaties. De nieuwe endpoint is gecontroleerd met echte antwoorden; browserbereikbaarheid blijft afhankelijk van netwerk/CORS. Tests controleren paginering, onvolledige antwoorden, gedeeltelijke fouten, zichtbare uitsluitingsredenen en annuleren van achterhaalde selecties.
+
+## O&E-bouwproducten en eigenschapsbronnen (1.6.2)
+
+De selectie volgt IFC 4.3 → O&E-bouwproduct → klasse-eigenschap → propertydictionary. Kies O&E als bron om alle aan het bouwproduct gepubliceerde eigenschappen te krijgen, ook als deze uit bijvoorbeeld IFC komen; de propertydictionary hoeft niet als losse selectiebron ingeschakeld te zijn. De generieke ondersteuning geldt ook voor andere dictionaries.
+
+Bij een hoofdentiteit worden de door IFC 4.3 gepubliceerde predefined-type-kinderen meegenomen in de bronzoekvraag. Er wordt met volledige IFC 4.3-URI's gezocht, niet met versie-onafhankelijke codes. Voorbeeld: de oude IfcDoor-zoekvraag vond 16 O&E-klassen, maar miste Binnendeur omdat die naar IfcDoorDOOR verwijst. De uitgebreide zoekvraag vindt 17. Deze route is gecontroleerd met live API-antwoorden van 12 november 2026 en opgenomen in een regressietest. Binnendeur levert 24 properties uit de O&E- en IFC-dictionaries.
+
+De generator controleert de IFC-relatie opnieuw op de productdetails. Expliciete relaties naar een andere IFC-versie worden niet via een gelijkende codenaam alsnog geaccepteerd. Zonder versiegebonden ClassRelation kan een gepubliceerde RelatedIfcEntityNames-relatie worden gebruikt; het type van die relatie blijft vastgelegd.
+
+Projectregels bewaren nu naast Source_dictionary (het productwoordenboek): Source_property_dictionary, Source_property_dictionary_name, Source_relation_uri en Source_ifc_references. De lijst toont de propertydictionary afzonderlijk. Eigenschappen met dezelfde URI op verschillende bouwproducten blijven afzonderlijk selecteerbaar; bestaande conflicterende UDPS-combinaties worden nog steeds overgeslagen, omdat een propertyset/property/entiteit maar één actieve mapping kan hebben.
+
+Predefined typen zoals IfcDoorDOOR zijn bSDD-verwijzingen en worden niet als zelfstandige IFC-entiteit geëxporteerd. De UDPS-export gebruikt IfcDoor. Een product- of predefined-typeverwijzing vormt geen selectievoorwaarde in de UDPS-export; zulke broninformatie blijft in het project bewaard. Gebruik dus geen verschillende actieve Revit-mappings voor dezelfde propertyset/property op dezelfde hoofdentiteit.
+
+HasPart-relaties worden in de broninformatie getoond, maar eigenschappen van bijvoorbeeld Kozijn worden niet stilzwijgend op Raam toegepast. Ook NL-SfB-verwijzingen voegen geen willekeurige eigenschappen toe. Er worden geen extra properties overgenomen uit een dictionary enkel omdat één eigenschap naar die dictionary verwijst.
+
+Oude broncaches worden vernieuwd. Een nieuwer meegeleverd cacheformaat vervangt een ouder browsercacheformaat voor dezelfde bron, zonder de gekozen bronnen of projectregels te wijzigen. De meegeleverde O&E-momentopname is aangevuld met de geverifieerde IfcDoor-route en Binnendeur-details. De migratietest controleert dat ook met een oude lege cache de 17 producten en 24 Binnendeur-properties beschikbaar zijn.
