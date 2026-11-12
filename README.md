@@ -72,3 +72,9 @@ De gedeeltelijke momentopname in `web/relations.json` bevat de bSDD-woordenboeke
 Nieuwe bronkoppelingen worden bij toevoegen en bij aanvinken van extra IFC-entiteiten tegen de gepubliceerde klassekoppeling gecontroleerd. Bestaande eigen/geïmporteerde regels worden niet automatisch semantisch heringedeeld. **+ Entiteit** blijft beperkt tot IFC-codes uit de geladen bSDD-catalogus. Dubbele properties binnen dezelfde propertyset en entiteit blokkeren export; het oorspronkelijke bestand bevat zo'n conflict voor `3.7 Materiaal` op negen entiteiten en wordt niet automatisch aangepast.
 
 Validatie: `npm test` en `npm run check`. Browsercontrole: ILS → IfcWindow → Raam → eigenschap toevoegen, bestaande invulling, bronregistratie en netwerkfoutafhandeling. De testbrowser kon nieuwe live relaties niet laden (`Failed to fetch`); API-opvragingen leverden deels gegevens en deels HTTP 429. Daardoor is de live route voor alle andere woordenboeken niet volledig bevestigd.
+
+### Compacte werkweergave (1.4)
+
+De lijst krijgt voorrang: statistieken staan rechts van de kleine intro en Revit–UDPS–IFC-blokken. Bronnen beheren, importeren, project bewaren en uitleg staan onder Menu. Bronversies worden op bronnaam gegroepeerd; wisselen van versie wijzigt bestaande projectkoppelingen niet.
+
+Propertyset- en IFC-filters zijn multiselecties met Alle/Geen. Binnen een filter geldt OR, tussen de filters en zoeken AND. De IFC-selectie bepaalt ook welke entiteitskolommen zichtbaar zijn. Deze weergavefilters wijzigen geen koppelingen of exportselecties; de statistieken blijven projecttotalen en boven de lijst staat het aantal zichtbare regels.
