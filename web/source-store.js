@@ -1,0 +1,12 @@
+import {defaults,dictionaries,relatedClasses,classDetails,relationshipKey} from './bsdd.js';
+let state={schema:1,registry:[],enabled:defaults,relations:{},details:{}},loading;
+export const sourceState=()=>state;
+export async function initStore(){if(loading)return loading;loading=(async()=>{try{const r=await fetch('./relations.json');if(r.ok)state={...state,...await r.json(),enabled:defaults};}catch{}try{const saved=JSON.parse(localStorage.getItem('udps-relations-v1'));if(saved?.schema===1&&Array.isArray(saved.enabled)&&saved.relations&&saved.details)state={...state,...saved,relations:{...state.relations,...saved.relations},details:{...state.details,...saved.details},registry:state.registry.length?state.registry:saved.registry||[]};}catch{}})();return loading;}
+export function persist(){try{localStorage.setItem('udps-relations-v1',JSON.stringify(state));return true;}catch{return false;}}
+export async function loadRegistry(){state.registry=await dictionaries();persist();return state.registry;}
+export function enableSource(uri){const s=state.registry.find(x=>x.uri===uri);if(!s)throw Error('Kies een bron uit de bSDD-lijst.');if(!state.enabled.some(x=>x.uri===uri))state.enabled.push(s);persist();}
+export function disableSource(uri){state.enabled=state.enabled.filter(s=>s.uri!==uri);persist();}
+export async function loadClasses(source,entity){const key=relationshipKey(source,entity);if(!state.relations[key]){state.relations[key]=await relatedClasses(source,entity);persist();}return state.relations[key];}
+export async function loadDetails(uri){if(!state.details[uri]){state.details[uri]=await classDetails(uri);persist();}return state.details[uri];}
+export async function proposedUpdate(){const next=structuredClone(state);for(const [key,r] of Object.entries(state.relations)){if(!state.enabled.some(s=>s.uri===r.source))continue;next.relations[key]=await relatedClasses(r.source,r.entity);for(const c of next.relations[key].items)if(state.details[c.uri])next.details[c.uri]=await classDetails(c.uri);}const changes=[];for(const [k,r] of Object.entries(next.relations)){const before=state.relations[k];if(JSON.stringify(before.items)!==JSON.stringify(r.items)||before.version!==r.version)changes.push(r.entity+': bronklassen/versie gewijzigd');for(const c of r.items)if(JSON.stringify(state.details[c.uri])!==JSON.stringify(next.details[c.uri]))changes.push(c.name+': eigenschappen gewijzigd');}return {next,changes:[...new Set(changes)]};}
+export function applyUpdate(next){state=next;return persist();}
