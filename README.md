@@ -60,3 +60,9 @@ De bronlijsten worden lokaal gecachet. Openbare bSDD-verzoeken bevatten geen pro
 Brondata en logo vallen niet onder de MIT-softwarelicentie: IFC vermeldt CC BY-ND 4.0; ILS vermeldt “No license (rights reserved)”. Bronvermeldingen: buildingSMART International en digiGO. Het Rollecate-logo is afkomstig van https://www.rollecate.nl/img/logo-rollecate.svg. De stylesheet gebruikt de kleuren en typografie van rollecate.nl. Montserrat wordt via Google Fonts geladen, met lokale fallback.
 
 Publicatie via GitHub Pages start vanaf deze versie automatisch na een push op main. De workflow blijft ook handmatig te starten.
+
+### Broninvoer (1.2)
+
+Gebruik **+ ILS-parameter** om een eigenschap uit de bron te kiezen. Bestaande regels worden op bron-URI herkend; naamovereenkomsten zonder URI worden apart aangeduid. Vul de Revit-parameter in en kies één of meer IFC-entiteiten. Voor een andere Revit-parameter voeg je dezelfde eigenschap opnieuw toe voor andere entiteiten. Propertyset `ILS_OntwerpEnEngineering` is een app-standaard, geen claim over de ILS-bron; exportdetails zijn aanpasbaar. Bron-datatype en eenheid worden vertaald naar een voorstel voor het UDPS-datatype.
+
+**+ Entiteit** kiest uitsluitend exacte IFC-klassecodes uit de geladen bSDD-catalogus. Actieve onbekende entiteiten uit imports blokkeren export. Dubbele properties binnen dezelfde propertyset en entiteit blokkeren export eveneens. Het oorspronkelijke bestand bevat zo'n conflict voor `3.7 Materiaal` op negen entiteiten; de app verwijdert of wijzigt deze bronregels niet automatisch.
