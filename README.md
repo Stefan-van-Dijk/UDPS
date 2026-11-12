@@ -1,6 +1,6 @@
 # UDPS generator
 
-Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.6.
+Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.6.1.
 
 ## Werkwijze
 
@@ -79,3 +79,11 @@ De app heeft geen buildstap of externe JavaScript-afhankelijkheden. Start met `n
 GitHub Pages publiceert automatisch na een push op main, na de controles in de workflow. Zelf hosten kan door de volledige map `web/` over te nemen.
 
 Versie 1.6: 39 tests controleren onder meer bronrelaties, meervoudige koppelingen, library roundtrips, importvalidatie, lege projecten en exportvolgordes. De visuele browsercontrole kon in deze werkomgeving niet worden afgerond door een browserblokkade. Nieuwe live bSDD-relaties waren bij eerdere browsercontrole deels onbereikbaar (`Failed to fetch` / HTTP 429). Daadwerkelijke Revit-export is niet in deze omgeving beschikbaar; controleer de definitie in de gebruikte IFC-exporter.
+
+## Ophaaldiagnose (1.6.1)
+
+Het aparte blok Naar export is verwijderd; exporteren staat uitsluitend in stap 03. Eigenschappen worden volledig gepagineerd opgehaald via `Class/Properties/v1`; `IncludeClassProperties` wordt niet meer gebruikt. Oude eigenschapcaches worden bij gebruik opnieuw gecontroleerd. **Opnieuw uit de bron ophalen** ververst ook eerder geladen bronklassen en eigenschappen. Als de bron onbereikbaar is en opgeslagen data beschikbaar zijn, wordt expliciet gemeld dat actualiteit/volledigheid niet bevestigd is.
+
+Een mislukte bronklasse verhindert niet meer dat andere geslaagde klassen in de keuzelijst verschijnen. Ophaalresultaten tonen per bronklasse het aantal eigenschappen, beschikbare resultaten, netwerkfouten en uitgesloten eigenschappen met reden (bijvoorbeeld geen propertyset, Range of Complex). Geen gerelateerde bronklassen wordt afzonderlijk gemeld.
+
+Live API-controle op 12 november 2026: IFC 4.3 IfcWindow retourneert 230 eigenschappen, waarvan 219 Single en 11 Range/Complex. ILS 2.0.1 Raam retourneert twee eigenschappen: Name en Object Type. Verschillen tussen bronnen zijn niet automatisch een appfout. De generator verzint geen ontbrekende bronrelaties. De nieuwe endpoint is gecontroleerd met echte antwoorden; browserbereikbaarheid blijft afhankelijk van netwerk/CORS. Tests controleren paginering, onvolledige antwoorden, gedeeltelijke fouten, zichtbare uitsluitingsredenen en annuleren van achterhaalde selecties.
