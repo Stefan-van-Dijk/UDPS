@@ -1,9 +1,9 @@
-import {availableEntities} from './mapping.js';
-import {librarySource,projectLibrary} from './libraries.js';
-import {groupSources} from './view.js';
-import {IFC,ILS,safeUri,validateCatalog,diffCatalog,fetchList} from './sources.js';
-import {httpsUri} from './bsdd.js';
-import {initStore,sourceState,loadRegistry,enableSource,disableSource,proposedUpdate,applyUpdate,importLibrary} from './source-store.js';
+import {availableEntities} from './mapping.js?v=1.7.3';
+import {librarySource,projectLibrary} from './libraries.js?v=1.7.3';
+import {groupSources} from './view.js?v=1.7.3';
+import {IFC,ILS,safeUri,validateCatalog,diffCatalog,fetchList} from './sources.js?v=1.7.3';
+import {httpsUri} from './bsdd.js?v=1.7.3';
+import {initStore,sourceState,loadRegistry,enableSource,disableSource,proposedUpdate,applyUpdate,importLibrary} from './source-store.js?v=1.7.3';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let catalog={schema:1,ifc:{uri:IFC,items:[]},ils:{uri:ILS,items:[]}},pending=null,api;
 export const getCatalog=()=>catalog;

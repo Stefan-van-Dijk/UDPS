@@ -1,6 +1,6 @@
-import {availableEntities} from './mapping.js';
-import {ifcReferences} from './bsdd.js';
-import {IFC} from './sources.js';
+import {availableEntities} from './mapping.js?v=1.7.3';
+import {ifcReferences} from './bsdd.js?v=1.7.3';
+import {IFC} from './sources.js?v=1.7.3';
 export const classTypeName=type=>({Class:'Objectklasse',Material:'Materiaal',GroupOfProperties:'Eigenschapgroep',AlternativeUse:'Overig'}[type]||type||'Objectklasse');
 export function searchProducts(items,query,type='all'){const q=query.trim().toLocaleLowerCase('nl');return items.filter(c=>(type==='all'||(c.classType||'Class')===type)&&[c.name,c.code,c.parentClassCode||''].some(v=>v.toLocaleLowerCase('nl').includes(q))).sort((a,b)=>Number(b.name.toLocaleLowerCase('nl')===q)-Number(a.name.toLocaleLowerCase('nl')===q)||a.name.localeCompare(b.name,'nl'));}
 export function productFamily(items,product){const path=[],seen=new Set([product.code]);let current=product;while(current.parentClassCode&&!seen.has(current.parentClassCode)){seen.add(current.parentClassCode);const parent=items.find(c=>c.code===current.parentClassCode);if(!parent)break;path.unshift(parent);current=parent;}return {parents:path,children:items.filter(c=>c.parentClassCode===product.code)};}

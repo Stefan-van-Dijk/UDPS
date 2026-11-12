@@ -1,4 +1,4 @@
-import {types,entities} from './core.js';
+import {types,entities} from './core.js?v=1.7.3';
 const clean=(value,label)=>{if(typeof value!=='string'||!value.trim()||/[\t\r\n]/.test(value)||value.length>500)throw Error('Ongeldig veld: '+label);return value.trim();};
 export function validateLibrary(input,allowed){
  if(input?.format!=='udps-library'||input.schema!==1||!Array.isArray(input.classes)||!input.classes.length||input.classes.length>10000)throw Error('Verwacht een UDPS-bibliotheek (schema 1) met klassen.');

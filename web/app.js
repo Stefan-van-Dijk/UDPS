@@ -1,12 +1,12 @@
-import {ifcReferences} from './bsdd.js';
-import {filterView} from './view.js';
-import {loadClasses,loadDetails} from './source-store.js';
-import {initMappingUI} from './mapping-ui.js';
-import {unknownEntities} from './mapping.js';
-import {entityHeading,sourceCell,initSources,getCatalog} from './sources-ui.js';
-import initial from './data.js';
-import {validate,generate,entities,types} from './core.js';
-import {readExcel} from './excel.js';
+import {ifcReferences} from './bsdd.js?v=1.7.3';
+import {filterView} from './view.js?v=1.7.3';
+import {loadClasses,loadDetails} from './source-store.js?v=1.7.3';
+import {initMappingUI} from './mapping-ui.js?v=1.7.3';
+import {unknownEntities} from './mapping.js?v=1.7.3';
+import {entityHeading,sourceCell,initSources,getCatalog} from './sources-ui.js?v=1.7.3';
+import initial from './data.js?v=1.7.3';
+import {validate,generate,entities,types} from './core.js?v=1.7.3';
+import {readExcel} from './excel.js?v=1.7.3';
 const $=id=>document.getElementById(id),key='udps-project-v1';let data=validate(initial),visible=[],result;let groupSelection=null,entitySelection=null;let deleted=[];
 try{const saved=localStorage.getItem(key);if(saved)data=validate(JSON.parse(saved));}catch{toast('Opgeslagen project niet leesbaar; brongegevens geopend.');}
 function toast(s){$('toast').textContent=s;$('toast').hidden=false;clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>$('toast').hidden=true,5000);}

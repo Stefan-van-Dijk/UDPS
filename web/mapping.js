@@ -1,5 +1,5 @@
-import {validateRelation,ifcReferences} from './bsdd.js';
-import {types,entities} from './core.js';
+import {validateRelation,ifcReferences} from './bsdd.js?v=1.7.3';
+import {types,entities} from './core.js?v=1.7.3';
 export const availableEntities=c=>c.ifc.items.filter(x=>x.kind==='class'&&/^Ifc[A-Za-z0-9]+$/.test(x.code)&&!/[A-Z]{2,}$/.test(x.code));
 export function usages(d,item){return d.rows.map((row,index)=>({row,index,exact:row.Source_uri===item.uri})).filter(x=>x.exact||(!x.row.Source_uri&&[item.name,item.code].includes(x.row.IFC_parameter)));}
 export function sourceType(item){const unit=item.units?.[0];if(['mm','cm','m'].includes(unit))return 'Length';if(['m2','m²'].includes(unit))return 'Area';if(['m3','m³'].includes(unit))return 'Volume';return types.includes(item.dataType)?item.dataType:({String:'Text',Number:'Real'}[item.dataType]||'Text');}

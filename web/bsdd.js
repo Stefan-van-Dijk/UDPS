@@ -1,4 +1,4 @@
-import {IFC,ILS} from './sources.js';
+import {IFC,ILS} from './sources.js?v=1.7.3';
 const API='https://api.bsdd.buildingsmart.org/api/';
 export const defaults=[{uri:ILS,name:'ILS Ontwerp en Engineering 2'},{uri:IFC,name:'IFC 4.3'}];
 export const httpsUri=s=>{try{const u=new URL(s);return u.protocol==='https:'&&!u.username&&!u.password?u.href:'';}catch{return '';}};

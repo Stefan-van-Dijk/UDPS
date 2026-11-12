@@ -1,6 +1,6 @@
 # UDPS generator
 
-Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.7.2.
+Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.7.3.
 
 ## Werkwijze
 
@@ -127,3 +127,7 @@ De gepubliceerde app is in de browser doorlopen: Deur (42), Binnendeur (24), Raa
 Verholpen: oude meldingen na een klassewissel, geblokkeerde ophaalknoppen bij wisselen/sluiten tijdens laden, oude soortaantallen bij een mislukte bronwissel en een onjuiste leegmelding wanneer het zoekfilter alle eigenschappen verbergt. Late antwoorden van eerdere keuzes worden genegeerd. Netwerk- en timeoutmeldingen zijn verduidelijkt.
 
 72 tests slagen, waaronder acht tests van de daadwerkelijke UI-eventhandlers met een minimale DOM-adapter en gecontroleerd vertraagde antwoorden. Die tests zijn geen live browsercontrole. Ze omvatten meerdere bronnen en IFC-entiteiten, een gedeeltelijk mislukte bron, verschillende Revit-namen per entiteit, ontbrekende IFC-relaties en het behoud van bestaande koppelingen.
+
+## Releasebestanden (1.7.3)
+
+Tijdens controle na publicatie toonde de browser de nieuwe HTML-versie met oude JavaScript-bediening. De moduleverwijzingen en stylesheet krijgen daarom vanaf 1.7.3 allemaal dezelfde releaseversie in hun URL. `npm run version:app -- X.Y.Z` verhoogt deze consistent. Een regressietest controleert ook de volledige moduleketen. Alle 73 tests slagen.
