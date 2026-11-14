@@ -8,6 +8,12 @@ Read the [team operating guide](https://app.notion.com/p/4170dde84cc181ee91a6f10
 
 If Notion is unavailable, report the gap. Continue only independent work; do not write project records elsewhere or invent missing requirements.
 
+## Coherent skillset
+
+Use the [coherent 24-method skillset](https://github.com/jaskem/agent-guidance/blob/83c2f800c7d8b2dc074121edbd060b27be8e05b6/docs/SKILLSET.md), its [method router](https://github.com/jaskem/agent-guidance/blob/83c2f800c7d8b2dc074121edbd060b27be8e05b6/docs/METHOD-ROUTING.md) and [catalog](https://github.com/jaskem/agent-guidance/blob/83c2f800c7d8b2dc074121edbd060b27be8e05b6/skills/catalog.json). Choose one applicable primary method and read its actual body and only needed references. The integrated techniques replace competing default provider lifecycles; do not run a second procedure merely because another provider is installed. Ordinary questions and small text changes need no full development process. Host-required artifact and service tools remain available for their actual task.
+
+Use supported subagents autonomously when the selected method calls for them or bounded independent investigation, execution or verification improves the result; the user does not need to request agents explicitly. Preserve the current task's authority, one writer per shared object and the parent agent's integration responsibility. Give workers precise sources, scope, write ownership and expected evidence; unavailable tooling or a worker report is not proof of completed independent verification.
+
 ## Ownership and teamwork
 
 Notion owns operational tasks, decisions and progress. This repository owns code, technical contracts and executable checks. Link commits and test evidence from the task; do not maintain competing backlogs.
