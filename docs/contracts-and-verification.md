@@ -17,11 +17,11 @@ Deze grenzen zijn bruikbaar. Er is bij de gerichte nulmeting geen noodzaak aange
 ## Contracten die behouden moeten blijven
 
 - Een bron-URI bepaalt bronidentiteit. Gelijke namen bewijzen geen gelijke betekenis; samenbrengen vraagt een inhoudelijke onderbouwing.
-- Elke actieve combinatie van IFC-entiteit, propertyset en property heeft maximaal één mapping. Conflicten blokkeren zowel downloaden als kopiëren; zonder koppelingen zijn beide acties uitgeschakeld.
+- Elke actieve combinatie van IFC-entiteit, propertyset en property heeft maximaal ��n mapping. Conflicten blokkeren zowel downloaden als kopi�ren; zonder koppelingen zijn beide acties uitgeschakeld.
 - Bronrelaties, onderdelen en vergelijkbare begrippen leiden niet automatisch tot overname of gelijkstelling. Eigen IFC-afspraken blijven expliciet herkenbaar.
 - Centrale standaardwijzigingen behouden afwijkende toepassingen, tenzij de gebruiker alle afwijkingen bewust vervangt. Een opgeslagen lege Revit-standaard is een waarde, geen ontbrekende instelling.
 - Een historische lege Revit-naam behoudt de bestaande fallback op de IFC-propertynaam bij andere wijzigingen. Een nieuwe ontbrekende koppeling of bewust leeggemaakte naam blijft te koppelen.
-- Samenbrengen toetst de mappingdatatypes, bekende genormaliseerde brondatatypes en primaire én alle bewaarde broncontexten op eenheden, keuzewaarden en voorwaarden. Nieuwe broncontexten bewaren zowel het oorspronkelijke als het genormaliseerde datatype. Oudere contexten zonder datatype kunnen niet achteraf worden bevestigd; ontbrekende metadata worden niet verzonnen. Afwijzing is atomair; er vindt geen waardenconversie plaats. Technische overeenstemming bewijst nog geen semantische gelijkheid.
+- Samenbrengen toetst de mappingdatatypes, bekende genormaliseerde brondatatypes en primaire �n alle bewaarde broncontexten op eenheden, keuzewaarden en voorwaarden. Nieuwe broncontexten bewaren zowel het oorspronkelijke als het genormaliseerde datatype. Oudere contexten zonder datatype kunnen niet achteraf worden bevestigd; ontbrekende metadata worden niet verzonnen. Afwijzing is atomair; er vindt geen waardenconversie plaats. Technische overeenstemming bewijst nog geen semantische gelijkheid.
 - Een bronupdate past uitsluitend de gecontroleerde broncaches toe. Bibliotheken, register, bronkeuzes en overige tussentijdse caches blijven behouden. Het gekozen updatevoorstel is leidend voor de specifiek gecontroleerde caches.
 - Een bibliotheekversie wordt niet stilzwijgend overschreven. Projecten bewaren koppelingen en metadata; bibliotheekbestanden worden afzonderlijk meegenomen.
 - Excelimport leest geen macro's. De werkelijke uitvoer van elk ZIP-onderdeel is begrensd op 30 MiB en moet overeenkomen met de opgegeven grootte, voordat XML wordt geparseerd.
@@ -34,7 +34,7 @@ npm run check
 npm test
 ```
 
-De regressies gebruiken de echte domeinfuncties en apphandlers. DOM-adapters en opgeslagen API-antwoorden zijn herkenbaar als geautomatiseerde tests; zij bewijzen geen live netwerk- of browseracceptatie. De exportcontrole omvat dubbele definities, ontbrekende Revit-koppelingen, lege projecten en geldige uitvoer. De Excel-controle gebruikt echte gecomprimeerde ZIP-bytes en controleert de grens vóór XML-parsing.
+De regressies gebruiken de echte domeinfuncties en apphandlers. DOM-adapters en opgeslagen API-antwoorden zijn herkenbaar als geautomatiseerde tests; zij bewijzen geen live netwerk- of browseracceptatie. De exportcontrole omvat dubbele definities, ontbrekende Revit-koppelingen, lege projecten en geldige uitvoer. De Excel-controle gebruikt echte gecomprimeerde ZIP-bytes en controleert de grens v��r XML-parsing.
 
 ## Werkelijke gebruikersacceptatie
 
@@ -47,16 +47,16 @@ Gebruik een afzonderlijke browserorigin en gecontroleerde testdata, zodat bestaa
 5. Controleer netwerkfouten en herstel. Benoem het gebruik van opgeslagen brondata en gedeeltelijke antwoorden; een mislukte bron mag geslaagde resultaten niet verbergen.
 6. Controleer de gepubliceerde releaseversie en module-URL's na herladen. Een CI-resultaat bewijst alleen de betrokken revisie en uitgevoerde checks.
 
-## Revit-acceptatie
+## Revit buiten deze opdracht
 
-De huidige testcomputer heeft geen aangetroffen Revit-proces of standaard Autodesk-installatiemap. Deze acceptatie blijft bij de [bestaande taak](https://app.notion.com/p/41a0dde84cc181e99551df37cf00cd86) open totdat werkelijk bewijs beschikbaar is.
+Op verzoek van Jasper op 16 november 2026 is testen in Revit uit deze opdracht verwijderd. De [bestaande taak](https://app.notion.com/p/41a0dde84cc181e99551df37cf00cd86) is als vervallen afgesloten. Er is geen Revit-test uitgevoerd; de browser- en generatortests bewijzen geen feitelijke Revit-/IFC-export. Revit vormt geen blokkade voor afronding van deze opdracht.
 
-Gebruik een gecontroleerde kopie van een model met deur en raam. Leg Revit-versie, IFC-exporterversie, taal, IFC-schema, exportinstellingen, bronmodel en apprevisie vast. Geef testparameters vooraf bekende tekst-, lengte- en booleaanse waarden; neem een bewuste afwijking per entiteit en een historische lege Revit-naam mee. Genereer de TXT, selecteer die bij de door de gebruiker gedefinieerde propertysets en inspecteer de werkelijke IFC-entiteiten, propertyset-/propertynamen, waarden, datatype en eenheden. Bewaar de feitelijke resultaten bij de taak.
+Alleen bij een later expliciet gevraagde Revit-proef: gebruik een gecontroleerde kopie van een model met deur en raam. Leg Revit-versie, IFC-exporterversie, taal, IFC-schema, exportinstellingen, bronmodel en apprevisie vast. Geef testparameters vooraf bekende tekst-, lengte- en booleaanse waarden; neem een bewuste afwijking per entiteit en een historische lege Revit-naam mee. Genereer de TXT, selecteer die bij de door de gebruiker gedefinieerde propertysets en inspecteer de werkelijke IFC-entiteiten, propertyset-/propertynamen, waarden, datatype en eenheden. Bewaar de feitelijke resultaten bij de dan geldende taak.
 
 Primaire instructies: [Autodesk Revit 2025](https://help.autodesk.com/cloudhelp/2025/ENU/Revit-DocumentPresent/files/GUID-0968B3FF-832B-4155-8B36-E848ACC97B95.htm) en [IFC-exportinstellingen Revit 2024](https://help.autodesk.com/cloudhelp/2024/ENU/Revit-DocumentPresent/files/GUID-E029E3AD-1639-4446-A935-C9796BC34C95.htm). Het gedrag voor instance/type en gelokaliseerde parameternamen moet met de werkelijk gebruikte exporter worden vastgesteld; deze release wijzigt de bestaande I/T-keuze niet.
 
 ## Publicatie en herstel
 
-De bestaande GitHub Pages-workflow controleert syntax en tests vóór publicatie. Versie-URL's worden met `npm run version:app -- X.Y.Z` gelijkgetrokken; de regressietest controleert de volledige moduleketen. Deze release verandert het project- of bibliotheekschema niet. Maak voor een praktijktest een JSON-projectbackup en bewaar eigen bibliotheken apart.
+De bestaande GitHub Pages-workflow controleert syntax en tests v��r publicatie. Versie-URL's worden met `npm run version:app -- X.Y.Z` gelijkgetrokken; de regressietest controleert de volledige moduleketen. Deze release verandert het project- of bibliotheekschema niet. Maak voor een praktijktest een JSON-projectbackup en bewaar eigen bibliotheken apart.
 
 Terugvalbasis is de ongewijzigde release 1.8.0 op `8dd81cff`. Een terugval naar de oude app herintroduceert de beschreven gebreken; behoud de huidige bestanden en leg de reden bij de taak vast. Er is geen daadwerkelijke rollback van gebruikersdata uitgevoerd of als getest aangemerkt.
