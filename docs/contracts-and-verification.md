@@ -47,11 +47,13 @@ Gebruik een afzonderlijke browserorigin en gecontroleerde testdata, zodat bestaa
 5. Controleer netwerkfouten en herstel. Benoem het gebruik van opgeslagen brondata en gedeeltelijke antwoorden; een mislukte bron mag geslaagde resultaten niet verbergen.
 6. Controleer de gepubliceerde releaseversie en module-URL's na herladen. Een CI-resultaat bewijst alleen de betrokken revisie en uitgevoerde checks.
 
-## Revit-acceptatie
+Voor live bSDD-aanvragen moet buildingSMART de browserorigin van de website toelaten via CORS. Volgens de [officiële API-instructies](https://technical.buildingsmart.org/services/bsdd/using-the-bsdd-api/) moet een website of SPA hiervoor zijn URL aanmelden. Voor deze publicatie is de origin `https://stefan-van-dijk.github.io` en de app-URL `https://stefan-van-dijk.github.io/UDPS/`. Een HTTP 200 buiten de browser bewijst deze toegang niet; controleer live ophalen vanuit de gepubliceerde app. Opgeslagen brondata en eigen bibliotheken bewijzen geen actuele live broninhoud.
 
-De huidige testcomputer heeft geen aangetroffen Revit-proces of standaard Autodesk-installatiemap. Deze acceptatie blijft bij de [bestaande taak](https://app.notion.com/p/41a0dde84cc181e99551df37cf00cd86) open totdat werkelijk bewijs beschikbaar is.
+## Revit buiten deze opdracht
 
-Gebruik een gecontroleerde kopie van een model met deur en raam. Leg Revit-versie, IFC-exporterversie, taal, IFC-schema, exportinstellingen, bronmodel en apprevisie vast. Geef testparameters vooraf bekende tekst-, lengte- en booleaanse waarden; neem een bewuste afwijking per entiteit en een historische lege Revit-naam mee. Genereer de TXT, selecteer die bij de door de gebruiker gedefinieerde propertysets en inspecteer de werkelijke IFC-entiteiten, propertyset-/propertynamen, waarden, datatype en eenheden. Bewaar de feitelijke resultaten bij de taak.
+Op verzoek van Jasper op 16 november 2026 is testen in Revit uit deze opdracht verwijderd. De [bestaande taak](https://app.notion.com/p/41a0dde84cc181e99551df37cf00cd86) is als vervallen afgesloten. Er is geen Revit-test uitgevoerd; de browser- en generatortests bewijzen geen feitelijke Revit-/IFC-export. Revit vormt geen blokkade voor afronding van deze opdracht.
+
+Alleen bij een later expliciet gevraagde Revit-proef: gebruik een gecontroleerde kopie van een model met deur en raam. Leg Revit-versie, IFC-exporterversie, taal, IFC-schema, exportinstellingen, bronmodel en apprevisie vast. Geef testparameters vooraf bekende tekst-, lengte- en booleaanse waarden; neem een bewuste afwijking per entiteit en een historische lege Revit-naam mee. Genereer de TXT, selecteer die bij de door de gebruiker gedefinieerde propertysets en inspecteer de werkelijke IFC-entiteiten, propertyset-/propertynamen, waarden, datatype en eenheden. Bewaar de feitelijke resultaten bij de dan geldende taak.
 
 Primaire instructies: [Autodesk Revit 2025](https://help.autodesk.com/cloudhelp/2025/ENU/Revit-DocumentPresent/files/GUID-0968B3FF-832B-4155-8B36-E848ACC97B95.htm) en [IFC-exportinstellingen Revit 2024](https://help.autodesk.com/cloudhelp/2024/ENU/Revit-DocumentPresent/files/GUID-E029E3AD-1639-4446-A935-C9796BC34C95.htm). Het gedrag voor instance/type en gelokaliseerde parameternamen moet met de werkelijk gebruikte exporter worden vastgesteld; deze release wijzigt de bestaande I/T-keuze niet.
 
