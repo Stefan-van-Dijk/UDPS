@@ -1,8 +1,14 @@
 # UDPS generator
 
-Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.8.0.
+Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.8.1.
 
 Actuele bediening en parameterafspraken staan bij [1.8.0 — Centrale eigenschappen en bSDD-relaties](#180--centrale-eigenschappen-en-bsdd-relaties). De versiehoofdstukken daarvóór beschrijven de ontwikkeling en het toen uitgevoerde controlebewijs; ze zijn geen actuele takenlijst.
+
+## 1.8.1 — Gegevensbehoud en betrouwbare uitvoer
+
+Bronupdates behouden tussentijds geïmporteerde bibliotheken en gewijzigde bronkeuzes. Kopiëren en downloaden gebruiken dezelfde exportblokkade. Centrale afspraken behouden expliciet lege standaarden en historische lege Revit-namen bij andere wijzigingen; samenbrengen controleert ook alle bewaarde broncontexten. Excelimport begrenst de werkelijk uitgepakte inhoud voordat XML wordt gelezen.
+
+De [technische contracten en verificatie](docs/contracts-and-verification.md) beschrijven verantwoordelijkheden, regressiecontroles, browserroutes en de afzonderlijke Revit-acceptatie. Operationele status en bewijs staan bij de [UDPS-opdracht in Digitaal Bouwen](https://app.notion.com/p/41a0dde84cc181479445d9417177cf27).
 
 ## Werkwijze
 
