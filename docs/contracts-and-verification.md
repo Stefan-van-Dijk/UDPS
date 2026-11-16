@@ -17,11 +17,11 @@ Deze grenzen zijn bruikbaar. Er is bij de gerichte nulmeting geen noodzaak aange
 ## Contracten die behouden moeten blijven
 
 - Een bron-URI bepaalt bronidentiteit. Gelijke namen bewijzen geen gelijke betekenis; samenbrengen vraagt een inhoudelijke onderbouwing.
-- Elke actieve combinatie van IFC-entiteit, propertyset en property heeft maximaal ��n mapping. Conflicten blokkeren zowel downloaden als kopi�ren; zonder koppelingen zijn beide acties uitgeschakeld.
+- Elke actieve combinatie van IFC-entiteit, propertyset en property heeft maximaal één mapping. Conflicten blokkeren zowel downloaden als kopiëren; zonder koppelingen zijn beide acties uitgeschakeld.
 - Bronrelaties, onderdelen en vergelijkbare begrippen leiden niet automatisch tot overname of gelijkstelling. Eigen IFC-afspraken blijven expliciet herkenbaar.
 - Centrale standaardwijzigingen behouden afwijkende toepassingen, tenzij de gebruiker alle afwijkingen bewust vervangt. Een opgeslagen lege Revit-standaard is een waarde, geen ontbrekende instelling.
 - Een historische lege Revit-naam behoudt de bestaande fallback op de IFC-propertynaam bij andere wijzigingen. Een nieuwe ontbrekende koppeling of bewust leeggemaakte naam blijft te koppelen.
-- Samenbrengen toetst de mappingdatatypes, bekende genormaliseerde brondatatypes en primaire �n alle bewaarde broncontexten op eenheden, keuzewaarden en voorwaarden. Nieuwe broncontexten bewaren zowel het oorspronkelijke als het genormaliseerde datatype. Oudere contexten zonder datatype kunnen niet achteraf worden bevestigd; ontbrekende metadata worden niet verzonnen. Afwijzing is atomair; er vindt geen waardenconversie plaats. Technische overeenstemming bewijst nog geen semantische gelijkheid.
+- Samenbrengen toetst de mappingdatatypes, bekende genormaliseerde brondatatypes en primaire én alle bewaarde broncontexten op eenheden, keuzewaarden en voorwaarden. Nieuwe broncontexten bewaren zowel het oorspronkelijke als het genormaliseerde datatype. Oudere contexten zonder datatype kunnen niet achteraf worden bevestigd; ontbrekende metadata worden niet verzonnen. Afwijzing is atomair; er vindt geen waardenconversie plaats. Technische overeenstemming bewijst nog geen semantische gelijkheid.
 - Een bronupdate past uitsluitend de gecontroleerde broncaches toe. Bibliotheken, register, bronkeuzes en overige tussentijdse caches blijven behouden. Het gekozen updatevoorstel is leidend voor de specifiek gecontroleerde caches.
 - Een bibliotheekversie wordt niet stilzwijgend overschreven. Projecten bewaren koppelingen en metadata; bibliotheekbestanden worden afzonderlijk meegenomen.
 - Excelimport leest geen macro's. De werkelijke uitvoer van elk ZIP-onderdeel is begrensd op 30 MiB en moet overeenkomen met de opgegeven grootte, voordat XML wordt geparseerd.
@@ -34,7 +34,7 @@ npm run check
 npm test
 ```
 
-De regressies gebruiken de echte domeinfuncties en apphandlers. DOM-adapters en opgeslagen API-antwoorden zijn herkenbaar als geautomatiseerde tests; zij bewijzen geen live netwerk- of browseracceptatie. De exportcontrole omvat dubbele definities, ontbrekende Revit-koppelingen, lege projecten en geldige uitvoer. De Excel-controle gebruikt echte gecomprimeerde ZIP-bytes en controleert de grens v��r XML-parsing.
+De regressies gebruiken de echte domeinfuncties en apphandlers. DOM-adapters en opgeslagen API-antwoorden zijn herkenbaar als geautomatiseerde tests; zij bewijzen geen live netwerk- of browseracceptatie. De exportcontrole omvat dubbele definities, ontbrekende Revit-koppelingen, lege projecten en geldige uitvoer. De Excel-controle gebruikt echte gecomprimeerde ZIP-bytes en controleert de grens vóór XML-parsing.
 
 ## Werkelijke gebruikersacceptatie
 
@@ -57,6 +57,6 @@ Primaire instructies: [Autodesk Revit 2025](https://help.autodesk.com/cloudhelp/
 
 ## Publicatie en herstel
 
-De bestaande GitHub Pages-workflow controleert syntax en tests v��r publicatie. Versie-URL's worden met `npm run version:app -- X.Y.Z` gelijkgetrokken; de regressietest controleert de volledige moduleketen. Deze release verandert het project- of bibliotheekschema niet. Maak voor een praktijktest een JSON-projectbackup en bewaar eigen bibliotheken apart.
+De bestaande GitHub Pages-workflow controleert syntax en tests vóór publicatie. Versie-URL's worden met `npm run version:app -- X.Y.Z` gelijkgetrokken; de regressietest controleert de volledige moduleketen. Deze release verandert het project- of bibliotheekschema niet. Maak voor een praktijktest een JSON-projectbackup en bewaar eigen bibliotheken apart.
 
 Terugvalbasis is de ongewijzigde release 1.8.0 op `8dd81cff`. Een terugval naar de oude app herintroduceert de beschreven gebreken; behoud de huidige bestanden en leg de reden bij de taak vast. Er is geen daadwerkelijke rollback van gebruikersdata uitgevoerd of als getest aangemerkt.
