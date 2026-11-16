@@ -58,7 +58,19 @@ Bootstrap maakt alleen ontbrekende objecten aan. Zoek eerst op exact `Object-ID`
 3. Maak één nieuwe note, met bronbewijs en een duidelijke status. Gebruik een eigen branch en PR; inspecteer de actuele diff en vereiste controles. Vernieuw vlak voor samenvoegen de gedeelde objectversie. Bij een gewijzigde uitgangssituatie eerst opnieuw afstemmen.
 4. Pas na publicatie op `main` krijgt de lokale gedeelde toestand de nieuwe bronversie. Controleer de publicatie en de Notion-write. Bewaar de note zolang een lokale verwerking nog open is, en markeer zo'n tussenstand niet als afgerond.
 
-Voor een inhoudelijk conflict volgt een nieuwe herstel-note op de gezamenlijke geldige basis. Ook een account dat al één van de conflicterende wijzigingen had toegepast, moet die afstemming kunnen volgen. Alleen samenvoegen van Git-bestanden bewijst geen oplossing van een projectconflict.
+### Een inhoudelijk conflict oplossen
+
+Een conflict vraagt een vastgelegde inhoudelijke keuze van de gebruiker of de aangewezen inhoudseigenaar. Publiceer daarna een nieuwe herstel-note. Alleen samenvoegen van Git-bestanden bewijst geen oplossing van een projectconflict.
+
+Twee bijna gelijktijdig samengevoegde wijzigingen kunnen dezelfde basis A hebben, terwijl het ene account B en het andere C toepaste. Een gewone operatie met één `base_revision` kan die verschillende voorgangers niet allebei bereiken. Gebruik dan in de hersteloperatie aanvullend:
+
+- `resolves`: de betrokken conflicterende operaties, als `change_id/entity_id`.
+- `resolution_decision`: het vastgelegde besluit, reden en deelbaar bronbewijs van de inhoudelijke keuze.
+- `accepted_predecessors`: de bekende toegelaten voorgangers, elk met `revision` en `before`. Alle voor/na-varianten bevatten exact dezelfde gewijzigde velden. De gewone `base_revision`/`before` vormt de eerste variant.
+
+De ontvanger controleert de vastgelegde keuze en zoekt een variant waarvan **zowel** de objectversie **als alle** voor-waarden precies overeenkomen. Alleen dan mag de gekozen `after` worden opgeslagen met de nieuwe herstelrevisie. Persoonlijke velden blijven behouden. Een onbekende versie of afwijkende lokale waarde blijft een conflict; de lijst verleent geen algemene overschrijfrechten. Sla de oude toestand en beide voorstellen in het eigen conflictdossier op, controleer de nieuwe toestand door teruglezen en registreer de betrokken operaties als inhoudelijk vervangen door de herstel-note. Bewaar hun ontvangstgeschiedenis en laat geen opgeloste note later opnieuw toepassen. Afhankelijke wijzigingen worden opnieuw beoordeeld tegen de nieuwe objectversie.
+
+Zo kunnen accounts op B en C dezelfde nieuwe toestand D bereiken zonder ongecontroleerde normalisatie of verlies van de voorstellen. Als één voorganger ontbreekt, blijft dat account geblokkeerd totdat een nieuwe, expliciete herstel-note zijn bekende voorganger toevoegt; een al gepubliceerde note wordt niet aangepast.
 
 ## Aansluiten en bewijs
 
