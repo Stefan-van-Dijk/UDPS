@@ -8,7 +8,9 @@ Actuele bediening en parameterafspraken staan bij [1.8.0 — Centrale eigenschap
 
 Bronupdates behouden tussentijds geïmporteerde bibliotheken en gewijzigde bronkeuzes. Kopiëren en downloaden gebruiken dezelfde exportblokkade. Centrale afspraken behouden expliciet lege standaarden en historische lege Revit-namen bij andere wijzigingen; samenbrengen controleert ook alle bewaarde broncontexten. Excelimport begrenst de werkelijk uitgepakte inhoud voordat XML wordt gelezen.
 
-De [technische contracten en verificatie](docs/contracts-and-verification.md) beschrijven verantwoordelijkheden, regressiecontroles, browserroutes en de afzonderlijke Revit-acceptatie. Operationele status en bewijs staan bij de [UDPS-opdracht in Digitaal Bouwen](https://app.notion.com/p/41a0dde84cc181479445d9417177cf27).
+De [technische contracten en verificatie](docs/contracts-and-verification.md) beschrijven verantwoordelijkheden, regressiecontroles en browserroutes. Revit-testen is uit de huidige opdracht verwijderd. Gedeelde taken, besluiten en voortgang lopen via het [GitHub-wijzigingenlog](docs/change-notes/) naar ieders eigen Notion-project, volgens de [samenwerkingswerkwijze](docs/collaboration/README.md). Het [bestaande UDPS-dossier in Digitaal Bouwen](https://app.notion.com/p/41a0dde84cc181479445d9417177cf27) blijft behouden.
+
+Voor de tweede deelnemer is er een [aansluitprompt voor de eigen ChatGPT](docs/collaboration/colleague-onboarding.md). De [vaste projectinstructie](docs/collaboration/project-instruction.md) borgt volgende opdrachten. Een gepubliceerde instructie bewijst nog geen aansluiting of gewijzigde ChatGPT-projectinstelling bij beide accounts.
 
 ## Werkwijze
 

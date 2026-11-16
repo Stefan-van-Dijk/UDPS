@@ -1,6 +1,6 @@
 # UDPS: contracten en verificatie
 
-Gecontroleerde basis: main `8dd81cff62c4d060d235945b5f79ba7ce1537657`, versie 1.8.0. Herstelrelease: 1.8.1. Operationele taken, besluiten en actuele acceptatiestatus staan in [Digitaal Bouwen](https://app.notion.com/p/41a0dde84cc181479445d9417177cf27); dit document is geen tweede takenlijst.
+Gecontroleerde basis: main `8dd81cff62c4d060d235945b5f79ba7ce1537657`, versie 1.8.0. Herstelrelease: 1.8.1. Gedeelde taken, besluiten en actuele acceptatiestatus staan in het [wijzigingenlog](change-notes/) en worden volgens de [samenwerkingswerkwijze](collaboration/README.md) in ieders eigen Notion-project bijgehouden. Het [bestaande dossier in Digitaal Bouwen](https://app.notion.com/p/41a0dde84cc181479445d9417177cf27) blijft behouden; dit technische document is geen tweede takenlijst.
 
 ## Bestaande verantwoordelijkheden
 
