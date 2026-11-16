@@ -47,6 +47,8 @@ Gebruik een afzonderlijke browserorigin en gecontroleerde testdata, zodat bestaa
 5. Controleer netwerkfouten en herstel. Benoem het gebruik van opgeslagen brondata en gedeeltelijke antwoorden; een mislukte bron mag geslaagde resultaten niet verbergen.
 6. Controleer de gepubliceerde releaseversie en module-URL's na herladen. Een CI-resultaat bewijst alleen de betrokken revisie en uitgevoerde checks.
 
+Voor live bSDD-aanvragen moet buildingSMART de browserorigin van de website toelaten via CORS. Volgens de [officiële API-instructies](https://technical.buildingsmart.org/services/bsdd/using-the-bsdd-api/) moet een website of SPA hiervoor zijn URL aanmelden. Voor deze publicatie is de origin `https://stefan-van-dijk.github.io` en de app-URL `https://stefan-van-dijk.github.io/UDPS/`. Een HTTP 200 buiten de browser bewijst deze toegang niet; controleer live ophalen vanuit de gepubliceerde app. Opgeslagen brondata en eigen bibliotheken bewijzen geen actuele live broninhoud.
+
 ## Revit buiten deze opdracht
 
 Op verzoek van Jasper op 16 november 2026 is testen in Revit uit deze opdracht verwijderd. De [bestaande taak](https://app.notion.com/p/41a0dde84cc181e99551df37cf00cd86) is als vervallen afgesloten. Er is geen Revit-test uitgevoerd; de browser- en generatortests bewijzen geen feitelijke Revit-/IFC-export. Revit vormt geen blokkade voor afronding van deze opdracht.
