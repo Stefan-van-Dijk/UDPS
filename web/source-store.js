@@ -1,5 +1,5 @@
-import {validateLibrary,librarySource,libraryDetails} from './libraries.js?v=1.8.0';
-import {defaults,dictionaries,relatedClasses,classDetails,relationshipKey,dictionaryProducts} from './bsdd.js?v=1.8.0';
+import {validateLibrary,librarySource,libraryDetails} from './libraries.js?v=1.8.1';
+import {defaults,dictionaries,relatedClasses,classDetails,relationshipKey,dictionaryProducts} from './bsdd.js?v=1.8.1';
 const comparableDetail=d=>{if(!d)return d;const {checkedAt,loadWarning,...content}=d;return content;};
 const mergeCache=(bundled,saved,field)=>{const merged={...bundled,...saved};for(const [uri,value] of Object.entries(bundled))if((value[field]||0)>(saved[uri]?.[field]||0))merged[uri]=value;return merged;};
 let state={schema:1,registry:[],enabled:defaults,relations:{},details:{},libraries:[],products:{}},loading;
@@ -12,16 +12,20 @@ export function disableSource(uri){state.enabled=state.enabled.filter(s=>s.uri!=
 export async function loadClasses(source,entity,{refresh=false}={}){const lib=(state.libraries||[]).find(l=>librarySource(l).uri===source);if(lib)return {source,entity,version:lib.version,items:lib.classes.filter(c=>c.ifcEntities.includes(entity)).map(c=>{const d=libraryDetails(lib,c);return {uri:d.uri,code:d.code,name:d.name};})};const key=relationshipKey(source,entity);if(refresh||!state.relations[key]||state.relations[key].relationSchema!==2){try{state.relations[key]=await relatedClasses(source,entity);persist();}catch(e){if(!state.relations[key])throw e;return {...state.relations[key],loadWarning:'Actualiseren mislukt; opgeslagen bronklassen getoond: '+e.message};}}return state.relations[key];}
 export async function loadDetails(uri,{refresh=false}={}){for(const lib of state.libraries||[])for(const c of lib.classes){const d=libraryDetails(lib,c);if(d.uri===uri)return d;}if(refresh||!state.details[uri]||state.details[uri].propertySchema!==4){try{state.details[uri]=await classDetails(uri);persist();}catch(e){if(!state.details[uri])throw e;return {...state.details[uri],loadWarning:'Actualiseren mislukt; opgeslagen eigenschappen getoond. Volledigheid niet bevestigd: '+e.message};}}return state.details[uri];}
 export async function proposedUpdate(){
- const next=structuredClone(state),changes=[],refreshDetails=new Set();
- const enabled=uri=>state.enabled.some(s=>s.uri===uri&&!s.local);
- for(const [key,r] of Object.entries(state.relations)){if(!enabled(r.source))continue;next.relations[key]=await relatedClasses(r.source,r.entity);if(JSON.stringify(r.items)!==JSON.stringify(next.relations[key].items)||r.version!==next.relations[key].version)changes.push(r.entity+': bronklassen/versie gewijzigd');for(const c of next.relations[key].items)if(state.details[c.uri])refreshDetails.add(c.uri);}
- for(const [source,index] of Object.entries(state.products||{})){if(!enabled(source))continue;next.products[source]=await dictionaryProducts(source);if(JSON.stringify(index.items)!==JSON.stringify(next.products[source].items)||index.version!==next.products[source].version)changes.push('Bronklassen gewijzigd: '+source);for(const c of next.products[source].items)if(state.details[c.uri])refreshDetails.add(c.uri);}
+ const before=structuredClone(state),next={relations:{},products:{},details:{}},changes=[],refreshDetails=new Set();
+ const enabled=uri=>before.enabled.some(s=>s.uri===uri&&!s.local);
+ for(const [key,r] of Object.entries(before.relations)){if(!enabled(r.source))continue;next.relations[key]=await relatedClasses(r.source,r.entity);if(JSON.stringify(r.items)!==JSON.stringify(next.relations[key].items)||r.version!==next.relations[key].version)changes.push(r.entity+': bronklassen/versie gewijzigd');for(const c of next.relations[key].items)if(before.details[c.uri])refreshDetails.add(c.uri);}
+ for(const [source,index] of Object.entries(before.products||{})){if(!enabled(source))continue;next.products[source]=await dictionaryProducts(source);if(JSON.stringify(index.items)!==JSON.stringify(next.products[source].items)||index.version!==next.products[source].version)changes.push('Bronklassen gewijzigd: '+source);for(const c of next.products[source].items)if(before.details[c.uri])refreshDetails.add(c.uri);}
  // Also refresh inspected classes without an IFC relation, not just mapped classes.
- for(const [uri,d] of Object.entries(state.details))if(enabled(d.dictionaryUri))refreshDetails.add(uri);
- for(const uri of refreshDetails){next.details[uri]=await classDetails(uri);if(JSON.stringify(comparableDetail(state.details[uri]))!==JSON.stringify(comparableDetail(next.details[uri])))changes.push(next.details[uri].name+': eigenschappen gewijzigd');}
+ for(const [uri,d] of Object.entries(before.details))if(enabled(d.dictionaryUri))refreshDetails.add(uri);
+ for(const uri of refreshDetails){next.details[uri]=await classDetails(uri);if(JSON.stringify(comparableDetail(before.details[uri]))!==JSON.stringify(comparableDetail(next.details[uri])))changes.push(next.details[uri].name+': eigenschappen gewijzigd');}
  return {next,changes:[...new Set(changes)]};
 }
-export function applyUpdate(next){state=next;return persist();}
+export function applyUpdate(next){
+ // Apply only the checked remote caches; later libraries, source choices and other caches remain current.
+ state={...state,relations:{...state.relations,...next.relations},products:{...state.products,...next.products},details:{...state.details,...next.details}};
+ return persist();
+}
 
 export function importLibrary(input,allowed){const lib=validateLibrary(input,allowed),source=librarySource(lib);if((state.libraries||[]).some(l=>librarySource(l).uri===source.uri)){throw Error('Deze bibliotheekversie bestaat al. Verhoog het versienummer om wijzigingen in te laden.');}const before=structuredClone(state);state.libraries=[...(state.libraries||[]),lib];state.registry.push(source);state.enabled=state.enabled.filter(s=>s.name.toLowerCase()!==source.name.toLowerCase());state.enabled.push(source);if(!persist()){state=before;throw Error('Onvoldoende browseropslag; bibliotheek niet ingeladen.');}return source;}
 

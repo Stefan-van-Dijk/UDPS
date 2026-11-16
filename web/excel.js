@@ -1,7 +1,37 @@
 // Read OOXML tables using native ZIP decompression; never execute workbook macros.
+const MAX_MEMBER_BYTES=30*1024*1024;
+async function memberBytes(raw,method,expected){
+ if(method===0){
+  if(raw.byteLength>MAX_MEMBER_BYTES)throw Error('Excelonderdeel te groot.');
+  if(raw.byteLength!==expected)throw Error('Beschadigd Excelbestand: onderdeelgrootte klopt niet.');
+  return raw;
+ }
+ if(method!==8)throw Error('Niet-ondersteunde Excelcompressie.');
+ if(typeof DecompressionStream==='undefined')throw Error('Excelimport vereist een moderne browser. Gebruik eventueel een JSON-project.');
+ const reader=new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw')).getReader();
+ const chunks=[];let size=0;
+ try{
+  for(;;){
+   const {done,value}=await reader.read();if(done)break;
+   size+=value.byteLength;
+   if(size>MAX_MEMBER_BYTES){await reader.cancel();throw Error('Excelonderdeel te groot.');}
+   chunks.push(value);
+  }
+ }finally{reader.releaseLock();}
+ if(size!==expected)throw Error('Beschadigd Excelbestand: onderdeelgrootte klopt niet.');
+ const bytes=new Uint8Array(size);let offset=0;
+ for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
+ return bytes;
+}
 export async function readExcel(buffer,name){
- const b=new Uint8Array(buffer),v=new DataView(buffer),dec=new TextDecoder();if(b.length<22)throw Error('Geen geldig Excelbestand.');let end=b.length-22;const min=Math.max(0,b.length-65557);while(end>=min&&v.getUint32(end,true)!==0x06054b50)end--;if(end<min)throw Error('Geen geldig Excelbestand.');const files=Object.create(null);let p=v.getUint32(end+16,true);for(let i=0;i<v.getUint16(end+10,true);i++){if(v.getUint32(p,true)!==0x02014b50)throw Error('Beschadigd Excelbestand.');const method=v.getUint16(p+10,true),size=v.getUint32(p+20,true),uncompressed=v.getUint32(p+24,true),len=v.getUint16(p+28,true),extra=v.getUint16(p+30,true),comment=v.getUint16(p+32,true),offset=v.getUint32(p+42,true),n=dec.decode(b.slice(p+46,p+46+len));if(uncompressed>30*1024*1024)throw Error('Excelonderdeel te groot.');files[n]={method,size,offset};p+=46+len+extra+comment;}
- async function xml(path){const f=files[path];if(!f)throw Error('Excelonderdeel ontbreekt: '+path);const start=f.offset+30+v.getUint16(f.offset+26,true)+v.getUint16(f.offset+28,true),raw=b.slice(start,start+f.size);let text;if(f.method===0)text=dec.decode(raw);else if(f.method===8){if(typeof DecompressionStream==='undefined')throw Error('Excelimport vereist een moderne browser. Gebruik eventueel een JSON-project.');text=await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text();}else throw Error('Niet-ondersteunde Excelcompressie.');const doc=new DOMParser().parseFromString(text,'application/xml');if(doc.getElementsByTagName('parsererror').length)throw Error('Ongeldige Excel XML.');return doc;}
+ const b=new Uint8Array(buffer),v=new DataView(buffer),dec=new TextDecoder();if(b.length<22)throw Error('Geen geldig Excelbestand.');let end=b.length-22;const min=Math.max(0,b.length-65557);while(end>=min&&v.getUint32(end,true)!==0x06054b50)end--;if(end<min)throw Error('Geen geldig Excelbestand.');const files=Object.create(null);let p=v.getUint32(end+16,true);for(let i=0;i<v.getUint16(end+10,true);i++){if(v.getUint32(p,true)!==0x02014b50)throw Error('Beschadigd Excelbestand.');const method=v.getUint16(p+10,true),size=v.getUint32(p+20,true),uncompressed=v.getUint32(p+24,true),len=v.getUint16(p+28,true),extra=v.getUint16(p+30,true),comment=v.getUint16(p+32,true),offset=v.getUint32(p+42,true),n=dec.decode(b.slice(p+46,p+46+len));if(uncompressed>30*1024*1024)throw Error('Excelonderdeel te groot.');files[n]={method,size,offset,uncompressed};p+=46+len+extra+comment;}
+ async function xml(path){
+  const f=files[path];if(!f)throw Error('Excelonderdeel ontbreekt: '+path);
+  const start=f.offset+30+v.getUint16(f.offset+26,true)+v.getUint16(f.offset+28,true),raw=b.slice(start,start+f.size);
+  if(raw.length!==f.size)throw Error('Beschadigd Excelbestand.');
+  const text=dec.decode(await memberBytes(raw,f.method,f.uncompressed));
+  const doc=new DOMParser().parseFromString(text,'application/xml');if(doc.getElementsByTagName('parsererror').length)throw Error('Ongeldige Excel XML.');return doc;
+ }
  const tags=(d,n)=>Array.from(d.getElementsByTagNameNS('*',n));let table,tablePath;for(const path of Object.keys(files).filter(x=>/^xl\/tables\/[^/]+\.xml$/.test(x))){const t=await xml(path);if(t.documentElement.getAttribute('name')==='ILS_Gevel'){table=t;tablePath=path;break;}}if(!table)throw Error('Tabel ILS_Gevel niet gevonden.');let sheet;for(const rp of Object.keys(files).filter(x=>/^xl\/worksheets\/_rels\/.*\.rels$/.test(x))){const rel=await xml(rp);if(tags(rel,'Relationship').some(r=>new URL(r.getAttribute('Target'),'https://excel/xl/worksheets/').pathname.slice(1)===tablePath)){sheet=rp.replace('/_rels/','/').replace(/\.rels$/,'');break;}}if(!sheet)throw Error('Werkblad voor ILS_Gevel niet gevonden.');
  const shared=files['xl/sharedStrings.xml']?tags(await xml('xl/sharedStrings.xml'),'si').map(s=>tags(s,'t').map(x=>x.textContent).join('')):[],doc=await xml(sheet),cells=Object.create(null);for(const c of tags(doc,'c')){const type=c.getAttribute('t'),val=tags(c,'v')[0]?.textContent??'';cells[c.getAttribute('r')]=type==='s'?shared[Number(val)]??'':type==='inlineStr'?tags(c,'t').map(x=>x.textContent).join(''):val;}
  const headers=tags(table,'tableColumn').map(c=>c.getAttribute('name')),ref=table.documentElement.getAttribute('ref').match(/^([A-Z]+)(\d+):([A-Z]+)(\d+)$/);if(!ref)throw Error('Onbekend tabelbereik.');const column=s=>[...s].reduce((n,c)=>n*26+c.charCodeAt(0)-64,0);function letters(n){let s='';while(n){n--;s=String.fromCharCode(65+n%26)+s;n=Math.floor(n/26);}return s;}
