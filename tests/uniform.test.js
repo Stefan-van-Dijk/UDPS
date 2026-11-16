@@ -85,3 +85,19 @@ test('A retained source datatype conflict blocks merge after adding and reloadin
  assert.deepEqual(contexts.map(c=>c.dataType),['Text','Real']);
  assert.deepEqual(contexts.map(c=>c.sourceDataType),['Text','Real']);
 });
+
+test('A historical first row cannot hide conflicts between other known source datatypes',()=>{
+ const catalog={ifc:{items:['IfcDoor','IfcWindow','IfcWall'].map(code=>({kind:'class',code}))}};
+ function entry(uri,code,entity,dataType){
+  const classUri='https://example.org/'+entity,item={uri,code,name:code,classUri,propertySet:'Common',relationUri:classUri+'/relation',dataType};
+  return {item,selection:{entity,source:'https://example.org/dictionary',classes:[{uri:classUri}],detail:{uri:classUri,properties:[item]}}};
+ }
+ const d=validate({headers:['Y/N','Revit_parameter','IFC_parameter','Export_tabblad','Data_type'],rows:[]});
+ addMappings(d,catalog,[entry('https://example.org/a','A','IfcDoor','Text'),entry('https://example.org/a','A','IfcWindow','Text'),entry('https://example.org/b','B','IfcWall','Real')],'Mapped');
+ const old=JSON.parse(d.rows[0].Source_contexts);old.forEach(c=>{delete c.dataType;delete c.sourceDataType;});d.rows[0].Source_contexts=JSON.stringify(old);
+ const restored=validate(JSON.parse(JSON.stringify(d)));
+ updateApplication(restored,2,'IfcWall',{Data_type:'Text'});
+ const before=JSON.stringify(restored);
+ assert.throws(()=>mergeProperties(restored,'https://example.org/a','https://example.org/b','Meaning checked'),/datatypes/);
+ assert.equal(JSON.stringify(restored),before);
+});

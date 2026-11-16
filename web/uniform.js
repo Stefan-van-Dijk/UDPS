@@ -30,18 +30,18 @@ export function updateApplication(data,index,entity,values){return atomic(data,n
 export function addApplication(data,key,entity,allowed){if(!allowed.has(entity))throw Error('Kies een IFC-entiteit uit de catalogus.');return atomic(data,next=>{
  const group=groupRows(next,key);if(group.some(({row})=>row[entity]==='x'))throw Error('Deze entiteit is al gekoppeld. Wijzig de bestaande toepassing.');const defaults=uniformDefaults(next,key);if(!defaults.property||!defaults.propertySet||!defaults.dataType)throw Error('Leg eerst de standaardinstellingen vast.');ensureHeaders(next,[entity,'Uniform_id','Mapping_origin','Mapping_pending','Source_ifc_references']);const empty=group.find(({row})=>!entities(next).some(e=>row[e]==='x'));const row=empty?empty.row:{...group[0].row};for(const e of entities(next))row[e]='';Object.assign(row,{Uniform_id:key,Mapping_origin:'user',Source_ifc_references:'[]',Revit_parameter:defaults.revit,IFC_parameter:defaults.property,Export_tabblad:defaults.propertySet,Data_type:defaults.dataType,Mapping_pending:defaults.revit?'':'x','Y/N':'x',[entity]:'x'});group.forEach(({row})=>row.Uniform_id=key);if(!empty)next.rows.push(row);noNewDuplicates(data,next);return row;
  });}
-export function compatibility(a,b){
- const reasons=[];if(a.Data_type!==b.Data_type)reasons.push('verschillende datatypes');
+export function compatibility(...rows){
+ const reasons=[];if(new Set(rows.map(r=>r.Data_type)).size>1)reasons.push('verschillende datatypes');
  const contexts=row=>{const saved=parseJson(row.Source_contexts,[]);return Array.isArray(saved)?saved:[];};
- const sourceTypes=[...contexts(a),...contexts(b)].map(c=>c?.dataType).filter(Boolean);
+ const sourceTypes=rows.flatMap(contexts).map(c=>c?.dataType).filter(Boolean);
  if(new Set(sourceTypes).size>1)reasons.push('verschillende brondatatypes');
  const agreements=row=>[parseJson(row.Source_property_constraints,{}),...contexts(row).map(c=>c?.constraints||{})];
- const [first,...rest]=[...agreements(a),...agreements(b)],sorted=v=>JSON.stringify((v||[]).map(i=>typeof i==='object'?JSON.stringify(i):i).sort());
+ const [first,...rest]=rows.flatMap(agreements),sorted=v=>JSON.stringify((v||[]).map(i=>typeof i==='object'?JSON.stringify(i):i).sort());
  for(const current of rest){if(sorted(first.units)!==sorted(current.units))reasons.push('verschillende of ontbrekende eenheden');if(sorted(first.allowedValues)!==sorted(current.allowedValues))reasons.push('verschillende of ontbrekende keuzewaarden');if(JSON.stringify(first.constraints||{})!==JSON.stringify(current.constraints||{}))reasons.push('verschillende toepassingsvoorwaarden');}
  return [...new Set(reasons)];
 }
 export function mergeProperties(data,targetKey,sourceKey,reason){
  text(reason,'onderbouwing');if(targetKey===sourceKey)throw Error('Kies een andere eigenschap.');
- return atomic(data,next=>{const target=groupRows(next,targetKey),source=groupRows(next,sourceKey);const reasons=[...new Set([...target,...source].flatMap(({row})=>compatibility(target[0].row,row)))];if(reasons.length)throw Error('Niet samengevoegd: '+reasons.join(', ')+'. Controleer eerst de bronafspraken; er worden geen waarden geconverteerd.');ensureHeaders(next,['Uniform_id','Uniform_name','Uniform_merge_reason']);const name=target[0].row.Uniform_name||target[0].row.Source_name||target[0].row.IFC_parameter;for(const {row} of [...target,...source]){row.Uniform_id=targetKey;row.Uniform_name=name;row.Uniform_merge_reason=reason.trim();}return targetKey;});
+ return atomic(data,next=>{const target=groupRows(next,targetKey),source=groupRows(next,sourceKey);const reasons=compatibility(...[...target,...source].map(x=>x.row));if(reasons.length)throw Error('Niet samengevoegd: '+reasons.join(', ')+'. Controleer eerst de bronafspraken; er worden geen waarden geconverteerd.');ensureHeaders(next,['Uniform_id','Uniform_name','Uniform_merge_reason']);const name=target[0].row.Uniform_name||target[0].row.Source_name||target[0].row.IFC_parameter;for(const {row} of [...target,...source]){row.Uniform_id=targetKey;row.Uniform_name=name;row.Uniform_merge_reason=reason.trim();}return targetKey;});
 }
 export function groupEntries(entries){const groups=new Map();entries.forEach((entry,index)=>{const key=entry.item.uri;if(!groups.has(key))groups.set(key,{key,item:entry.item,entries:[]});groups.get(key).entries.push({...entry,index});});return [...groups.values()];}
