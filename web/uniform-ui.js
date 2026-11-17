@@ -1,9 +1,9 @@
-import {propertyGroups,uniformDefaults,setUniformDefaults,updateApplication,addApplication,mergeProperties,compatibility,ensureHeaders,parseJson} from './uniform.js?v=1.11.3';
-import {propertyLinks,propertyDetails,relationMeaning} from './linked-data.js?v=1.11.3';
-import {httpsUri} from './bsdd.js?v=1.11.3';
-import {entities,types} from './core.js?v=1.11.3';
-import {availableEntities} from './mapping.js?v=1.11.3';
-import {loadDetails} from './source-store.js?v=1.11.3';
+import {propertyGroups,uniformDefaults,setUniformDefaults,updateApplication,addApplication,mergeProperties,compatibility,ensureHeaders,parseJson} from './uniform.js?v=1.11.4';
+import {propertyLinks,propertyDetails,relationMeaning} from './linked-data.js?v=1.11.4';
+import {httpsUri} from './bsdd.js?v=1.11.4';
+import {entities,types} from './core.js?v=1.11.4';
+import {availableEntities} from './mapping.js?v=1.11.4';
+import {loadDetails} from './source-store.js?v=1.11.4';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const link=(uri,label)=>httpsUri(uri)?`<a href="${esc(httpsUri(uri))}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`:esc(label);
 const origin=r=>({user:'Eigen afspraak',bsdd:'bSDD',ids:'IDS-eis',library:'Eigen bibliotheek',legacy:'Eerdere koppeling'}[r.Mapping_origin]||'Eerdere koppeling · niet opnieuw bevestigd');

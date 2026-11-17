@@ -1,9 +1,9 @@
-import {readIds,applyIdsImport,saveIdsSource,IDS_MAX_BYTES} from './ids.js?v=1.11.3';
-import {buildIdsWorkspace,preflightIdsImport} from './ids-workflow.js?v=1.11.3';
-import {loadIdsFile,loadIdsText} from './ids-loader.js?v=1.11.3';
-import {compareIdsRevisions,idsRevisionCandidates} from './ids-revisions.js?v=1.11.3';
-import {auditIdsDocument} from './ids-audit.js?v=1.11.3';
-import {types} from './core.js?v=1.11.3';
+import {readIds,applyIdsImport,saveIdsSource,IDS_MAX_BYTES} from './ids.js?v=1.11.4';
+import {buildIdsWorkspace,preflightIdsImport} from './ids-workflow.js?v=1.11.4';
+import {loadIdsFile,loadIdsText} from './ids-loader.js?v=1.11.4';
+import {compareIdsRevisions,idsRevisionCandidates} from './ids-revisions.js?v=1.11.4';
+import {auditIdsDocument} from './ids-audit.js?v=1.11.4';
+import {types} from './core.js?v=1.11.4';
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const labels={entity:'IFC-entiteit',property:'Eigenschap',attribute:'IFC-attribuut',classification:'Classificatie',material:'Materiaal',partOf:'Onderdeelrelatie',name:'Naam',predefinedType:'Predefined type',propertySet:'Propertyset',baseName:'Eigenschapsnaam',value:'Waarde',system:'Classificatiesysteem'};

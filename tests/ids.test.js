@@ -70,6 +70,27 @@ const propertyXml=({propertySet='Foo_Bar',property='Foo',dataType='IFCLABEL',ext
 const xmlDocument=({entity='IFCWALL',appExtra='',requirements=propertyXml(),hint='',version='',appXml}={})=>'<ids xmlns="'+NS+'" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'+(hint?' xsi:schemaLocation="'+NS+' '+hint+'"':'')+'><info><title>Generic test</title>'+(version?'<version>'+version+'</version>':'')+'</info><specifications><specification name="Synthetic" ifcVersion="IFC4"><applicability minOccurs="1" maxOccurs="unbounded">'+(appXml??'<entity>'+value('name',entity)+'</entity>'+appExtra)+'</applicability><requirements>'+requirements+'</requirements></specification></specifications></ids>';
 const parse=xml=>readIds(xml,{DOMParser,XMLSerializer});
 
+test('IDS mass density is proposed and exported as MassDensity after restoring the project',async()=>{
+ const xml=xmlDocument({requirements:propertyXml({propertySet:'QA_Material',property:'Density',dataType:'IFCMASSDENSITYMEASURE'})});
+ const preview=await parse(xml);
+ const [proposal]=mappingProposals(preview,catalog);
+ assert.equal(proposal.dataType,'MassDensity');
+ assert.equal(proposal.eligible,true);
+
+ const data=empty();
+ applyIdsImport(data,catalog,preview,[proposal.id],{
+  [proposal.id]:{dataType:'MassDensity',revitParameter:'QA_RevitDensity'}
+ });
+ const restored=validate(JSON.parse(JSON.stringify(data)));
+ assert.equal(restored.idsImports[0].xml,xml);
+ assert.equal(restored.idsImports[0].decisions[proposal.id].dataType,'MassDensity');
+ assert.equal(restored.rows[0].Data_type,'MassDensity');
+ const output=generate(restored);
+ assert.deepEqual(output.errors,[]);
+ assert.deepEqual(output.warnings,[]);
+ assert(output.text.includes('\tDensity\tMassDensity\tQA_RevitDensity\r\n'));
+});
+
 test('IDS literals retain exact xs:string identities and unsafe identities disable proposals',async()=>{
  for(const [key,text] of [['propertySet',' Foo_Bar'],['propertySet','Foo_Bar '],['property',' Foo'],['property','Foo '],['property','Foo\tBar']]){
   const xml=xmlDocument({requirements:propertyXml({[key]:text})}),preview=await parse(xml),r=preview.specifications[0].requirements[0];
