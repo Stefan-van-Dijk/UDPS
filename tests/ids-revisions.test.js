@@ -133,6 +133,38 @@ test('Unique specification identifiers distinguish otherwise identical requireme
  assert.equal(result.counts.unchanged,2);assert.equal(result.decisions[first].revitParameter,'Second');assert.equal(result.decisions['spec:1/requirement:0'].revitParameter,'First');
 });
 
+test('Different explicit specification identifiers cannot pair through name, scope or identical content',async()=>{
+ const previous=await parse(document(specification({identifier:'retired'})));
+ const priorChoices={[first]:{revitParameter:'Previous'}};
+ const rows=[{IDS_requirements:JSON.stringify([{documentId:previous.id,requirementId:first}])}];
+ for(const requirements of [property(),property('Replacement')]){
+  const current=await parse(document(specification({identifier:'new',requirements})));
+  const result=compareIdsRevisions(previous,current,priorChoices,{rows});
+  assert.deepEqual(result.counts,{unchanged:0,modified:0,added:1,removed:1,ambiguous:0});
+  assert.deepEqual(result.decisions,{});
+  assert.deepEqual(result.changes.find(change=>change.status==='removed').impactedRows,[0]);
+ }
+});
+
+test('An anonymous ambiguity does not introduce a mismatched explicit predecessor',async()=>{
+ const previous=await parse(document(specification({identifier:'retired'})+specification({identifier:''})));
+ const current=await parse(document(specification({identifier:'new'})+specification({identifier:''})));
+ const result=compareIdsRevisions(previous,current,{[first]:{revitParameter:'Retired'}});
+ const explicitlyNew=result.changes.find(change=>change.currentId===first);
+ const possiblePrevious=result.ambiguityGroups.find(group=>group.id===explicitlyNew.ambiguityGroupId);
+ assert.deepEqual(possiblePrevious.previousIds,['spec:1/requirement:0']);
+ assert.deepEqual(result.decisions,{});
+});
+
+test('A partial name match ignores a retired explicit ID when finding a unique anonymous predecessor',async()=>{
+ const previous=await parse(document(specification({identifier:'retired',name:'Retired',requirements:property('Foo')})+
+  specification({identifier:'',name:'Current',requirements:property('Foo')+property('Bar')})));
+ const current=await parse(document(specification({identifier:'new',name:'Current',requirements:property('Foo')+property('Bar')+property('Baz')})));
+ const result=compareIdsRevisions(previous,current,{[first]:{revitParameter:'Retired'},'spec:1/requirement:0':{revitParameter:'Keep'}});
+ assert.deepEqual(result.counts,{unchanged:2,modified:0,added:1,removed:1,ambiguous:0});
+ assert.deepEqual(result.decisions[first],{revitParameter:'Keep'});
+});
+
 test('Invalid reference records are reported without hiding the valid part of existing provenance',async()=>{
  const old=await parse(document(specification())),current=await parse(document(specification()).replace('Revision fixture','New title'));
  const result=compareIdsRevisions(old,current,{}, {rows:[{IDS_requirements:JSON.stringify([null,{documentId:old.id,requirementId:first}])}]});

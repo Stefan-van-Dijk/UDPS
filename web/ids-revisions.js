@@ -98,7 +98,21 @@ export function compareIdsRevisions(previousPreview,currentPreview,previousDecis
  const contextSafety=new WeakMap(),scopeSignatures=new WeakMap(),unitSignatures=new WeakMap();
  const scopeSignature=specification=>{if(!scopeSignatures.has(specification))scopeSignatures.set(specification,signature(scopeMeaning(specification)));return scopeSignatures.get(specification);};
  const unitSignature=unit=>{if(!unitSignatures.has(unit))unitSignatures.set(unit,signature(facetMeaning(unit)));return unitSignatures.get(unit);};
- const meaningIndex=document=>{const index=new Map();for(const specification of document.specifications){const scope=scopeSignature(specification),byUnit=index.get(scope)||new Map();for(const unit of units(specification)){const key=unitSignature(unit),group=byUnit.get(key)||[];group.push({specification,unit});byUnit.set(key,group);}index.set(scope,byUnit);}return index;};
+ function meaningIndex(document){
+  const index=new Map();
+  for(const specification of document.specifications){
+   const scope=scopeSignature(specification),byUnit=index.get(scope)||new Map();
+   for(const unit of units(specification)){
+    const key=unitSignature(unit),group=byUnit.get(key)||{all:[],withoutIdentifier:[]};
+    const item={specification,unit};
+    group.all.push(item);
+    if(!specification.identifier)group.withoutIdentifier.push(item);
+    byUnit.set(key,group);
+   }
+   index.set(scope,byUnit);
+  }
+  return index;
+ }
  const oldMeanings=meaningIndex(previous),newMeanings=meaningIndex(current),weakAmbiguities=new Map();
  const contextSafe=(document,specification)=>{if(!contextSafety.has(specification))contextSafety.set(specification,safeContext(document,specification));return contextSafety.get(specification);};
  const refs=rowReferences(options.rows),documentSame=signature(documentMeaning(previous))===signature(documentMeaning(current));
@@ -131,7 +145,14 @@ export function compareIdsRevisions(previousPreview,currentPreview,previousDecis
  }
  function matchSpecifications(key,trusted=false){
   const oldIndex=indexBy([...remainingOld],key),newIndex=indexBy([...remainingNew],key);
-  for(const [value,news] of newIndex){const olds=oldIndex.get(value)||[];if(olds.length===1&&news.length===1){pairs.push([olds[0],news[0],trusted]);remainingOld.delete(olds[0]);remainingNew.delete(news[0]);}}
+  for(const [value,news] of newIndex){
+   const olds=oldIndex.get(value)||[];
+   if(olds.length!==1||news.length!==1)continue;
+   const [older]=olds,[newer]=news;
+   // A similarity match can account for an absent identifier, not a different one.
+   if(older.s.identifier&&newer.s.identifier&&older.s.identifier!==newer.s.identifier)continue;
+   pairs.push([older,newer,trusted]);remainingOld.delete(older);remainingNew.delete(newer);
+  }
  }
  const fullSpec=x=>signature({scope:scopeMeaning(x.s),requirements:sorted(units(x.s).map(facetMeaning))});
  matchSpecifications(x=>x.s.identifier||'',true);
@@ -140,16 +161,29 @@ export function compareIdsRevisions(previousPreview,currentPreview,previousDecis
  matchSpecifications(x=>signature(scopeMeaning(x.s)));
  // Equal remaining content with multiple candidates is genuinely ambiguous.
  const oldFull=indexBy([...remainingOld],fullSpec),newFull=indexBy([...remainingNew],fullSpec);
- for(const [key,news] of newFull){const olds=oldFull.get(key)||[];if(olds.length)ambiguousSpecs(olds,news,'Meerdere inhoudelijk gelijke specificaties; geen keuze op basis van positie.');}
+ for(const [key,news] of newFull){
+  const olds=oldFull.get(key)||[];
+  const withoutOldId=olds.filter(x=>!x.s.identifier),withoutNewId=news.filter(x=>!x.s.identifier);
+  const newWithId=news.filter(x=>x.s.identifier);
+  const reason='Meerdere inhoudelijk gelijke specificaties; geen keuze op basis van positie.';
+  if(withoutOldId.length&&newWithId.length)ambiguousSpecs(withoutOldId,newWithId,reason);
+  if(olds.length&&withoutNewId.length)ambiguousSpecs(olds,withoutNewId,reason);
+ }
  function comparePair(oldEntry,newEntry,trusted){
   const oldSpec=oldEntry.s,newSpec=newEntry.s,oldUnits=new Set(units(oldSpec)),newUnits=new Set(units(newSpec));
   const contextSame=documentSame&&scopeSignature(oldSpec)===scopeSignature(newSpec);
   const full=unitSignature;
   function matched(oldUnit,newUnit){
-   const same=contextSame&&full(oldUnit)===full(newUnit),scope=scopeSignature(oldSpec),key=full(oldUnit),olds=oldMeanings.get(scope)?.get(key)||[],news=newMeanings.get(scope)?.get(key)||[];
+   const same=contextSame&&full(oldUnit)===full(newUnit),scope=scopeSignature(oldSpec),key=full(oldUnit);
+   // Equal explicit identifiers have already paired. Only unidentified peers
+   // can compete with the identified side of a fallback pair.
+   const previousPeers=newSpec.identifier?'withoutIdentifier':'all',currentPeers=oldSpec.identifier?'withoutIdentifier':'all';
+   const olds=oldMeanings.get(scope)?.get(key)?.[previousPeers]||[],news=newMeanings.get(scope)?.get(key)?.[currentPeers]||[];
    if(same&&!trusted&&(olds.length!==1||news.length!==1)){
     const reason='De inhoud komt meermaals voor zonder unieke specificatie-identiteit; eerdere keuzes opnieuw beoordelen.';
-    let byUnit=weakAmbiguities.get(scope);if(!byUnit){byUnit=new Map();weakAmbiguities.set(scope,byUnit);}let group=byUnit.get(key);if(!group){group=ambiguity(olds,news,reason);byUnit.set(key,group);}
+    const peerKey=previousPeers+'\u0000'+currentPeers+'\u0000'+key;
+    let byUnit=weakAmbiguities.get(scope);if(!byUnit){byUnit=new Map();weakAmbiguities.set(scope,byUnit);}
+    let group=byUnit.get(peerKey);if(!group){group=ambiguity(olds,news,reason);byUnit.set(peerKey,group);}
     record('ambiguous',wrap(oldSpec,oldUnit),wrap(newSpec,newUnit),reason,group);
    }else record(same?'unchanged':'modified',wrap(oldSpec,oldUnit),wrap(newSpec,newUnit),same?'De eis en alle vastgelegde toepassings- en waardevoorwaarden zijn ongewijzigd.':'De eis, IFC-versie of toepassings-/waardevoorwaarden zijn gewijzigd; opnieuw beoordelen.');
    oldUnits.delete(oldUnit);newUnits.delete(newUnit);

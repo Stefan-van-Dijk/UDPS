@@ -1,23 +1,34 @@
-import {ensurePropertyIds,propertyKey} from './uniform.js?v=1.11.2';
-import {initUniformUI} from './uniform-ui.js?v=1.11.2';
-import {ifcReferences} from './bsdd.js?v=1.11.2';
-import {filterView} from './view.js?v=1.11.2';
-import {loadClasses,loadDetails} from './source-store.js?v=1.11.2';
-import {initMappingUI} from './mapping-ui.js?v=1.11.2';
-import {unknownEntities} from './mapping.js?v=1.11.2';
-import {entityHeading,sourceCell,initSources,getCatalog} from './sources-ui.js?v=1.11.2';
-import initial from './data.js?v=1.11.2';
-import {validate,generate,entities,types} from './core.js?v=1.11.2';
-import {readExcel} from './excel.js?v=1.11.2';
-import {initIdsUI} from './ids-ui.js?v=1.11.2';
-import {IDS_PROJECT_MAX_BYTES} from './ids.js?v=1.11.2';
-import {createProjectStore} from './project-storage.js?v=1.11.2';
+import {ensurePropertyIds,propertyKey} from './uniform.js?v=1.11.3';
+import {initUniformUI} from './uniform-ui.js?v=1.11.3';
+import {ifcReferences} from './bsdd.js?v=1.11.3';
+import {filterView} from './view.js?v=1.11.3';
+import {loadClasses,loadDetails} from './source-store.js?v=1.11.3';
+import {initMappingUI} from './mapping-ui.js?v=1.11.3';
+import {unknownEntities} from './mapping.js?v=1.11.3';
+import {entityHeading,sourceCell,initSources,getCatalog} from './sources-ui.js?v=1.11.3';
+import initial from './data.js?v=1.11.3';
+import {validate,generate,entities,types} from './core.js?v=1.11.3';
+import {readExcel} from './excel.js?v=1.11.3';
+import {initIdsUI} from './ids-ui.js?v=1.11.3';
+import {IDS_PROJECT_MAX_BYTES} from './ids.js?v=1.11.3';
+import {createProjectStore} from './project-storage.js?v=1.11.3';
 const $=id=>document.getElementById(id),projectStore=createProjectStore();let data=validate(initial),visible=[],result;let groupSelection=null,entitySelection=null;let deleted=[];let uniformUI=null,mappingUI=null,saveTicket=0,recoveryRequired=false;
 $('saved').textContent='Project laden…';
 try{const saved=await projectStore.load();if(saved.project)data=validate(saved.project);recoveryRequired=!!saved.recoveryRequired;$('saved').textContent=saved.warning||(saved.project?'Project geopend uit deze browser':'Voorbeeldproject geopend');}catch{recoveryRequired=true;$('saved').textContent='Opgeslagen project niet leesbaar. Importeer je JSON-backup om te herstellen.';}
 function toast(s){$('toast').textContent=s;$('toast').hidden=false;clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>$('toast').hidden=true,5000);}
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function save(){if(recoveryRequired){update();return;}const run=++saveTicket;$('saved').textContent='Wijzigingen bewaren…';projectStore.save(data).then(result=>{if(run===saveTicket)$('saved').textContent=result.warning||(result.backend==='none'?'Automatisch bewaren mislukt — bewaar je project als bestand':'Wijzigingen bewaard in deze browser');}).catch(()=>{if(run===saveTicket)$('saved').textContent='Automatisch bewaren mislukt — bewaar je project als bestand';});update();}
+function save(){
+ if(recoveryRequired){update();return Promise.resolve('none');}
+ const run=++saveTicket;
+ const failure='Automatisch bewaren mislukt — bewaar je project als bestand';
+ $('saved').textContent='Wijzigingen bewaren…';
+ const persistence=projectStore.save(data).then(result=>{
+  if(run===saveTicket)$('saved').textContent=result.warning||(result.backend==='none'?failure:'Wijzigingen bewaard in deze browser');
+  return result.backend;
+ }).catch(()=>{if(run===saveTicket)$('saved').textContent=failure;return 'none';});
+ update();
+ return persistence;
+}
 function update(){result=generate({...data,exportOrder:data.exportOrder||'propertyset'});const unknown=unknownEntities(data,getCatalog());if(unknown.length)result.errors.push('Niet in de geladen bSDD-bron: '+unknown.join(', ')+'. Controleer de bronlijst of schakel deze koppelingen uit.');$('source').textContent=data.source;$('selected').textContent=data.rows.filter(r=>r['Y/N']==='x').length;$('groups').textContent=result.groups.length;$('entities').textContent=result.entities.length;$('mappings').textContent=result.mappings;$('output').textContent=result.text;$('previewInfo').textContent=result.blocks+' blokken · '+result.mappings+' koppelingen';$('copy').disabled=$('download').disabled=!!result.errors.length||!result.mappings;$('errors').textContent=result.errors.length?result.errors.length+' fout(en) verhinderen export. '+result.errors.slice(0,2).join(' ')+(result.errors.length>2?' Bekijk de gearceerde regels voor alle details.':''):'';$('warnings').hidden=!result.warnings.length;$('warningTitle').textContent=result.warnings.length+' aandachtspunten · export blijft beschikbaar';$('warningList').innerHTML=result.warnings.map(x=>'<li>'+esc(x)+'</li>').join('');}
 function filters(){for(const [id,items,title,selection] of [['groupFilter',[...new Set(data.rows.map(r=>r.Export_tabblad))],'Propertysets',groupSelection],['entityFilter',entities(data),'IFC-entiteiten',entitySelection]]){$(id).innerHTML=`<summary>${title} · ${selection===null?'alle':items.filter(x=>selection.has(x)).length}</summary><div class="filter-options"><div class="filter-actions"><button type="button" data-filter-action="all">Alle</button><button type="button" data-filter-action="none">Geen</button></div>`+items.map(v=>`<label><input type="checkbox" value="${esc(v)}" ${selection===null||selection.has(v)?'checked':''}>${esc(v)}</label>`).join('')+'</div>';}}
 function heading(es){$('thead').innerHTML='<tr><th>Actief</th><th>Revit-parameter</th><th>IFC-property</th><th>Propertyset</th><th>Datatype</th><th>Bron</th>'+es.map(e=>'<th class="ent">'+entityHeading(e)+'</th>').join('')+'<th></th></tr>';}
@@ -49,7 +60,7 @@ $('help').onclick=()=>$('helpDialog').showModal();$('closeHelp').onclick=()=>$('
 initSources({render,data:()=>data,download,bind(row,item,version){for(const key of ['Source_uri','Source_code','Source_version']){if(!data.headers.includes(key)){data.headers.push(key);data.rows.forEach(r=>r[key]='');}}row.Source_uri=item?.uri||'';row.Source_code=item?.code||'';row.Source_version=version;save();render();}});
 
 mappingUI=initMappingUI({catalog:getCatalog,data:()=>data,notice:toast,changed(){clearFilters();save();render();showStep(2);}});
-initIdsUI({catalog:getCatalog,data:()=>data,notice:toast,changed(){clearFilters();save();render();showStep(2);}});
+initIdsUI({catalog:getCatalog,data:()=>data,notice:toast,changed(){clearFilters();const persistence=save();render();showStep(2);return persistence;}});
 
 
 uniformUI=initUniformUI({data:()=>data,catalog:getCatalog,changed(){save();render();},openClass:uri=>mappingUI.openClass(uri)});

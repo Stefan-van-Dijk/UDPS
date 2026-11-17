@@ -1,6 +1,6 @@
 # IDS-import: parameters koppelen met behoud van alle eisen
 
-De route in 1.11.0 leest een lokaal IDS-document, bewaart de volledige bron en maakt geschikte `property`-eisen beschikbaar als UDPS-parameterdefinities. De gebruiker kan Revit-namen direct koppelen en de projectwijzigingen vóór toevoegen controleren. De app maakt geen Revit-parameters aan en controleert geen IFC-model.
+De IDS-route leest een lokaal IDS-document, bewaart de volledige bron en maakt geschikte `property`-eisen beschikbaar als UDPS-parameterdefinities. De gebruiker kan Revit-namen direct koppelen en de projectwijzigingen vóór toevoegen controleren. De app maakt geen Revit-parameters aan en controleert geen IFC-model.
 
 ## Drie onderdelen in de dialoog
 
@@ -80,6 +80,8 @@ De zelftest onderscheidt een geldig voorbeeld, XSD-ongeldige invoer en XSD-geldi
 
 Een nieuwe XML-tekst heeft een eigen SHA-256-identiteit. De gebruiker kiest zelf welke bewaarde bron de vorige versie is; een bestandsnaam of positie-ID is daarvoor geen bewijs. Het overzicht onderscheidt ongewijzigde, gewijzigde, nieuwe, vervallen en niet-eenduidige eisen en kan de betrokken bestaande exportregels aanwijzen.
 
+Verschillende expliciete specificatie-ID's gelden als verschillende specificaties. De eerdere eisen worden als vervallen getoond en de huidige eisen als nieuw. Bij een ontbrekende ID kan de vergelijking nog steunen op een unieke inhoudelijke overeenkomst.
+
 Alleen een aantoonbaar unieke, ongewijzigde property-eis met dezelfde bekende document-, IFC-, toepassings- en waardecontext kan eerdere keuzes overnemen. Volgorde of namespace-prefix mag die vergelijking niet bepalen. Een gewijzigd datatype, andere scope, onbekende semantiek, dubbele identifier of onduidelijke voorganger vraagt herbeoordeling. Overnemen overschrijft geen huidige handmatige keuze.
 
 Bij het bewust overnemen wordt `previousDocumentId` als bronrelatie bewaard. De voorganger moet in hetzelfde project bestaan; zelfverwijzingen en cycli zijn ongeldig. De oude brontekst blijft onder de eigen identiteit bewaard. Vervallen eisen verwijderen geen exportregels: de gebruiker beoordeelt het gevolg zelf. Een vergelijking bewijst geen inhoudelijke gelijkwaardigheid buiten de gecontroleerde contexten.
@@ -91,6 +93,8 @@ Bij het bewust overnemen wordt `previousDocumentId` als bronrelatie bewaard. De 
 `IDS_requirements` verwijst per exportregel naar document, specificatie en eis en bewaart zo nodig de beoordeelde doelen en voorwaarden. Er wordt geen bSDD-`Source_uri` of bevestigde bSDD-relatie verzonnen. Alle XML en metadata blijven passieve broninformatie. Bewaren en heropenen van de project-JSON behoudt deze gegevens.
 
 Projecten worden automatisch in IndexedDB bewaard. Bestaande projectgegevens uit de oude `localStorage` worden gemigreerd terwijl de oude kopie behouden blijft. Opeenvolgende opslagacties bewaren hun eigen momentopname en worden op volgorde afgehandeld. Een beperkte opslagfallback meldt dat expliciet; bij mislukken vraagt de app een JSON-backup. Een nieuwere, tijdelijk onbereikbare projectversie wordt niet stilzwijgend vervangen door een oudere lokale kopie. Deze browseropslag is geen serversynchronisatie of gedeelde projectmap.
+
+Bij **Alleen bron en keuzes bewaren** wacht de dialoog op het opslagresultaat. Wanneer opslaan mislukt, blijven de actuele keuzes in het geopende project beschikbaar om via **Menu → Project bewaren** een JSON-backup te maken.
 
 Bewaar een JSON-projectbestand voor overdracht en herstel. Een oudere app kan nieuwe keuzes of bronhistorie verwijderen; versies vóór 1.9.0 behouden zelfs `idsImports` niet. De eerdere `localStorage`-kopie is niet automatisch een actuele backup nadat er in IndexedDB verder is gewerkt.
 
