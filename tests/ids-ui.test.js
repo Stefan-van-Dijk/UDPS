@@ -246,3 +246,17 @@ test('The delegated application-group click permits the native checkbox default 
  assert.notEqual(s.e.idsScopesBody.onclick({target}),false);
  s.e.idsScopesBody.onchange({target});assert.match(s.e.idsSummary.textContent,/1 bruikbare eisen/);
 });
+
+test('Revit input and entity exceptions reach preflight immediately without a blur event',async t=>{
+ const source=documentXml(specification({identifier:'wall'})+specification({identifier:'door',entity:'IFCDOOR'})),s=ui(t);s.e.importIds.onclick();await s.load(source);
+ const group=/data-ids-revit="([^"]+)"/.exec(s.e.idsRequirements.innerHTML)[1];
+ s.e.idsRequirements.oninput({target:{dataset:{idsRevit:group},value:'QA_Live'}});
+ s.e.idsDetail.oninput({target:{dataset:{idsEntityRevit:'IfcDoor'},value:'QA_LiveDoor'}});
+ s.e.idsSelectAll.onclick();s.e.idsReview.onclick();assert.match(s.e.idsChanges.innerHTML,/QA_LiveDoor/);assert.match(s.e.idsChanges.innerHTML,/QA_Live/);
+ s.e.idsAdd.onclick();assert.equal(s.data.rows.find(r=>r.IfcDoor==='x').Revit_parameter,'QA_LiveDoor');assert.equal(s.data.rows.find(r=>r.IfcWall==='x').Revit_parameter,'QA_Live');
+});
+
+test('Manual IFC choices exclude predefined-type pseudo classes offered by the catalog',async t=>{
+ const s=ui(t);catalog.ifc.items.push({kind:'class',code:'IfcWallSTANDARD'});t.after(()=>catalog.ifc.items.pop());s.e.importIds.onclick();await s.load(xml());
+ assert.match(s.e.idsEntityChoices.innerHTML,/data-ids-entity="IfcWall"/);assert.doesNotMatch(s.e.idsEntityChoices.innerHTML,/IfcWallSTANDARD/);
+});

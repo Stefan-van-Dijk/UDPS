@@ -1,9 +1,9 @@
-import {readIds,applyIdsImport,saveIdsSource,IDS_MAX_BYTES} from './ids.js?v=1.11.1';
-import {buildIdsWorkspace,preflightIdsImport} from './ids-workflow.js?v=1.11.1';
-import {loadIdsFile,loadIdsText} from './ids-loader.js?v=1.11.1';
-import {compareIdsRevisions,idsRevisionCandidates} from './ids-revisions.js?v=1.11.1';
-import {auditIdsDocument} from './ids-audit.js?v=1.11.1';
-import {types} from './core.js?v=1.11.1';
+import {readIds,applyIdsImport,saveIdsSource,IDS_MAX_BYTES} from './ids.js?v=1.11.2';
+import {buildIdsWorkspace,preflightIdsImport} from './ids-workflow.js?v=1.11.2';
+import {loadIdsFile,loadIdsText} from './ids-loader.js?v=1.11.2';
+import {compareIdsRevisions,idsRevisionCandidates} from './ids-revisions.js?v=1.11.2';
+import {auditIdsDocument} from './ids-audit.js?v=1.11.2';
+import {types} from './core.js?v=1.11.2';
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const labels={entity:'IFC-entiteit',property:'Eigenschap',attribute:'IFC-attribuut',classification:'Classificatie',material:'Materiaal',partOf:'Onderdeelrelatie',name:'Naam',predefinedType:'Predefined type',propertySet:'Propertyset',baseName:'Eigenschapsnaam',value:'Waarde',system:'Classificatiesysteem'};
@@ -100,7 +100,7 @@ export function initIdsUI(api,injected={}){
  }
  function renderEntityChoices(){
   const host=$('idsEntityChoices');if(!host)return;const g=currentGroup(),q=($('idsEntitySearch')?.value||'').toLowerCase();
-  host.innerHTML=(api.catalog()?.ifc?.items||[]).filter(x=>x.kind==='class'&&/^Ifc[A-Za-z0-9]+$/.test(x.code)&&x.code.toLowerCase().includes(q)).map(x=>`<label class="ids-check"><input type="checkbox" data-ids-entity="${esc(x.code)}" ${g.entities.includes(x.code)?'checked':''}>${esc(x.code)}</label>`).join('');
+  host.innerHTML=(api.catalog()?.ifc?.items||[]).filter(x=>x.kind==='class'&&/^Ifc[A-Za-z0-9]+$/.test(x.code)&&!/[A-Z]{2,}$/.test(x.code)&&x.code.toLowerCase().includes(q)).map(x=>`<label class="ids-check"><input type="checkbox" data-ids-entity="${esc(x.code)}" ${g.entities.includes(x.code)?'checked':''}>${esc(x.code)}</label>`).join('');
  }
  function render(){
   const active=document.activeElement,retain=$('idsDialog').contains?.(active)?{dataset:{...active.dataset},start:active.selectionStart,end:active.selectionEnd}:null;
@@ -108,6 +108,11 @@ export function initIdsUI(api,injected={}){
   if(retain&&Object.keys(retain.dataset).length){const target=Array.from($('idsDialog').querySelectorAll?.('input,select')||[]).find(n=>Object.entries(retain.dataset).every(([key,value])=>n.dataset[key]===value));target?.focus?.({preventScroll:true});if(typeof retain.start==='number'&&target?.setSelectionRange)try{target.setSelectionRange(retain.start,retain.end);}catch{}}
  }
  function patch(ids,key,value){for(const id of ids){const d=decisions[id]??={};if(value===undefined)delete d[key];else d[key]=value;}rebuild();render();}
+ function draftRevit(g,value,entity){
+  for(const id of g.requirementIds){const d=decisions[id]??={};if(entity){const v={...d.revitByEntity};if(value)v[entity]=value;else delete v[entity];d.revitByEntity=v;}else d.revitParameter=value;}
+  if(entity){if(value)g.revitByEntity[entity]=value;else delete g.revitByEntity[entity];}else{g.revitParameter=value;g.hasRevitDecision=true;g.revitSuggested=false;}
+  invalidate();
+ }
  function renderAudit(){
   const names={running:'XSD-controle wordt uitgevoerd…',valid:'XSD gecontroleerd',invalid:'Bestand voldoet niet aan het IDS-XSD',unavailable:'XSD-controle niet beschikbaar',unsupported:'Formaat niet door deze XSD-controle ondersteund'};
   $('idsAuditStatus').textContent=names[audit?.status]||'Nog niet gecontroleerd';
@@ -140,11 +145,12 @@ export function initIdsUI(api,injected={}){
  };
  $('closeIds').onclick=()=>{ticket++;controller?.abort();$('idsDialog').close();};$('idsDialog').addEventListener('cancel',()=>{ticket++;controller?.abort();});
  $('idsRequirements').onclick=e=>{const id=e.target.dataset.idsFocus;if(id){focusId=id;render();}};
+ $('idsRequirements').oninput=e=>{const g=workspace?.groups.find(g=>g.id===e.target.dataset.idsRevit);if(g)draftRevit(g,e.target.value);};
  $('idsRequirements').onchange=e=>{const t=e.target,g=workspace.groups.find(g=>g.id===(t.dataset.idsGroup||t.dataset.idsRevit));if(!g)return;if(t.dataset.idsRevit!==undefined){patch(g.requirementIds,'revitParameter',t.value);return;}for(const id of g.eligibleIds)t.checked?selected.add(id):selected.delete(id);invalidate();renderList();};
- $('idsDetail').oninput=e=>{if(e.target.id==='idsEntitySearch')renderEntityChoices();};
+ $('idsDetail').oninput=e=>{const t=e.target,g=currentGroup();if(t.id==='idsEntitySearch')renderEntityChoices();else if(g&&t.dataset.idsField==='revitParameter')draftRevit(g,t.value);else if(g&&t.dataset.idsEntityRevit)draftRevit(g,t.value,t.dataset.idsEntityRevit);};
  $('idsDetail').onchange=e=>{
   const t=e.target,g=currentGroup();if(!g)return;
-  if(t.dataset.idsField){patch(g.requirementIds,t.dataset.idsField,t.value||undefined);return;}
+  if(t.dataset.idsField){patch(g.requirementIds,t.dataset.idsField,t.dataset.idsField==='revitParameter'?t.value:t.value||undefined);return;}
   if(t.dataset.idsReview!==undefined){const r=g.reviewGroups[Number(t.dataset.idsReview)];patch(r.requirementIds,t.dataset.field,!!t.checked);return;}
   if(t.dataset.idsEntity){const es=new Set(g.entities);t.checked?es.add(t.dataset.idsEntity):es.delete(t.dataset.idsEntity);for(const id of g.requirementIds)(decisions[id]??={}).acknowledgeScope=false;patch(g.requirementIds,'entities',[...es]);return;}
   if(t.dataset.idsEntityRevit){for(const id of g.requirementIds){const d=decisions[id]??={},v={...d.revitByEntity};if(t.value) v[t.dataset.idsEntityRevit]=t.value;else delete v[t.dataset.idsEntityRevit];d.revitByEntity=v;}rebuild();render();}

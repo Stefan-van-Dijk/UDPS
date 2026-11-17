@@ -1,9 +1,9 @@
-import {availableEntities} from './mapping.js?v=1.11.1';
-import {librarySource,projectLibrary} from './libraries.js?v=1.11.1';
-import {groupSources} from './view.js?v=1.11.1';
-import {IFC,ILS,safeUri,validateCatalog,diffCatalog,fetchList} from './sources.js?v=1.11.1';
-import {httpsUri} from './bsdd.js?v=1.11.1';
-import {initStore,sourceState,loadRegistry,enableSource,disableSource,proposedUpdate,applyUpdate,importLibrary} from './source-store.js?v=1.11.1';
+import {availableEntities} from './mapping.js?v=1.11.2';
+import {librarySource,projectLibrary} from './libraries.js?v=1.11.2';
+import {groupSources} from './view.js?v=1.11.2';
+import {IFC,ILS,safeUri,validateCatalog,diffCatalog,fetchList} from './sources.js?v=1.11.2';
+import {httpsUri} from './bsdd.js?v=1.11.2';
+import {initStore,sourceState,loadRegistry,enableSource,disableSource,proposedUpdate,applyUpdate,importLibrary} from './source-store.js?v=1.11.2';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let catalog={schema:1,ifc:{uri:IFC,items:[]},ils:{uri:ILS,items:[]}},pending=null,api;
 export const getCatalog=()=>catalog;
