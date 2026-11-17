@@ -1,0 +1,92 @@
+{
+  "engine": {
+    "package": "xmllint-wasm",
+    "version": "5.3.0",
+    "libxml": "2.13.8",
+    "license": "MIT",
+    "repository": "https://github.com/noppa/xmllint-wasm/tree/v5.3.0",
+    "npmIntegrity": "sha512-sEgRXdf2t13eYCFCURmCE6h2hwleEOIS9VL/jOh9JJJnez2YXIooi2Ghm05/JZEPXyPawN8sMASPVZlmh8Sd6A==",
+    "filesUnchanged": true,
+    "note": "xmllint-node.js is renamed to .cjs to preserve its CommonJS type; bytes are unchanged."
+  },
+  "idsSchema": {
+    "version": "1.0.0",
+    "commit": "870f9c4e6e8f414e737b4d84ca1aa9b46fc6c8f3",
+    "source": "https://github.com/buildingSMART/IDS/blob/870f9c4e6e8f414e737b4d84ca1aa9b46fc6c8f3/Schema/ids.xsd",
+    "license": "CC-BY-ND-4.0",
+    "filesUnchanged": true
+  },
+  "supportSchemas": {
+    "repository": "https://github.com/buildingSMART/IDS-Audit-tool",
+    "commit": "fdfc562f62c87dc8dce47a296b882e986f8e4443",
+    "directory": "ids-lib/Resources/XsdSchemas",
+    "filesUnchanged": true,
+    "note": "XMLSchema.xsd is the unchanged xsdschema.xsd from the official audit library, carrying its W3C/Microsoft license notices; xml.xsd is unchanged. The runtime supplies an empty XMLSchema-instance namespace declaration; libxml2 validates xsi attributes as built-ins. All imports resolve from the preloaded virtual FS with --nonet."
+  },
+  "scope": {
+    "xsd": true,
+    "fullBuildingSmartSemanticAudit": false,
+    "ifcModelValidation": false
+  },
+  "files": [
+    {
+      "path": "COPYING-xmllint.txt",
+      "bytes": 1178,
+      "sha256": "74f6fb26dabad238799d4c3bf65c26bbb1c82b7cbaefe6e9443cd7d091947cc9"
+    },
+    {
+      "path": "LICENSE-IDS.txt",
+      "bytes": 287,
+      "sha256": "e0af6597dc57ac8e0bc46ace941da3ee5a746b0ad43b89a2e83514e7fce28190"
+    },
+    {
+      "path": "LICENSE-audit-support.txt",
+      "bytes": 1084,
+      "sha256": "9066ba021f387b0da16c7c5b463644b365e2858c09e21edf406aaee87a6270fa"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2464,
+      "sha256": "60a29afc3966c1d035e96bff72dc04a8f1cbd9334688ac0cc4bbd874fc3512c4"
+    },
+    {
+      "path": "schemas/XMLSchema.xsd",
+      "bytes": 62820,
+      "sha256": "06095bd2a5f7cb881824da508d696ef0656cbd1080d2c8701bd015a27e67ca3b"
+    },
+    {
+      "path": "schemas/ids.xsd",
+      "bytes": 13180,
+      "sha256": "01d24814a8583d06433c736724f6178a5ff4d2f7c48e00758db581b70126e601"
+    },
+    {
+      "path": "schemas/xml.xsd",
+      "bytes": 1365,
+      "sha256": "a95eb5c39d8c370bce24f285f816c79576f3254c9bb038382a031d1f3e6ac071"
+    },
+    {
+      "path": "xmllint-browser.mjs",
+      "bytes": 28042,
+      "sha256": "5f5a2c17be12d398c640f3b494e7ded8cd8c9b0175d2c65e6f197a28b77fd01e"
+    },
+    {
+      "path": "xmllint-node.cjs",
+      "bytes": 30751,
+      "sha256": "135ef53a1f3be23e850ab262e39c15732c4b19df5538e6e15891aa64c7bc0f30"
+    },
+    {
+      "path": "xmllint.wasm",
+      "bytes": 778732,
+      "sha256": "4e3cc21a67e8dd40ccb59822e4193fd1923b4cda08b40fe8ff8973de5eed9515"
+    }
+  ],
+  "developmentReference": {
+    "package": "ids-tool.CommandLine",
+    "version": "1.0.124",
+    "sourceCommit": "fdfc562f62c87dc8dce47a296b882e986f8e4443",
+    "nugetSha512Base64": "O0puBowyRCAQhvWtMzu6FnIoCxt9td7w7oVKZrcBApXQV17kf+bbIJm9H/8kekWieo4b5rfM15GHF0fWGbjuvQ==",
+    "shippedInBrowser": false,
+    "requires": ".NET 8 runtime or SDK",
+    "runner": "scripts/ids-audit-reference.py"
+  }
+}

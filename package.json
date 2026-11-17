@@ -1,15 +1,16 @@
 {
   "name": "udps-generator",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "check": "node --check web/app.js && node --check web/core.js && node --check web/excel.js && node --check web/sources.js && node --check web/sources-ui.js && node --check web/mapping.js && node --check web/mapping-ui.js && node --check web/bsdd.js && node --check web/source-store.js && node --check web/view.js && node --check web/libraries.js && node --check web/property-loader.js && node --check web/products.js && node --check web/uniform.js && node --check web/uniform-ui.js && node --check web/linked-data.js && node --check web/ids.js && node --check web/ids-ui.js && node --check web/ids-document.js",
+    "check": "node --check web/app.js && node --check web/core.js && node --check web/excel.js && node --check web/sources.js && node --check web/sources-ui.js && node --check web/mapping.js && node --check web/mapping-ui.js && node --check web/bsdd.js && node --check web/source-store.js && node --check web/view.js && node --check web/libraries.js && node --check web/property-loader.js && node --check web/products.js && node --check web/uniform.js && node --check web/uniform-ui.js && node --check web/linked-data.js && node --check web/ids.js && node --check web/ids-ui.js && node --check web/ids-document.js && node --check web/ids-workflow.js && node --check web/ids-revisions.js && node --check web/ids-loader.js && node --check web/ids-worker.js && node --check web/ids-audit.js && node --check web/project-storage.js",
     "start": "python3 -m http.server 8080 --directory web",
     "version:app": "node scripts/version.mjs"
   },
   "devDependencies": {
-    "@xmldom/xmldom": "0.9.12"
+    "@xmldom/xmldom": "0.9.12",
+    "fake-indexeddb": "6.2.8"
   }
 }

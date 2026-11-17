@@ -6,13 +6,13 @@ import {generate,validate} from '../web/core.js';
 class Element {
  constructor(){this.value='';this.hidden=false;this.disabled=false;this.textContent='';this.classList={toggle(){}};}
  set innerHTML(value){this.html=value;} get innerHTML(){return this.html||'';}
- addEventListener(){} querySelectorAll(){return [];} showModal(){} close(){}
+ addEventListener(){} querySelectorAll(){return [];} showModal(){this.open=true;} close(){this.open=false;}
 }
 let sequence=0;
-async function app(t,project){
+async function app(t,project,storageValues={}){
  const saved=Object.fromEntries(['document','window','fetch','localStorage','navigator'].map(k=>[k,Object.getOwnPropertyDescriptor(globalThis,k)]));
  const elements=Object.fromEntries([...fs.readFileSync(new URL('../web/index.html',import.meta.url),'utf8').matchAll(/id="([^"]+)"/g)].map(m=>[m[1],new Element()]));
- const writes=[];const storage=new Map([['udps-project-v1',JSON.stringify(project)]]);
+ const writes=[];const storage=new Map([['udps-project-v1',JSON.stringify(project)],...Object.entries(storageValues)]);
  Object.defineProperty(globalThis,'navigator',{configurable:true,value:{clipboard:{writeText:async text=>writes.push(text)}}});
  globalThis.document={getElementById:id=>{assert(elements[id],id);return elements[id];},addEventListener(){},querySelectorAll(){return [];}};
  globalThis.window={};
@@ -21,7 +21,7 @@ async function app(t,project){
  t.after(()=>{clearTimeout(globalThis.window.toastTimer);for(const [key,descriptor] of Object.entries(saved)){if(descriptor)Object.defineProperty(globalThis,key,descriptor);else delete globalThis[key];}});
  await import('../web/app.js?export-test='+sequence++);
  await new Promise(resolve=>setImmediate(resolve));
- return {elements,writes};
+ return {elements,writes,storage};
 }
 const project=rows=>validate({headers:['Y/N','Revit_parameter','IFC_parameter','Export_tabblad','Data_type','IfcDoor','Mapping_pending'],rows});
 const row=extra=>({'Y/N':'x',Revit_parameter:'QA_FireRating',IFC_parameter:'FireRating',Export_tabblad:'QA_Set',Data_type:'Text',IfcDoor:'x',...extra});
@@ -40,4 +40,17 @@ test('Valid export copies the current generated text and keeps both actions avai
  const data=project([row()]);const {elements:e,writes}=await app(t,data);
  assert.equal(e.download.disabled,false);assert.equal(e.copy.disabled,false);
  await e.copy.onclick();assert.deepEqual(writes,[generate({...data,exportOrder:'propertyset'}).text]);
+});
+
+test('An uncertain saved project requires recovery before a new project can replace it',async t=>{
+ const data=project([row()]),headKey='udps-project-v1:storage-head-v1';
+ const {elements:e,storage}=await app(t,data,{[headKey]:JSON.stringify({schema:1,revision:20,backend:'indexeddb'})});
+ assert.equal(e.storageRecoveryDialog.open,true);
+ assert.match(e.storageRecoveryMessage.textContent,/opgeslagen|toestand|bereikbaar/i);
+ assert.equal(storage.get('udps-project-v1'),JSON.stringify(data),'Legacy data must remain available');
+ assert.equal(storage.has('udps-project-v1:storage-fallback-v1'),false,'Opening a recovery screen must not persist the example');
+ e.storageFresh.onclick();await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(e.storageRecoveryDialog.open,false);assert.equal(e.count.textContent,'0 van 0 parameters');
+ assert.equal(JSON.parse(storage.get('udps-project-v1:storage-fallback-v1')).project.source,'Nieuw UDPS-project');
+ assert.equal(storage.get('udps-project-v1'),JSON.stringify(data));
 });

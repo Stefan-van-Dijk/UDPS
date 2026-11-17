@@ -87,36 +87,38 @@ test('IDS planning atomically rejects names with boundary whitespace, including 
  }
 });
 
-// Controlled DOM adapter exercises actual handlers; it is not a native browser/parser test.
+// Controlled DOM adapter exercises legacy API handlers, not native browser/parser behavior.
 function ui(t,read=async()=>document()){
  const before=globalThis.document,ids=[...readFileSync(new URL('../web/index.html',import.meta.url),'utf8').matchAll(/\bid="([^"]+)"/g)].map(x=>x[1]);
- const elements=Object.fromEntries(ids.map(id=>[id,{id,value:'',textContent:'',innerHTML:'',disabled:false,open:false,addEventListener(){},showModal(){this.open=true;},close(){this.open=false;},click(){}}]));
+ ids.push('idsEntityChoices','idsEntitySearch');
+ const elements=Object.fromEntries(ids.map(id=>[id,{id,value:'',textContent:'',innerHTML:'',disabled:false,hidden:false,open:false,classList:{toggle(){}},addEventListener(){},showModal(){this.open=true;},close(){this.open=false;},click(){}}]));
  globalThis.document={getElementById:id=>{assert(elements[id],id);return elements[id];}};t.after(()=>{globalThis.document=before;});
  let data=empty(),changes=0;const notices=[];
- initIdsUI({data:()=>data,catalog:()=>catalog,changed(){changes++;},notice:s=>notices.push(s)},{readIds:read,applyIdsImport});
+ initIdsUI({data:()=>data,catalog:()=>catalog,changed(){changes++;},notice:s=>notices.push(s)},{readIds:read,applyIdsImport,auditIdsDocument:async()=>({status:'valid',issues:[],complete:false})});
  return {e:elements,get data(){return data;},set data(value){data=value;},get changes(){return changes;},notices};
 }
-test('IDS handler previews partial input, selects supported rows and preserves source after save/reopen',async t=>{
+test('IDS handler previews partial input, requires mutation review and preserves source after save/reopen',async t=>{
  const s=ui(t,async()=>document([requirement(),requirement({id:'spec:0/requirement:1',eligible:false,cardinality:'optional',reasons:['Optionele property'],xml:'<property/>'})]));
  s.e.importIds.onclick();assert.equal(s.e.idsDialog.open,true);assert.equal(s.e.idsAdd.disabled,true);
  await s.e.idsFile.onchange({target:{files:[{name:'test.ids',size:100,text:async()=>'<ids/>'}],value:'test.ids'}});
- assert.match(s.e.idsSummary.textContent,/gedeeltelijke import/);assert.match(s.e.idsRequirements.innerHTML,/Optionele property/);
- s.e.idsSelectAll.onclick();assert.match(s.e.idsSummary.textContent,/1 geselecteerd/);s.e.idsAdd.onclick();
+ assert.match(s.e.idsSummary.textContent,/2 eisen · 1 parameterdefinities · 1 bruikbare eisen/);assert.match(s.e.idsDetail.innerHTML,/Optionele property|optionele eigenschap/);
+ s.e.idsSelectAll.onclick();assert.match(s.e.idsSummary.textContent,/1 geselecteerd/);assert.equal(s.e.idsAdd.disabled,true);
+ s.e.idsReview.onclick();assert.equal(s.e.idsAdd.disabled,false);s.e.idsAdd.onclick();
  assert.equal(s.data.rows.length,1);assert.equal(s.changes,1);assert.equal(s.e.idsDialog.open,false);
  s.data=validate(JSON.parse(JSON.stringify(s.data)));s.e.importIds.onclick();assert.match(s.e.idsSaved.innerHTML,/example.ids/);
  s.e.idsSaved.value=s.data.idsImports[0].id;s.e.idsSaved.onchange();assert.equal(s.e.idsOpenSaved.disabled,false);await s.e.idsOpenSaved.onclick();assert.match(s.e.idsSummary.textContent,/specificaties/);
 });
-test('IDS handler rejects a late parse after closing or replacing the project',async t=>{
+test('IDS handler rejects a late legacy parse after closing the dialog',async t=>{
  let resolve;const pending=new Promise(r=>resolve=r),s=ui(t,()=>pending);
  s.e.importIds.onclick();const load=s.e.idsFile.onchange({target:{files:[{name:'test.ids',size:100,text:async()=>'<ids/>'}],value:'test.ids'}});
  await new Promise(r=>setImmediate(r));s.e.closeIds.onclick();s.e.importIds.onclick();resolve(document());await load;
  assert.equal(s.e.idsAdd.disabled,true);assert.equal(s.e.idsRequirements.innerHTML,'');assert.equal(s.data.rows.length,0);
 });
-test('IDS handler clears old selection when a replacement source fails',async t=>{
+test('IDS handler clears old selection and mutation review when a replacement source fails',async t=>{
  let calls=0;const s=ui(t,async()=>{if(calls++)throw Error('Malformed XML');return document();});
  s.e.importIds.onclick();const event=()=>({target:{files:[{name:'test.ids',size:100,text:async()=>'<ids/>'}],value:'test.ids'}});
- await s.e.idsFile.onchange(event());s.e.idsSelectAll.onclick();assert.equal(s.e.idsAdd.disabled,false);
- await s.e.idsFile.onchange(event());assert.equal(s.e.idsAdd.disabled,true);assert.equal(s.e.idsRequirements.innerHTML,'');assert.match(s.e.idsError.textContent,/Malformed/);assert.equal(s.data.rows.length,0);
+ await s.e.idsFile.onchange(event());s.e.idsSelectAll.onclick();s.e.idsReview.onclick();assert.equal(s.e.idsAdd.disabled,false);
+ await s.e.idsFile.onchange(event());assert.equal(s.e.idsAdd.disabled,true);assert.equal(s.e.idsRequirements.innerHTML,'');assert.equal(s.e.idsChanges.innerHTML,'');assert.match(s.e.idsError.textContent,/Malformed/);assert.equal(s.data.rows.length,0);
 });
 
 const enumeration=(name,names)=>'<'+name+'><xs:restriction base="xs:string">'+names.map(v=>'<xs:enumeration value="'+v+'"/>').join('')+'</xs:restriction></'+name+'>';
