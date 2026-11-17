@@ -48,6 +48,8 @@ Propertyset- en propertynamen worden niet automatisch getrimd of anders geschrev
 
 ## Wijzigingsoverzicht, toepassen en herstel
 
+Bij `IFCMASSDENSITYMEASURE` stelt UDPS het uitvoerdatatype `MassDensity` voor. De gekozen Revit-parametertitel en dit datatype worden samen in de TXT-regel opgenomen. Autodesk gebruikt dit datatype om een massadichtheidswaarde aan een IFC-property te koppelen. [Revit IFC-exporter](https://github.com/Autodesk/revit-ifc/blob/IFC_v25.4.40/Source/Revit.IFC.Export/Exporter/PropertySet/PropertySetEntryMap.cs#L629-L634)
+
 Preview en toepassing gebruiken dezelfde geïndexeerde planning van concrete IFC-entiteit/propertyset/property-combinaties. Herhaalde eisen kunnen daardoor dezelfde exportkoppeling gebruiken en alle herkomstverwijzingen behouden. Het overzicht toont apart hoeveel nieuwe koppelingen ontstaan, bestaande koppelingen worden hergebruikt, conflicten bestaan en selecties niet bruikbaar zijn. Het vermeldt ook welke bestaande lege pending koppelingen worden ingevuld.
 
 Een datatypeconflict, dubbele actieve uitvoeridentiteit, verschillende onverenigbare Revit-keuzes of overschreden limiet wijst de gehele toevoeging af. Het project blijft ongewijzigd. Vlak vóór toepassen wordt de planning opnieuw vergeleken met het getoonde overzicht; als het project veranderde, moet het vernieuwde overzicht opnieuw worden bekeken.

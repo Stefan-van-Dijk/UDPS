@@ -1,4 +1,4 @@
-import {ifcReferences} from './bsdd.js?v=1.11.3';
+import {ifcReferences} from './bsdd.js?v=1.11.4';
 // A failed class must never discard successfully loaded classes.
 export async function collectProperties(selections,load,{isCurrent=()=>true,onProgress=()=>{}}={}){
  const entries=[],reports=[],seen=new Set();

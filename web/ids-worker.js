@@ -1,6 +1,6 @@
 // The DOM parser is intentionally loaded only inside this worker.
-import {DOMParser,XMLSerializer} from './vendor/ids-parser/xmldom.js?v=1.11.3';
-import {decodeIdsBytes,readIds,IDS_MAX_BYTES} from './ids-document.js?v=1.11.3';
+import {DOMParser,XMLSerializer} from './vendor/ids-parser/xmldom.js?v=1.11.4';
+import {decodeIdsBytes,readIds,IDS_MAX_BYTES} from './ids-document.js?v=1.11.4';
 
 self.onmessage=async event=>{
  const request=event.data;

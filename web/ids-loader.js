@@ -1,4 +1,4 @@
-import {IDS_MAX_BYTES} from './ids-document.js?v=1.11.3';
+import {IDS_MAX_BYTES} from './ids-document.js?v=1.11.4';
 const messages={reading:'IDS-bestand lezen…',decoding:'Tekencodering controleren…',parsing:'IDS-eisen en voorwaarden lezen…'};
 const abortError=()=>new DOMException('IDS-inladen geannuleerd.','AbortError');
 const checkFile=file=>{
@@ -19,7 +19,7 @@ function processIds(request,{signal,onProgress,timeoutMs=60000}={}){
   const cancel=()=>finish(abortError());
   signal?.addEventListener('abort',cancel,{once:true});
   try{
-   worker=new Worker(new URL('./ids-worker.js?v=1.11.3',import.meta.url),{type:'module',name:'udps-ids-reader'});
+   worker=new Worker(new URL('./ids-worker.js?v=1.11.4',import.meta.url),{type:'module',name:'udps-ids-reader'});
    // A cancelled request must never publish a late result, even during startup.
    if(signal?.aborted){cancel();return;}
    worker.onmessage=event=>{

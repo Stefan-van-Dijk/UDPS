@@ -4,7 +4,9 @@ Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en U
 
 Actuele IDS-bediening staat hieronder en in [IDS-import](docs/ids-import.md). De eerdere versiehoofdstukken beschrijven de ontwikkeling en het toen uitgevoerde controlebewijs; ze zijn geen actuele takenlijst.
 
-## 1.11.3 — IDS-parameters koppelen en wijzigingen controleren
+## 1.11.4 — IDS-parameters koppelen en wijzigingen controleren
+
+UDPS vertaalt IDS-datatype `IFCMASSDENSITYMEASURE` naar `MassDensity` in het TXT-bestand voor eigen IFC-propertysets. [Autodesk Revit IFC](https://github.com/Autodesk/revit-ifc/blob/master/Install/Program%20Files%20to%20Install/DefaultUserDefinedParameterSets.txt)
 
 **IDS inladen** opent een werkoverzicht met unieke parameterdefinities en alle onderliggende eisen. Koppel een standaard Revit-parameter direct in de tabel of stel een uitzondering per IFC-entiteit in. Bestaande ingevulde namen blijven behouden. Een bestaande lege pending koppeling met één entiteit kan expliciet worden ingevuld; andere bestaande koppelingen blijven te bewerken bij de exportregels.
 
