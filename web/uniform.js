@@ -1,4 +1,4 @@
-import {entities,types} from './core.js?v=1.11.0';
+import {entities,types} from './core.js?v=1.11.1';
 
 export const parseJson=(value,fallback)=>{try{return JSON.parse(value||'null')??fallback;}catch{return fallback;}};
 export const propertyKey=(row,index)=>row.Uniform_id||row.Source_uri||'row:'+index;

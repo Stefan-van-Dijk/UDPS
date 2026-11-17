@@ -236,3 +236,13 @@ test('Source comparison surfaces malformed provenance and identifies actual affe
  await s.load(currentXml,'Current.ids');s.e.idsRevision.value=previous.id;s.e.idsRevision.onchange();await s.e.idsCompare.onclick();
  assert.match(s.e.idsComparison.innerHTML,/Regel 1: IDS-herkomst is niet leesbaar/);assert.match(s.e.idsComparison.innerHTML,/bestaande regels 3/);assert.doesNotMatch(s.e.idsComparison.innerHTML,/1 bestaande regels/);assert.equal(s.data.rows.length,3);assert.equal(s.data.rows[0].IDS_requirements,'not-json');
 });
+
+test('The delegated application-group click permits the native checkbox default action',async t=>{
+ const s=ui(t);s.e.importIds.onclick();await s.load(xml({appExtra:conditional}));
+ s.e.idsScopes.open=true;s.e.idsScopes.events.toggle();
+ const scope=/data-ids-scope="([^"]+)"/.exec(s.e.idsScopesBody.innerHTML)[1];
+ const target={type:'checkbox',checked:true,dataset:{idsScope:scope}};
+ // Returning false from a DOM0 click handler cancels/reverts checkbox activation.
+ assert.notEqual(s.e.idsScopesBody.onclick({target}),false);
+ s.e.idsScopesBody.onchange({target});assert.match(s.e.idsSummary.textContent,/1 bruikbare eisen/);
+});

@@ -1,9 +1,9 @@
-import {readIds,applyIdsImport,saveIdsSource,IDS_MAX_BYTES} from './ids.js?v=1.11.0';
-import {buildIdsWorkspace,preflightIdsImport} from './ids-workflow.js?v=1.11.0';
-import {loadIdsFile,loadIdsText} from './ids-loader.js?v=1.11.0';
-import {compareIdsRevisions,idsRevisionCandidates} from './ids-revisions.js?v=1.11.0';
-import {auditIdsDocument} from './ids-audit.js?v=1.11.0';
-import {types} from './core.js?v=1.11.0';
+import {readIds,applyIdsImport,saveIdsSource,IDS_MAX_BYTES} from './ids.js?v=1.11.1';
+import {buildIdsWorkspace,preflightIdsImport} from './ids-workflow.js?v=1.11.1';
+import {loadIdsFile,loadIdsText} from './ids-loader.js?v=1.11.1';
+import {compareIdsRevisions,idsRevisionCandidates} from './ids-revisions.js?v=1.11.1';
+import {auditIdsDocument} from './ids-audit.js?v=1.11.1';
+import {types} from './core.js?v=1.11.1';
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const labels={entity:'IFC-entiteit',property:'Eigenschap',attribute:'IFC-attribuut',classification:'Classificatie',material:'Materiaal',partOf:'Onderdeelrelatie',name:'Naam',predefinedType:'Predefined type',propertySet:'Propertyset',baseName:'Eigenschapsnaam',value:'Waarde',system:'Classificatiesysteem'};
@@ -150,7 +150,7 @@ export function initIdsUI(api,injected={}){
   if(t.dataset.idsEntityRevit){for(const id of g.requirementIds){const d=decisions[id]??={},v={...d.revitByEntity};if(t.value) v[t.dataset.idsEntityRevit]=t.value;else delete v[t.dataset.idsEntityRevit];d.revitByEntity=v;}rebuild();render();}
  };
  function showSource(e){const id=e.target.dataset.idsSource;if(!id)return;const r=workspace.proposals.find(r=>r.id===id);$('idsXml').textContent=r?.xml||'';$('idsXmlPanel').open=true;}
- $('idsDetail').onclick=e=>{if(!navigate(e))showSource(e);};$('idsOtherBody').onclick=e=>{if(!navigate(e))showSource(e);};$('idsScopesBody').onclick=navigate;$('idsComparison').onclick=navigate;$('idsChanges').onclick=navigate;
+ $('idsDetail').onclick=e=>{if(!navigate(e))showSource(e);};$('idsOtherBody').onclick=e=>{if(!navigate(e))showSource(e);};$('idsScopesBody').onclick=e=>{navigate(e);};$('idsComparison').onclick=e=>{navigate(e);};$('idsChanges').onclick=e=>{navigate(e);};
  $('idsOther').addEventListener('toggle',()=>{if(workspace)renderOthers();});
  $('idsScopes').addEventListener('toggle',()=>{if(workspace)renderScopes();});
  $('idsScopesBody').onchange=e=>{const s=workspace?.scopeReviewGroups?.find(s=>s.id===e.target.dataset.idsScope);if(s)patch(s.requirementIds,'acknowledgeScope',!!e.target.checked);};

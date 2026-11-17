@@ -1,11 +1,11 @@
-import {groupEntries} from './uniform.js?v=1.11.0';
-import {searchProducts,productFamily,productSelections,classTypeName} from './products.js?v=1.11.0';
-import {collectProperties} from './property-loader.js?v=1.11.0';
-import {groupSources} from './view.js?v=1.11.0';
-import {availableEntities,usages,addMappings} from './mapping.js?v=1.11.0';
-import {entities} from './core.js?v=1.11.0';
-import {initStore,sourceState,loadClasses,loadDetails,loadProducts} from './source-store.js?v=1.11.0';
-import {relationMeaning} from './linked-data.js?v=1.11.0';
+import {groupEntries} from './uniform.js?v=1.11.1';
+import {searchProducts,productFamily,productSelections,classTypeName} from './products.js?v=1.11.1';
+import {collectProperties} from './property-loader.js?v=1.11.1';
+import {groupSources} from './view.js?v=1.11.1';
+import {availableEntities,usages,addMappings} from './mapping.js?v=1.11.1';
+import {entities} from './core.js?v=1.11.1';
+import {initStore,sourceState,loadClasses,loadDetails,loadProducts} from './source-store.js?v=1.11.1';
+import {relationMeaning} from './linked-data.js?v=1.11.1';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function initMappingUI(api,store={initStore,sourceState,loadClasses,loadDetails,loadProducts}){const {initStore,sourceState,loadClasses,loadDetails,loadProducts}=store;let mode='property',selected=new Set(),groups=[],classes=[],entries=[],chosen=new Set(),epoch=0,loadWarnings='',route='product',productIndex=[],productRefresh=false,propertiesLoaded=false,productIndexReady=false,productVersion='',productIndexWarning='';
  function sources(){ $('mappingSources').innerHTML=groups.map(g=>`<label class="mapping-source"><input type="checkbox" data-source-group="${esc(g.key)}" checked><span>${esc(g.name)}</span><select aria-label="Versie ${esc(g.name)}">${g.versions.map(v=>`<option value="${esc(v.uri)}">${esc(v.version||'Standaard')}</option>`).join('')}</select></label>`).join('')||'<p>Voeg eerst bronnen toe bij stap 01.</p>'; }
