@@ -1,10 +1,22 @@
 # UDPS generator
 
-Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.9.0.
+Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.10.0.
 
-Actuele bediening en parameterafspraken staan bij [1.8.0 — Centrale eigenschappen en bSDD-relaties](#180--centrale-eigenschappen-en-bsdd-relaties). De versiehoofdstukken daarvóór beschrijven de ontwikkeling en het toen uitgevoerde controlebewijs; ze zijn geen actuele takenlijst.
+Actuele IDS-bediening staat hieronder en in [IDS-import](docs/ids-import.md). De eerdere versiehoofdstukken beschrijven de ontwikkeling en het toen uitgevoerde controlebewijs; ze zijn geen actuele takenlijst.
 
-## 1.9.0 — Bronklassen verkennen en IDS-eisen inladen
+## 1.10.0 — Algemene IDS-bronimport en bewuste koppelvoorstellen
+
+**IDS inladen** leest de zes IDS-facetten en hun restricties, ook zonder directe UDPS-koppeling. Bekijk en doorzoek alle eisen; bewaar desgewenst alleen de volledige bron. Heropenen vanuit het JSON-project behoudt de oorspronkelijke XML en je koppelkeuzes.
+
+Exacte IFC-entiteiten en eindige entiteitenlijsten leveren parametervoorstellen op. Voor aanvullende toepassingsfilters, waarde-eisen en optionele eigenschappen vraagt de app een bewuste keuze. Namen met patronen, onbekende entiteiten en ontbrekende datatypes vragen een concrete invoer. Andere IFC-routes, zoals materiaal, classificatie, attributen, onderdeelrelaties en quantity sets blijven broninformatie: ze worden niet als gewone properties verzonnen.
+
+UDPS voert deze toepassingsfilters en waarde-eisen niet uit. Bevestigde ruimere koppelingen houden daarom een waarschuwing bij de export. Deze import is geen volledige XSD-audit en controleert geen IFC-model. Expliciete historische en toekomstige formaatverwijzingen blijven alleen leesbaar. [Ondersteuning en grenzen](docs/ids-import.md) beschrijft het onderscheid.
+
+Geautomatiseerde controles gebruiken 334 ongewijzigde officiële IDS-testbestanden plus gerichte regressies voor lezen, keuzes, gegevensbehoud en conflicten. Dit corpus bewijst geen universele IDS- of modelconformiteit. Bestanden worden lokaal verwerkt; er wordt geen schema of URL uit een IDS opgehaald.
+
+Nieuwe koppelingen blijven export blokkeren zolang de Revit-naam ontbreekt. Bestaande Revit-namen blijven behouden en datatypeconflicten wijzen de hele selectie af. Bewaar het project vóór een terugval: versie 1.9.0 bewaart de nieuwe beoordelingskeuzes niet volledig en 1.8.1 bewaart geen IDS-bronnen.
+
+## 1.9.0 — Bronklassen verkennen en eerste IDS-import (historisch)
 
 De productkeuze toont nu de gepubliceerde hiërarchie en uitgaande klasserelaties,
 ook voordat eigenschappen zijn toegevoegd. Open een verwante klasse om haar eigen
