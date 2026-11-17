@@ -19,7 +19,7 @@ const conditional=`<classification>${literal('system','Classification')}${litera
 
 // Controlled DOM adapter; handlers use the real parser, grouping, planner and revision comparator.
 // This proves data/interaction boundaries, not native layout, file-picker or accessibility behavior.
-function ui(t,services={}){
+function ui(t,services={},persist=()=>Promise.resolve('indexeddb')){
  const previous=globalThis.document;
  const ids=[...readFileSync(new URL('../web/index.html',import.meta.url),'utf8').matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
  ids.push('idsEntityChoices','idsEntitySearch');
@@ -27,7 +27,7 @@ function ui(t,services={}){
  globalThis.document={getElementById(id){assert(elements[id],`Missing DOM adapter for ${id}`);return elements[id];}};
  t.after(()=>{globalThis.document=previous;});
  let data=empty(),changes=0;const notices=[],calls={saved:[],applied:[]};
- initIdsUI({data:()=>data,catalog:()=>catalog,changed(){changes++;},notice:m=>notices.push(m)},{readIds:parse,auditIdsDocument:async()=>({status:'valid',issues:[],complete:false}),saveIdsSource(...args){calls.saved.push(structuredClone(args.slice(1)));return saveIdsSource(...args);},applyIdsImport(...args){calls.applied.push(structuredClone(args.slice(2)));return applyIdsImport(...args);},...services});
+ initIdsUI({data:()=>data,catalog:()=>catalog,changed(){changes++;return persist();},notice:m=>notices.push(m)},{readIds:parse,auditIdsDocument:async()=>({status:'valid',issues:[],complete:false}),saveIdsSource(...args){calls.saved.push(structuredClone(args.slice(1)));return saveIdsSource(...args);},applyIdsImport(...args){calls.applied.push(structuredClone(args.slice(2)));return applyIdsImport(...args);},...services});
  const load=async(text,name='ui-fixture.ids')=>{await elements.idsFile.onchange({target:{files:[{name,size:Buffer.byteLength(text),text:async()=>text}],value:name}});};
  return {e:elements,load,calls,notices,get data(){return data;},set data(next){data=next;},get changes(){return changes;}};
 }
@@ -88,9 +88,37 @@ test('Source-only save retains non-property requirements with a relevant route e
  assert.equal(s.e.idsOtherBody.innerHTML,'','Other-route details are lazy until opened');openOthers(s);
  assert.match(s.e.idsOtherBody.innerHTML,/Classificatie/);assert.match(s.e.idsOtherBody.innerHTML,/Materiaal/);assert.match(s.e.idsOtherBody.innerHTML,/andere IFC-route/);
  assert.doesNotMatch(s.e.idsOtherBody.innerHTML,/eigenschapsnaam.*propertysetnaam|datatype ontbreekt/);
- s.e.idsSaveSource.onclick();assert.equal(s.data.rows.length,0);assert.equal(s.data.idsImports[0].xml,source);assert.deepEqual(s.data.idsImports[0].selectedRequirementIds,[]);
+ await s.e.idsSaveSource.onclick();assert.equal(s.data.rows.length,0);assert.equal(s.data.idsImports[0].xml,source);assert.deepEqual(s.data.idsImports[0].selectedRequirementIds,[]);
  assert.equal(s.changes,1);assert.equal(s.e.idsDialog.open,true);assert.match(s.e.idsError.textContent,/geen koppelingen toegevoegd/);
  });
+
+test('Saving source choices waits for storage and keeps an exportable draft when both backends fail',async t=>{
+ let finish;
+ const pending=new Promise(resolve=>{finish=resolve;}),s=ui(t,{},()=>pending),source=xml();
+ s.e.importIds.onclick();await s.load(source);
+ edit(s,'revitParameter','QA_KeepForBackup');
+ const saving=s.e.idsSaveSource.onclick();
+ assert.match(s.e.idsError.textContent,/bewaren…/);
+ assert.equal(s.data.idsImports[0].xml,source);
+ finish('none');await saving;
+ assert.match(s.e.idsError.textContent,/Automatisch bewaren mislukt.*JSON/);
+ assert.equal(s.data.idsImports[0].decisions['spec:0/requirement:0'].revitParameter,'QA_KeepForBackup');
+ assert.equal(s.data.rows.length,0);
+});
+
+test('A delayed source save cannot acknowledge choices edited after the saved snapshot',async t=>{
+ let finish;
+ const pending=new Promise(resolve=>{finish=resolve;}),s=ui(t,{},()=>pending);
+ s.e.importIds.onclick();await s.load(xml());
+ edit(s,'revitParameter','QA_First');
+ const saving=s.e.idsSaveSource.onclick();
+ edit(s,'revitParameter','QA_Later');
+ finish('indexeddb');await saving;
+ assert.match(s.e.idsError.textContent,/Keuzes gewijzigd.*opnieuw/);
+ assert.equal(s.data.idsImports[0].decisions['spec:0/requirement:0'].revitParameter,'QA_First');
+ s.e.idsSelectAll.onclick();s.e.idsReview.onclick();
+ assert.match(s.e.idsChanges.innerHTML,/QA_Later/);
+});
 
 test('Filtering narrows select-all and excludes unshown definitions',async t=>{
  const s=ui(t);s.e.importIds.onclick();await s.load(xml({requirements:property('Alpha')+property('Beta')}));
@@ -254,6 +282,24 @@ test('Revit input and entity exceptions reach preflight immediately without a bl
  s.e.idsDetail.oninput({target:{dataset:{idsEntityRevit:'IfcDoor'},value:'QA_LiveDoor'}});
  s.e.idsSelectAll.onclick();s.e.idsReview.onclick();assert.match(s.e.idsChanges.innerHTML,/QA_LiveDoor/);assert.match(s.e.idsChanges.innerHTML,/QA_Live/);
  s.e.idsAdd.onclick();assert.equal(s.data.rows.find(r=>r.IfcDoor==='x').Revit_parameter,'QA_LiveDoor');assert.equal(s.data.rows.find(r=>r.IfcWall==='x').Revit_parameter,'QA_Live');
+});
+
+test('Leaving a Revit field keeps the list and detail controls attached for the pending click',async t=>{
+ const source=documentXml(specification({identifier:'wall'})+specification({identifier:'door',entity:'IFCDOOR'})),s=ui(t);
+ s.e.importIds.onclick();await s.load(source);
+ const group=/data-ids-revit="([^"]+)"/.exec(s.e.idsRequirements.innerHTML)[1];
+ let replacements=0;
+ for(const panel of [s.e.idsRequirements,s.e.idsDetail]){
+  let markup=panel.innerHTML;
+  Object.defineProperty(panel,'innerHTML',{get:()=>markup,set(value){replacements++;markup=value;}});
+ }
+ s.e.idsRequirements.onchange({target:{dataset:{idsRevit:group},value:'QA_Table'}});
+ edit(s,'revitParameter','QA_Detail');
+ s.e.idsDetail.onchange({target:{dataset:{idsEntityRevit:'IfcDoor'},value:'QA_Override'}});
+ assert.equal(replacements,0);
+ complete(s);
+ assert.equal(s.data.rows.find(r=>r.IfcWall==='x').Revit_parameter,'QA_Detail');
+ assert.equal(s.data.rows.find(r=>r.IfcDoor==='x').Revit_parameter,'QA_Override');
 });
 
 test('Manual IFC choices exclude predefined-type pseudo classes offered by the catalog',async t=>{

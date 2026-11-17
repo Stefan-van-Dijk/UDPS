@@ -4,7 +4,7 @@ Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en U
 
 Actuele IDS-bediening staat hieronder en in [IDS-import](docs/ids-import.md). De eerdere versiehoofdstukken beschrijven de ontwikkeling en het toen uitgevoerde controlebewijs; ze zijn geen actuele takenlijst.
 
-## 1.11.2 — IDS-parameters koppelen en wijzigingen controleren
+## 1.11.3 — IDS-parameters koppelen en wijzigingen controleren
 
 **IDS inladen** opent een werkoverzicht met unieke parameterdefinities en alle onderliggende eisen. Koppel een standaard Revit-parameter direct in de tabel of stel een uitzondering per IFC-entiteit in. Bestaande ingevulde namen blijven behouden. Een bestaande lege pending koppeling met één entiteit kan expliciet worden ingevuld; andere bestaande koppelingen blijven te bewerken bij de exportregels.
 
@@ -17,6 +17,8 @@ Een eerder bewaarde bron kan expliciet met een nieuwe versie worden vergeleken. 
 De browser leest IDS in een achtergrondworker en voert een echte lokale **XSD-controle** uit met meegeleverde schema's. XML wordt pas op aanvraag getoond. Ongeldige XSD-invoer blijft leesbaar en bewaarbaar, maar kan niet worden toegevoegd. Onbeschikbare controle blijft expliciet zichtbaar. Dit is geen volledige IDS-inhoudsaudit of IFC-modelcontrole. De ontwikkelcontrole voert daarnaast de officiële, vastgezette buildingSMART-audit uit op positieve en negatieve referentiegevallen.
 
 Projectopslag gebruikt IndexedDB en neemt bestaande localStorage-projecten over. De oude kopie blijft behouden; latere wijzigingen staan in de nieuwe opslag. Bewaar een actuele JSON-backup vóór terugvallen naar een oudere app: oudere versies lezen mogelijk alleen de oude browserkopie en ondersteunen de nieuwe keuzemetadata niet volledig. [IDS-contracten en grenzen](docs/ids-import.md) bevatten de volledige beschrijving.
+
+Na het invullen van een Revit-naam opent de volgende klik meteen het gekozen parameterdetail. Bij bronvergelijking krijgen verschillende expliciete specificatie-ID's elk hun eigen resultaat. De dialoog bevestigt het bewaren van IDS-bron en keuzes pas na de reactie van de browseropslag. Bij een opslagfout zijn de wijzigingen via **Menu → Project bewaren** als JSON te downloaden.
 
 ## 1.10.0 — Algemene IDS-bronimport en bewuste koppelvoorstellen (historisch)
 

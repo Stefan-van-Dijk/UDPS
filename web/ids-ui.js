@@ -1,9 +1,9 @@
-import {readIds,applyIdsImport,saveIdsSource,IDS_MAX_BYTES} from './ids.js?v=1.11.2';
-import {buildIdsWorkspace,preflightIdsImport} from './ids-workflow.js?v=1.11.2';
-import {loadIdsFile,loadIdsText} from './ids-loader.js?v=1.11.2';
-import {compareIdsRevisions,idsRevisionCandidates} from './ids-revisions.js?v=1.11.2';
-import {auditIdsDocument} from './ids-audit.js?v=1.11.2';
-import {types} from './core.js?v=1.11.2';
+import {readIds,applyIdsImport,saveIdsSource,IDS_MAX_BYTES} from './ids.js?v=1.11.3';
+import {buildIdsWorkspace,preflightIdsImport} from './ids-workflow.js?v=1.11.3';
+import {loadIdsFile,loadIdsText} from './ids-loader.js?v=1.11.3';
+import {compareIdsRevisions,idsRevisionCandidates} from './ids-revisions.js?v=1.11.3';
+import {auditIdsDocument} from './ids-audit.js?v=1.11.3';
+import {types} from './core.js?v=1.11.3';
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const labels={entity:'IFC-entiteit',property:'Eigenschap',attribute:'IFC-attribuut',classification:'Classificatie',material:'Materiaal',partOf:'Onderdeelrelatie',name:'Naam',predefinedType:'Predefined type',propertySet:'Propertyset',baseName:'Eigenschapsnaam',value:'Waarde',system:'Classificatiesysteem'};
@@ -21,6 +21,9 @@ export function initIdsUI(api,injected={}){
  const services={readIds,applyIdsImport,saveIdsSource,buildIdsWorkspace,preflightIdsImport,loadIdsFile,loadIdsText,compareIdsRevisions,idsRevisionCandidates,auditIdsDocument,...injected};
  let preview=null,project=null,decisions={},workspace=null,selected=new Set(),focusId='',step=1,page=0,ticket=0,compareTicket=0,controller=null,report=null,audit=null,comparison=null,lastImport=null,detailOwner='',scopePage=0,otherPage=0,reviewPage=0,reqPage=0,comparisonPage=0,changePage=0;
  const pageSize=35;
+ let sourceSaveTicket=0,sourceSaveFeedback='';
+ let pointerPressed=false,pendingRevitRender=null;
+ const dialog=$('idsDialog');
  const currentGroup=()=>workspace?.groups.find(g=>g.requirementIds.includes(focusId))||workspace?.groups[0];
  const validProject=()=>project===api.data();
  function savedSources(){
@@ -29,6 +32,7 @@ export function initIdsUI(api,injected={}){
   $('idsSaved').disabled=!saved.length;$('idsOpenSaved').disabled=true;
  }
  function reset(){
+  pendingRevitRender=null;sourceSaveFeedback='';
   preview=null;project=null;decisions={};workspace=null;selected.clear();focusId='';page=0;report=null;audit=null;comparison=null;compareTicket++;detailOwner='';scopePage=otherPage=reviewPage=reqPage=comparisonPage=changePage=0;
   for(const id of ['idsRequirements','idsDetail','idsChanges','idsComparison','idsAudit','idsXml'])$(id).innerHTML='';
   $('idsSummary').textContent='Kies een IDS-bestand om de benodigde parameters te bekijken.';$('idsError').textContent='';
@@ -94,8 +98,8 @@ export function initIdsUI(api,injected={}){
   const field=(key,label,value)=>`<label>${label}<input data-ids-field="${key}" value="${esc(value||'')}"></label>`;
   const review=pager('review',reviewPage,g.reviewGroups.length,20,'voorwaardengroepen')+g.reviewGroups.slice(reviewPage*20,(reviewPage+1)*20).map((r,offset)=>{const i=reviewPage*20+offset;return `<fieldset><legend>Voorwaarden ${i+1} · ${r.requirementIds.length} eisen</legend><small>${esc(r.label)}</small>${r.conditions.map(f=>'<p>'+esc(labels[f.kind]||f.kind)+': '+esc(valueText(f))+'</p>').join('')}${r.values?'<p>Waarde-eisen blijven afzonderlijk te controleren.</p>':''}${[['scope','acknowledgeScope','scopeAcknowledged','Deze definitie voor de gekozen entiteiten gebruiken; de toepassingsfilters apart controleren.'],['values','acknowledgeValues','valuesAcknowledged','Waarde-eisen apart controleren; UDPS vult of controleert deze waarden niet.'],['optional','includeOptional','optionalIncluded','Deze optionele eigenschap ook voorbereiden.']].filter(([condition])=>r[condition]).map(([,key,checked,label])=>`<label class="ids-check"><input type="checkbox" data-ids-review="${i}" data-field="${key}" ${r[checked]?'checked':''}>${label}</label>`).join('')}</fieldset>`;}).join('');
   $('idsDetail').innerHTML=`<h3>${esc(g.property||'Parameter beoordelen')}</h3><p>${g.requirementIds.length} broneisen · ${g.entities.length} IFC-toepassingen</p><div class="ids-fields">${field('propertySet','Propertyset',g.propertySet)}${field('property','Eigenschapsnaam',g.property)}<label>Datatype<select data-ids-field="dataType"><option value="">Kiezen</option>${types.map(t=>`<option ${g.dataType===t?'selected':''}>${t}</option>`).join('')}</select></label>${field('revitParameter','Standaard Revit-parameter',g.revitParameter)}</div><p class="ids-note">Een standaard geldt voor nieuwe koppelingen. Bestaande ingevulde namen blijven behouden. Leeg betekent later koppelen.</p>${[...new Set([...g.reasons,...g.warnings,...g.conflicts])].map(x=>'<p class="relation-warning">'+esc(x)+'</p>').join('')}
-   ${review}<details><summary>IFC-doelen kiezen en uitzonderingen</summary><p>Een handmatige doelkeuze vraagt ook beoordeling van de toepassing.</p><input id="idsEntitySearch" type="search" aria-label="Zoek IFC-doel" placeholder="Zoek IFC-entiteit"><div id="idsEntityChoices"></div><h4>Revit-uitzonderingen per entiteit</h4>${g.entities.map(e=>`<label>${esc(e)}<input data-ids-entity-revit="${esc(e)}" value="${esc(g.revitByEntity[e]??'')}" placeholder="Standaard gebruiken"></label>`).join('')}</details>
-   <details><summary>Alle onderliggende IDS-eisen (${g.requirementIds.length})</summary>${pager('requirements',reqPage,g.requirements.length,35,'broneisen')}${g.requirements.slice(reqPage*35,(reqPage+1)*35).map(r=>`<section><strong>${esc(r.specificationName)}</strong><small>${esc(r.cardinality)} · ${esc(r.ifcDataType||'Datatype niet opgegeven')}</small>${Object.entries(r.parameters||{}).map(([k,v])=>'<p>'+esc(labels[k]||k)+': '+esc(valueText(v))+'</p>').join('')}<button data-ids-source="${esc(r.id)}">Bron van deze eis bekijken</button></section>`).join('')}</details>`;
+   ${review}<details><summary data-ids-disclosure="targets">IFC-doelen kiezen en uitzonderingen</summary><p>Een handmatige doelkeuze vraagt ook beoordeling van de toepassing.</p><input id="idsEntitySearch" type="search" aria-label="Zoek IFC-doel" placeholder="Zoek IFC-entiteit"><div id="idsEntityChoices"></div><h4>Revit-uitzonderingen per entiteit</h4>${g.entities.map(e=>`<label>${esc(e)}<input data-ids-entity-revit="${esc(e)}" value="${esc(g.revitByEntity[e]??'')}" placeholder="Standaard gebruiken"></label>`).join('')}</details>
+   <details><summary data-ids-disclosure="requirements">Alle onderliggende IDS-eisen (${g.requirementIds.length})</summary>${pager('requirements',reqPage,g.requirements.length,35,'broneisen')}${g.requirements.slice(reqPage*35,(reqPage+1)*35).map(r=>`<section><strong>${esc(r.specificationName)}</strong><small>${esc(r.cardinality)} · ${esc(r.ifcDataType||'Datatype niet opgegeven')}</small>${Object.entries(r.parameters||{}).map(([k,v])=>'<p>'+esc(labels[k]||k)+': '+esc(valueText(v))+'</p>').join('')}<button data-ids-source="${esc(r.id)}">Bron van deze eis bekijken</button></section>`).join('')}</details>`;
   Array.from($('idsDetail').querySelectorAll?.('details')||[]).forEach((d,i)=>{d.open=opened[i]||false;});renderEntityChoices();
  }
  function renderEntityChoices(){
@@ -103,15 +107,51 @@ export function initIdsUI(api,injected={}){
   host.innerHTML=(api.catalog()?.ifc?.items||[]).filter(x=>x.kind==='class'&&/^Ifc[A-Za-z0-9]+$/.test(x.code)&&!/[A-Z]{2,}$/.test(x.code)&&x.code.toLowerCase().includes(q)).map(x=>`<label class="ids-check"><input type="checkbox" data-ids-entity="${esc(x.code)}" ${g.entities.includes(x.code)?'checked':''}>${esc(x.code)}</label>`).join('');
  }
  function render(){
-  const active=document.activeElement,retain=$('idsDialog').contains?.(active)?{dataset:{...active.dataset},start:active.selectionStart,end:active.selectionEnd}:null;
+  pendingRevitRender=null;
+  const active=document.activeElement,retain=dialog.contains?.(active)?{id:active.id,dataset:{...active.dataset},start:active.selectionStart,end:active.selectionEnd}:null;
   renderList();renderDetail();
-  if(retain&&Object.keys(retain.dataset).length){const target=Array.from($('idsDialog').querySelectorAll?.('input,select')||[]).find(n=>Object.entries(retain.dataset).every(([key,value])=>n.dataset[key]===value));target?.focus?.({preventScroll:true});if(typeof retain.start==='number'&&target?.setSelectionRange)try{target.setSelectionRange(retain.start,retain.end);}catch{}}
+  if(retain&&!active.isConnected){
+   const fields=Object.entries(retain.dataset);
+   const target=retain.id?$(retain.id):fields.length?Array.from(dialog.querySelectorAll('input,select,button,summary')).find(node=>fields.every(([key,value])=>node.dataset[key]===value)):null;
+   target?.focus({preventScroll:true});
+   if(typeof retain.start==='number'&&target?.setSelectionRange)try{target.setSelectionRange(retain.start,retain.end);}catch{}
+  }
  }
- function patch(ids,key,value){for(const id of ids){const d=decisions[id]??={};if(value===undefined)delete d[key];else d[key]=value;}rebuild();render();}
+ function setSourceSaveFeedback(message){
+  sourceSaveFeedback=message;
+  $('idsError').textContent=message;
+ }
+ function sourceChoicesChanged(){
+  if(!sourceSaveFeedback||$('idsError').textContent!==sourceSaveFeedback)return;
+  sourceSaveTicket++;
+  sourceSaveFeedback='';
+  $('idsError').textContent='Keuzes gewijzigd. Bewaar de bron en keuzes opnieuw.';
+ }
+ function patch(ids,key,value){sourceChoicesChanged();for(const id of ids){const d=decisions[id]??={};if(value===undefined)delete d[key];else d[key]=value;}rebuild();render();}
  function draftRevit(g,value,entity){
+  sourceChoicesChanged();
   for(const id of g.requirementIds){const d=decisions[id]??={};if(entity){const v={...d.revitByEntity};if(value)v[entity]=value;else delete v[entity];d.revitByEntity=v;}else d.revitParameter=value;}
   if(entity){if(value)g.revitByEntity[entity]=value;else delete g.revitByEntity[entity];}else{g.revitParameter=value;g.hasRevitDecision=true;g.revitSuggested=false;}
   invalidate();
+ }
+ function showPendingRevitEdit(){
+  if(pointerPressed||pendingRevitRender!==ticket)return;
+  pendingRevitRender=null;
+  if(dialog.isConnected&&dialog.open&&validProject())render();
+ }
+ function releasePointer(){
+  pointerPressed=false;
+  if(pendingRevitRender!==null)setTimeout(showPendingRevitEdit);
+ }
+ dialog.addEventListener('pointerdown',()=>{pointerPressed=true;},true);
+ document.addEventListener?.('pointerup',releasePointer,true);
+ document.addEventListener?.('pointercancel',releasePointer,true);
+ function finishRevitEdit(group,value,entity){
+  draftRevit(group,value,entity);
+  rebuild();
+  // A text change can fire on pointerdown, before the intended click is delivered.
+  pendingRevitRender=ticket;
+  if(!pointerPressed)setTimeout(showPendingRevitEdit);
  }
  function renderAudit(){
   const names={running:'XSD-controle wordt uitgevoerd…',valid:'XSD gecontroleerd',invalid:'Bestand voldoet niet aan het IDS-XSD',unavailable:'XSD-controle niet beschikbaar',unsupported:'Formaat niet door deze XSD-controle ondersteund'};
@@ -146,14 +186,15 @@ export function initIdsUI(api,injected={}){
  $('closeIds').onclick=()=>{ticket++;controller?.abort();$('idsDialog').close();};$('idsDialog').addEventListener('cancel',()=>{ticket++;controller?.abort();});
  $('idsRequirements').onclick=e=>{const id=e.target.dataset.idsFocus;if(id){focusId=id;render();}};
  $('idsRequirements').oninput=e=>{const g=workspace?.groups.find(g=>g.id===e.target.dataset.idsRevit);if(g)draftRevit(g,e.target.value);};
- $('idsRequirements').onchange=e=>{const t=e.target,g=workspace.groups.find(g=>g.id===(t.dataset.idsGroup||t.dataset.idsRevit));if(!g)return;if(t.dataset.idsRevit!==undefined){patch(g.requirementIds,'revitParameter',t.value);return;}for(const id of g.eligibleIds)t.checked?selected.add(id):selected.delete(id);invalidate();renderList();};
+ $('idsRequirements').onchange=e=>{const t=e.target,g=workspace.groups.find(g=>g.id===(t.dataset.idsGroup||t.dataset.idsRevit));if(!g)return;if(t.dataset.idsRevit!==undefined){finishRevitEdit(g,t.value);return;}for(const id of g.eligibleIds)t.checked?selected.add(id):selected.delete(id);invalidate();renderList();};
  $('idsDetail').oninput=e=>{const t=e.target,g=currentGroup();if(t.id==='idsEntitySearch')renderEntityChoices();else if(g&&t.dataset.idsField==='revitParameter')draftRevit(g,t.value);else if(g&&t.dataset.idsEntityRevit)draftRevit(g,t.value,t.dataset.idsEntityRevit);};
  $('idsDetail').onchange=e=>{
   const t=e.target,g=currentGroup();if(!g)return;
-  if(t.dataset.idsField){patch(g.requirementIds,t.dataset.idsField,t.dataset.idsField==='revitParameter'?t.value:t.value||undefined);return;}
+  if(t.dataset.idsField==='revitParameter'){finishRevitEdit(g,t.value);return;}
+  if(t.dataset.idsField){patch(g.requirementIds,t.dataset.idsField,t.value||undefined);return;}
   if(t.dataset.idsReview!==undefined){const r=g.reviewGroups[Number(t.dataset.idsReview)];patch(r.requirementIds,t.dataset.field,!!t.checked);return;}
   if(t.dataset.idsEntity){const es=new Set(g.entities);t.checked?es.add(t.dataset.idsEntity):es.delete(t.dataset.idsEntity);for(const id of g.requirementIds)(decisions[id]??={}).acknowledgeScope=false;patch(g.requirementIds,'entities',[...es]);return;}
-  if(t.dataset.idsEntityRevit){for(const id of g.requirementIds){const d=decisions[id]??={},v={...d.revitByEntity};if(t.value) v[t.dataset.idsEntityRevit]=t.value;else delete v[t.dataset.idsEntityRevit];d.revitByEntity=v;}rebuild();render();}
+  if(t.dataset.idsEntityRevit)finishRevitEdit(g,t.value,t.dataset.idsEntityRevit);
  };
  function showSource(e){const id=e.target.dataset.idsSource;if(!id)return;const r=workspace.proposals.find(r=>r.id===id);$('idsXml').textContent=r?.xml||'';$('idsXmlPanel').open=true;}
  $('idsDetail').onclick=e=>{if(!navigate(e))showSource(e);};$('idsOtherBody').onclick=e=>{if(!navigate(e))showSource(e);};$('idsScopesBody').onclick=e=>{navigate(e);};$('idsComparison').onclick=e=>{navigate(e);};$('idsChanges').onclick=e=>{navigate(e);};
@@ -167,7 +208,21 @@ export function initIdsUI(api,injected={}){
  $('idsPagePrev').onclick=()=>{page=Math.max(0,page-1);renderList();};$('idsPageNext').onclick=()=>{page++;renderList();};
  $('idsSaved').onchange=()=>{$('idsOpenSaved').disabled=!$('idsSaved').value;};
  $('idsOpenSaved').onclick=async()=>{const d=api.data().idsImports?.find(d=>d.id===$('idsSaved').value);if(d)await loadText(d.xml,d.fileName,d);};
- $('idsSaveSource').onclick=()=>{try{if(!preview||!validProject())throw Error('Laad de IDS opnieuw voor het huidige project.');services.saveIdsSource(api.data(),preview,decisions);api.changed();savedSources();$('idsError').textContent='Volledige IDS-bron en keuzes bewaard. Er zijn geen koppelingen toegevoegd.';}catch(e){$('idsError').textContent='Niet bewaard: '+e.message;}};
+ $('idsSaveSource').onclick=async()=>{
+  const run=ticket,request=++sourceSaveTicket;
+  try{
+   if(!preview||!validProject())throw Error('Laad de IDS opnieuw voor het huidige project.');
+   services.saveIdsSource(api.data(),preview,decisions);
+   setSourceSaveFeedback('IDS-bron en keuzes bewaren…');
+   const persistence=api.changed();
+   savedSources();
+   const backend=await persistence;
+   if(run!==ticket||request!==sourceSaveTicket||!validProject()||$('idsError').textContent!==sourceSaveFeedback)return;
+   setSourceSaveFeedback(backend==='indexeddb'?'Volledige IDS-bron en keuzes bewaard. Er zijn geen koppelingen toegevoegd.':
+    backend==='localstorage'?'IDS-bron en keuzes bewaard in de beperkte browseropslag. Bewaar ook een JSON-bestand.':
+    'Automatisch bewaren mislukt. De bron en keuzes staan nog in dit project. Sluit de dialoog en kies Menu → Project bewaren voor een JSON-bestand.');
+  }catch(error){if(run===ticket&&request===sourceSaveTicket)setSourceSaveFeedback('Niet bewaard: '+error.message);}
+ };
  $('idsRevision').onchange=()=>{compareTicket++;comparison=null;$('idsComparison').innerHTML='';$('idsCompareReuse').disabled=true;$('idsCompare').disabled=!$('idsRevision').value;};
  $('idsCompare').onclick=async()=>{
   const d=project?.idsImports?.find(d=>d.id===$('idsRevision').value);if(!d||!preview)return;const run=ticket,current=preview,comparisonRun=++compareTicket;
@@ -179,7 +234,7 @@ export function initIdsUI(api,injected={}){
  };
  function renderComparison(){const c=comparison.counts;comparisonPage=Math.min(comparisonPage,Math.max(0,Math.ceil(comparison.changes.length/50)-1));$('idsComparison').innerHTML=`<p>${c.unchanged} ongewijzigd · ${c.modified} gewijzigd · ${c.added} nieuw · ${c.removed} vervallen · ${c.ambiguous} niet eenduidig. Bestaande exportregels worden niet verwijderd.</p>`+(comparison.warnings||[]).map(x=>'<p class="relation-warning">'+esc(x)+'</p>').join('')+pager('comparison',comparisonPage,comparison.changes.length,50,'verschillen')+comparison.changes.slice(comparisonPage*50,(comparisonPage+1)*50).map(x=>`<p><strong>${stateLabels[x.status]||x.status}</strong> · ${esc(x.label||x.kind||'Eis')} · ${esc(x.reason||'')}${x.impactedRows?.length?' · bestaande regels '+x.impactedRows.map(i=>i+1).join(', '):''}</p>`).join('');
  }
- $('idsCompareReuse').onclick=()=>{if(!comparison||!validProject()||comparison.previousDocumentId!==$('idsRevision').value)return;preview.previousDocumentId=comparison.previousDocumentId;for(const [id,d] of Object.entries(comparison.decisions))if(!Object.hasOwn(decisions,id))decisions[id]=clone(d);rebuild();render();$('idsError').textContent='Alleen aantoonbaar ongewijzigde keuzes overgenomen. Controleer de nieuwe of gewijzigde eisen.';$('idsCompareReuse').disabled=true;};
+ $('idsCompareReuse').onclick=()=>{if(!comparison||!validProject()||comparison.previousDocumentId!==$('idsRevision').value)return;sourceChoicesChanged();preview.previousDocumentId=comparison.previousDocumentId;for(const [id,d] of Object.entries(comparison.decisions))if(!Object.hasOwn(decisions,id))decisions[id]=clone(d);rebuild();render();$('idsError').textContent='Alleen aantoonbaar ongewijzigde keuzes overgenomen. Controleer de nieuwe of gewijzigde eisen.';$('idsCompareReuse').disabled=true;};
  function review(){
   if(!preview||!validProject()||audit?.status==='running'||audit?.status==='invalid')return;
   report=services.preflightIdsImport(api.data(),api.catalog(),preview,[...selected],decisions);
