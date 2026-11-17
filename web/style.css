@@ -24,3 +24,24 @@ dialog{width:min(600px,94vw);max-height:90vh;overflow:auto;border:1px solid var(
 /* IDS: compact parameter worklist and source conditions in the existing app style. */
 #idsDialog.ids-workspace{width:min(1480px,97vw);max-width:97vw;padding:20px;line-height:1.5}#idsDialog h2{margin:0}#idsDialog .section-heading p{margin:5px 0;font-size:12px;color:var(--muted)}#idsDialog .toolbar{padding:10px 0}#idsDialog .ids-steps{border-block:1px solid var(--line);gap:6px}#idsDialog .ids-steps button{font-size:12px}.ids-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(310px,360px);gap:18px}.ids-list{max-height:52vh;overflow:auto;border:1px solid var(--line);border-radius:5px}.ids-table{min-width:760px}.ids-table th{padding:9px 8px}.ids-table td{height:40px;padding:6px 8px}.ids-table small,#idsOtherBody small,#idsDetail small{display:block;font-size:11px;color:var(--muted);overflow-wrap:anywhere}.ids-table td input:not([type=checkbox]){width:160px;border-color:var(--line);background:white}.ids-table .ids-parameter-link{padding:0;border:0;background:transparent;color:var(--blue);text-align:left;font-size:12px;font-weight:600;overflow-wrap:anywhere;max-width:230px}.ids-focused td{background:#eaf3f9}#idsDetail{border:1px solid var(--line);border-radius:5px;padding:14px;max-height:58vh;overflow:auto;font-size:12px}#idsDetail h3{margin:0 0 8px;font-size:16px}#idsDetail .ids-fields{grid-template-columns:1fr}#idsDetail label{display:block;margin:7px 0}#idsDetail input:not([type=checkbox]),#idsDetail select{width:100%;font-size:12px;padding:7px}#idsDetail .ids-check,#idsEntityChoices label{display:flex;align-items:flex-start;gap:8px}#idsDetail input[type=checkbox]{flex:none;margin-top:3px}#idsDetail fieldset{border:1px solid var(--line);padding:10px;margin:12px 0}#idsDetail legend{font-weight:600}#idsDetail details,#idsOther,#idsXmlPanel,#idsStep1>details{border-top:1px solid var(--line);padding:10px 0;margin-top:12px}#idsDetail section,#idsOtherBody section{padding:10px 0;border-bottom:1px solid var(--line)}#idsEntityChoices{max-height:170px;overflow:auto}.ids-badge{font-size:11px;padding:3px 6px;border-radius:3px;background:#f4ebd9;color:#754913;white-space:nowrap}.ids-badge.ready{background:#e0f1e7;color:#225e3e}.ids-badge.conflict{background:#fae6df;color:#922e18}#idsAudit{padding:12px;border:1px solid var(--line);border-radius:5px;font-size:12px}#idsAudit p{margin:5px 0}#idsChanges .tablewrap{max-height:50vh;min-height:0}#idsXml{white-space:pre-wrap;overflow-wrap:anywhere;max-height:280px;overflow:auto;font-size:11px}.ids-bottom{position:sticky;bottom:-20px;background:white;border-top:1px solid var(--line);z-index:4}#idsReview{margin-left:auto}#idsStep1 select{max-width:400px}#idsError{font-size:12px;color:#8a391c}@media(max-width:1050px){.ids-layout{grid-template-columns:1fr}#idsDetail{max-height:none}.ids-list{max-height:45vh}}@media(max-width:600px){#idsDialog.ids-workspace{padding:14px}.ids-steps button{flex:1;min-width:100px}.ids-table{min-width:680px}#idsStep1 select{max-width:250px}.ids-bottom{bottom:-14px}}
 #idsScopes{border:1px solid var(--line);padding:10px;margin-top:12px;font-size:12px}#idsScopesBody fieldset{border:1px solid var(--line);padding:10px;margin-top:10px}#idsScopesBody p{margin:5px 0}#idsScopesBody .ids-check{display:flex;align-items:flex-start;gap:8px;margin-top:10px}#idsScopesBody input[type=checkbox]{flex:none;margin-top:3px}#idsScopesBody small{color:var(--muted)}
+
+#idsComparison ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#idsComparison li {
+  border-top: 1px solid var(--line);
+  padding: 8px 0;
+  overflow-wrap: anywhere;
+}
+
+#idsComparison li small {
+  display: block;
+  color: var(--muted);
+}
+
+#idsComparison li button {
+  margin-top: 4px;
+}
