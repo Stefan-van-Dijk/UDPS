@@ -1,6 +1,6 @@
 # UDPS: contracten en verificatie
 
-Gecontroleerde basis: main `8dd81cff62c4d060d235945b5f79ba7ce1537657`, versie 1.8.0. Herstelrelease: 1.8.1. Gedeelde taken, besluiten en actuele acceptatiestatus staan in het [wijzigingenlog](change-notes/) en worden volgens de [samenwerkingswerkwijze](collaboration/README.md) in ieders eigen Notion-project bijgehouden. Het [bestaande dossier in Digitaal Bouwen](https://app.notion.com/p/41a0dde84cc181479445d9417177cf27) blijft behouden; dit technische document is geen tweede takenlijst.
+Historische nulmeting: main `8dd81cff62c4d060d235945b5f79ba7ce1537657`, versie 1.8.0. Herstelrelease: 1.8.1. Gedeelde taken, besluiten en actuele acceptatiestatus staan in het [wijzigingenlog](change-notes/) en worden volgens de [samenwerkingswerkwijze](collaboration/README.md) in ieders eigen Notion-project bijgehouden. Het [bestaande dossier in Digitaal Bouwen](https://app.notion.com/p/41a0dde84cc181479445d9417177cf27) blijft behouden; dit technische document is geen tweede takenlijst.
 
 ## Bestaande verantwoordelijkheden
 
@@ -11,25 +11,46 @@ Gecontroleerde basis: main `8dd81cff62c4d060d235945b5f79ba7ce1537657`, versie 1.
 | `bsdd.js`, `sources.js`, `products.js`, `linked-data.js`, `property-loader.js` | Openbare broncontracten, paginering, bronrelaties en normalisatie. |
 | `source-store.js` | Lokale bibliotheken, bronkeuzes en broncaches; updatevoorstellen worden pas na toepassen actief. |
 | `excel.js` | Lokale OOXML-import zonder macro-uitvoering. |
+| `ids-document.js` | Begrensd decoderen en lezen van IDS-documenten, alle zes facetten, restricties en oorspronkelijke XML. |
+| `ids.js`, `ids-ui.js` | Expliciete koppelkeuzes, importplanning, bronbewaring en bediening van de IDS-dialoog. |
 
 Deze grenzen zijn bruikbaar. Er is bij de gerichte nulmeting geen noodzaak aangetoond voor een frameworkmigratie, backend of algemene herbouw.
 
-Vanaf 1.9.0 bezit `ids.js` de begrensde IDS-preview, importplanning en bronbewaring;
-`ids-ui.js` bezit de bediening. Het oorspronkelijke IDS wordt lokaal als passieve
-projectmetadata bewaard. [IDS-import](ids-import.md) beschrijft de ondersteunde
-eisen en bewijsgrenzen; [Raam/Dakraam](bsdd-window-mapping.md) bezit het concrete
+Vanaf 1.9.0 kan IDS als passieve projectmetadata worden bewaard. De uitgebreide
+route scheidt het lezen van het hele document van het omzetten naar platte
+parameterdefinities. [IDS-import](ids-import.md) beschrijft de koppelkeuzes,
+grenzen en testdekking; [Raam/Dakraam](bsdd-window-mapping.md) bezit het concrete
 bSDD-brononderzoek. De bestaande bron- en IFC-validaties blijven van toepassing.
 
 ## Contracten die behouden moeten blijven
 
 - Een bron-URI bepaalt bronidentiteit. Gelijke namen bewijzen geen gelijke betekenis; samenbrengen vraagt een inhoudelijke onderbouwing.
-- IDS-eisen worden geen bSDD-bronrelaties. Alleen expliciet ondersteunde eisen
-  worden als voorstel toegevoegd; conditionele toepassing wordt niet tot een
-  hele IFC-entiteit verbreed. Ontbrekende Revit-namen blijven export blokkeren.
+- IDS lezen vereist geen directe UDPS-vertaling: alle zes facetten, restricties,
+  exacte tekst en onbekende/meervoudige inhoud blijven beschikbaar. De volledige
+  bron kan zonder nieuwe projectregels worden bewaard. Niet-propertyfacetten
+  en quantities blijven ter beoordeling in de bron; zij worden geen gewone
+  UDPS-properties of bSDD-bronrelaties.
+- IDS-koppelingen beschrijven parameterdefinities voor gekozen IFC-entiteiten.
+  Extra toepassingsfilters of handmatige doelen vragen expliciete bevestiging
+  van deze vlakke toepassing; waardevoorwaarden vragen afzonderlijke bevestiging.
+  Een eindige entiteitsenumeratie levert de vereniging van alle bekende doelen;
+  onbekende doelen worden niet weggelaten. Patronen worden niet als JavaScript-
+  regex uitgevoerd. Namen blijven exact en ontbrekende datatypes vragen een
+  handmatige keuze. Verboden eigenschappen/toepassingen en niet ondersteunde
+  aantallen leveren geen positieve koppeling op; ook de standaardwaarde
+  `maxOccurs=1` blijft alleen als bron beschikbaar. Optionele eigenschappen
+  vragen een expliciete keuze.
+- Nieuwe IDS-regels blijven te koppelen totdat een Revit-naam is ingevuld.
   Herhaling behoudt bestaande namen en bronverwijzingen; conflicten wijzen de
-  selectie atomair af. De oorspronkelijke XML en eisverwijzingen overleven
-  bewaren en heropenen in 1.9.0. Oudere appversies bewaren `idsImports` niet;
-  bewaar daarom de nieuwe projectbackup voordat je terugvalt.
+  selectie atomair af. De volledige gedecodeerde XML, bronidentiteiten en
+  vastgelegde keuzes/eisverwijzingen overleven bewaren en heropenen. Een oudere
+  app kan nieuwe keuzemetadata verwijderen; vóór 1.9.0 blijft ook `idsImports`
+  niet behouden. Bewaar een projectbackup voordat je terugvalt.
+  UTF-8/UTF-16-invoer is begrensd op 10 MiB, evenals de XML in UTF-8;
+  maximaal 20 bronnen gebruiken samen 16 MiB JSON-projectgegevens. IDS-toevoegen
+  toetst maximaal 50.000 IDS-verwijzingen op projectregels. Bewaren/toevoegen toetst ook de
+  volledige opgemaakte project-JSON aan 32 MiB; JSON-heropenen heeft dezelfde
+  bestandsgroottegrens. Verdere documentgrenzen staan bij [IDS-import](ids-import.md).
 - Elke actieve combinatie van IFC-entiteit, propertyset en property heeft maximaal één mapping. Conflicten blokkeren zowel downloaden als kopiëren; zonder koppelingen zijn beide acties uitgeschakeld.
 - Bronrelaties, onderdelen en vergelijkbare begrippen leiden niet automatisch tot overname of gelijkstelling. Eigen IFC-afspraken blijven expliciet herkenbaar.
 - Centrale standaardwijzigingen behouden afwijkende toepassingen, tenzij de gebruiker alle afwijkingen bewust vervangt. Een opgeslagen lege Revit-standaard is een waarde, geen ontbrekende instelling.
@@ -48,6 +69,16 @@ npm test
 ```
 
 De regressies gebruiken de echte domeinfuncties en apphandlers. DOM-adapters en opgeslagen API-antwoorden zijn herkenbaar als geautomatiseerde tests; zij bewijzen geen live netwerk- of browseracceptatie. De exportcontrole omvat dubbele definities, ontbrekende Revit-koppelingen, lege projecten en geldige uitvoer. De Excel-controle gebruikt echte gecomprimeerde ZIP-bytes en controleert de grens vóór XML-parsing.
+
+De IDS-leestest controleert 334 ongewijzigde officiële IDS-bestanden op
+SHA-256, volledige XML en behoud van alle facetten en restricties. Aanvullende
+tests gebruiken alle zes facetten bij toepassing, ontbrekende entiteiten,
+prefixes, schemaverwijzingen, coderingen en expliciete koppelkeuzes. Deze tests
+gebruiken een echte XML-parser als ontwikkelafhankelijkheid; zij voeren geen
+volledige XSD/IDS-audit of IFC-modelcontrole uit. De upstream labels
+`pass`/`fail`/`invalid` zijn geen parseracceptatielabels. Leesbare XML bewijst
+geen geldige IDS en geen geldigheid van een feitelijke export. Zie het
+[herkomstmanifest](../tests/fixtures/ids/official-provenance.json).
 
 ## Werkelijke gebruikersacceptatie
 

@@ -1,102 +1,189 @@
-// IDS is an information requirement source, never a confirmed bSDD relation.
-const IDS='http://standards.buildingsmart.org/IDS',XS='http://www.w3.org/2001/XMLSchema',XSI='http://www.w3.org/2001/XMLSchema-instance';
-export const IDS_MAX_BYTES=2*1024*1024;
-const MAX_DOCUMENTS=20,MAX_SAVED_BYTES=10*1024*1024,MAX_REQUIREMENTS=2000,MAX_SPECIFICATIONS=200;
+// IDS sources remain evidence. UDPS mappings describe parameters, not IDS compliance.
+import {IDS_MAX_BYTES} from './ids-document.js?v=1.10.0';
+export {readIds,decodeIdsBytes,IDS_MAX_BYTES} from './ids-document.js?v=1.10.0';
+export const IDS_PROJECT_MAX_BYTES=32*1024*1024;
+const MAX_DOCUMENTS=20,MAX_SAVED_BYTES=16*1024*1024,MAX_REFERENCES=50000;
 const byteLength=value=>new TextEncoder().encode(value).length;
 const datatypeMap={IFCBOOLEAN:'Boolean',IFCINTEGER:'Integer',IFCREAL:'Real',IFCTEXT:'Text',IFCLABEL:'Label',IFCIDENTIFIER:'Identifier',IFCLOGICAL:'Logical',IFCLENGTHMEASURE:'Length',IFCPOSITIVELENGTHMEASURE:'PositiveLength',IFCAREAMEASURE:'Area',IFCVOLUMEMEASURE:'Volume',IFCCOUNTMEASURE:'Count',IFCPLANEANGLEMEASURE:'PlaneAngle',IFCPOSITIVEPLANEANGLEMEASURE:'PositivePlaneAngle',IFCRATIOMEASURE:'Ratio',IFCPOSITIVERATIOMEASURE:'PositiveRatio',IFCNORMALISEDRATIOMEASURE:'NormalisedRatio',IFCTHERMALTRANSMITTANCEMEASURE:'ThermalTransmittance',IFCTHERMODYNAMICTEMPERATUREMEASURE:'ThermodynamicTemperature',IFCPOWERMEASURE:'Power',IFCPRESSUREMEASURE:'Pressure',IFCFREQUENCYMEASURE:'Frequency',IFCFORCEMEASURE:'Force',IFCVOLUMETRICFLOWRATEMEASURE:'VolumetricFlowRate',IFCELECTRICCURRENTMEASURE:'ElectricalCurrent',IFCELECTRICVOLTAGEMEASURE:'ElectricalVoltage',IFCILLUMINANCEMEASURE:'Illuminance',IFCLUMINOUSFLUXMEASURE:'LuminousFlux',IFCLUMINOUSINTENSITYMEASURE:'LuminousIntensity'};
-const field=value=>typeof value==='string'&&!!value.trim()&&value.length<=500&&!/[\t\r\n]/.test(value);
-// IDS simpleValue uses xs:string: whitespace is part of an IFC output identity.
-// UDPS cannot safely preserve boundary whitespace or control characters; exclude, never normalize.
-const identity=value=>field(value)&&value===value.trim()&&!/[\u0000-\u001f\u007f-\u009f]/.test(value);
-const children=node=>Array.from(node?.children||node?.childNodes||[]).filter(n=>n.nodeType===1);
-const named=(node,name)=>children(node).filter(n=>n.namespaceURI===IDS&&n.localName===name);
-const one=(node,name)=>{const list=named(node,name);return list.length===1?list[0]:null;};
-const attribute=(node,name)=>node?.getAttribute(name)||'';
-function literal(node){const values=children(node);return values.length===1&&values[0].namespaceURI===IDS&&values[0].localName==='simpleValue'&&!children(values[0]).length?values[0].textContent:'';}
-function supportedAttributes(node,allowed){return Array.from(node?.attributes||[]).every(a=>a.namespaceURI==='http://www.w3.org/2000/xmlns/'||!a.namespaceURI&&allowed.includes(a.localName));}
-function sourceXml(node){return new XMLSerializer().serializeToString(node);}
-function entities(catalog){return (catalog?.ifc?.items||[]).filter(x=>x.kind==='class'&&/^Ifc[A-Za-z0-9]+$/.test(x.code)&&!/[A-Z]{2,}$/.test(x.code)).map(x=>x.code);}
+// Kept independent of core.js: core validates stored IDS sources and must not form a cycle.
+const coreTypes=new Set('Area Boolean ClassificationReference ColorTemperature Count Currency ElectricalCurrent ElectricalEfficacy ElectricalVoltage Force Frequency Identifier Illuminance Integer Label Length Logical LuminousFlux LuminousIntensity NormalisedRatio PlaneAngle PositiveLength PositivePlaneAngle PositiveRatio Power Pressure Ratio Real Text ThermalTransmittance ThermodynamicTemperature Volume VolumetricFlowRate'.split(' '));
+const field=value=>typeof value==='string'&&!!value.trim()&&value.length<=500&&!/[\u0000-\u001f\u007f-\u009f]/.test(value);
+// xs:string whitespace is part of an IFC identity. Never silently trim it.
+const identity=value=>field(value)&&value===value.trim();
+const requirementId=value=>typeof value==='string'&&/^spec:\d+\/requirement:\d+$/.test(value);
+const digest=value=>typeof value==='string'&&/^sha256:[a-f0-9]{64}$/.test(value);
+const entities=catalog=>(catalog?.ifc?.items||[]).filter(x=>x.kind==='class'&&/^Ifc[A-Za-z0-9]+$/.test(x.code)&&!/[A-Z]{2,}$/.test(x.code)).map(x=>x.code);
+const own=(value,key)=>Object.prototype.hasOwnProperty.call(value,key);
+const unique=value=>[...new Set(value)];
+function checkedDecisions(value={},draft=false){
+ if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).length>MAX_REFERENCES)throw Error('Ongeldige IDS-keuzes.');
+ const result={};
+ for(const [id,input] of Object.entries(value)){
+  if(!requirementId(id)||!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).some(k=>!['entities','propertySet','property','dataType','acknowledgeScope','acknowledgeValues','includeOptional'].includes(k)))throw Error('Ongeldige IDS-keuze.');
+  const decision={};
+  if(own(input,'entities')){
+   if(!Array.isArray(input.entities)||input.entities.length>2000||input.entities.some(e=>typeof e!=='string'||e.length>500||!draft&&(!identity(e)||!/^Ifc[A-Za-z0-9]+$/.test(e))))throw Error('Ongeldige IFC-entiteiten in IDS-keuze.');
+   decision.entities=unique(input.entities);
+  }
+  for(const k of ['propertySet','property'])if(own(input,k)){if(typeof input[k]!=='string'||input[k].length>500||!draft&&!identity(input[k]))throw Error('Ongeldige eigenschapsnaam in IDS-keuze.');decision[k]=input[k];}
+  if(own(input,'dataType')){if(typeof input.dataType!=='string'||input.dataType.length>500||!draft&&!coreTypes.has(input.dataType))throw Error('Ongeldig datatype in IDS-keuze.');decision.dataType=input.dataType;}
+  for(const k of ['acknowledgeScope','acknowledgeValues','includeOptional'])if(own(input,k)){if(typeof input[k]!=='boolean')throw Error('Ongeldige bevestiging in IDS-keuze.');decision[k]=input[k];}
+  if(Object.keys(decision).length)result[id]=decision;
+ }
+ return result;
+}
 
-// Saved originals are bounded passive evidence; they are not executed or treated as authority.
+// Saved originals are bounded passive evidence; schema 1 remains backwards compatible.
 export function validateIdsImports(value){
  if(value===undefined)return undefined;
  if(!Array.isArray(value)||value.length>MAX_DOCUMENTS)throw Error('Ongeldige of te veel opgeslagen IDS-bronnen.');
- let size=0;const seen=new Set();
- return value.map(d=>{
-  if(!d||d.schema!==1||!/^sha256:[a-f0-9]{64}$/.test(d.id)||seen.has(d.id)||!field(d.fileName)||typeof d.xml!=='string'||!d.xml||byteLength(d.xml)>IDS_MAX_BYTES||!Array.isArray(d.selectedRequirementIds)||d.selectedRequirementIds.length>MAX_REQUIREMENTS||d.selectedRequirementIds.some(id=>typeof id!=='string'||!/^spec:\d+\/requirement:\d+$/.test(id)))throw Error('Ongeldige opgeslagen IDS-bron.');
-  seen.add(d.id);size+=byteLength(d.xml);if(size>MAX_SAVED_BYTES)throw Error('Opgeslagen IDS-bronnen zijn samen groter dan 10 MB.');
-  return {schema:1,id:d.id,fileName:d.fileName,xml:d.xml,selectedRequirementIds:[...new Set(d.selectedRequirementIds)]};
+ const seen=new Set();
+ const result=value.map(d=>{
+  if(!d||d.schema!==1||!digest(d.id)||seen.has(d.id)||!field(d.fileName)||typeof d.xml!=='string'||!d.xml||byteLength(d.xml)>IDS_MAX_BYTES||!Array.isArray(d.selectedRequirementIds)||d.selectedRequirementIds.length>MAX_REFERENCES||d.selectedRequirementIds.some(id=>!requirementId(id)))throw Error('Ongeldige opgeslagen IDS-bron.');
+  seen.add(d.id);
+  const record={schema:1,id:d.id,fileName:d.fileName,xml:d.xml,selectedRequirementIds:unique(d.selectedRequirementIds)};
+  if(d.decisions!==undefined)record.decisions=checkedDecisions(d.decisions);
+  if(d.documentSchema!==undefined){if(![1,2].includes(d.documentSchema))throw Error('Ongeldige opgeslagen IDS-documentversie.');record.documentSchema=d.documentSchema;}
+  if(d.sourceEncoding!==undefined){if(!field(d.sourceEncoding)||d.sourceEncoding.length>80)throw Error('Ongeldige IDS-tekstcodering.');record.sourceEncoding=d.sourceEncoding;}
+  if(d.sourceByteDigest!==undefined){if(!digest(d.sourceByteDigest))throw Error('Ongeldige IDS-bestandsidentiteit.');record.sourceByteDigest=d.sourceByteDigest;}
+  return record;
  });
+ if(byteLength(JSON.stringify(result))>MAX_SAVED_BYTES)throw Error('Opgeslagen IDS-bronnen zijn samen groter dan 16 MB projectgegevens.');
+ return result;
 }
 
-export async function readIds(xml,{fileName='Ingeladen.ids',catalog,DOMParser:Parser=globalThis.DOMParser}={}){
- if(typeof xml!=='string'||byteLength(xml)>IDS_MAX_BYTES)throw Error('IDS-bestand is groter dan 2 MB of bevat geen XML-tekst.');
- if(/<!\s*(DOCTYPE|ENTITY)\b/i.test(xml))throw Error('DTD en eigen XML-entiteiten zijn niet toegestaan in een IDS-bestand.');
- if(!Parser)throw Error('De XML-parser van de browser is niet beschikbaar.');
- if(!field(fileName))throw Error('Ongeldige IDS-bestandsnaam.');
- const doc=new Parser().parseFromString(xml,'application/xml'),root=doc.documentElement;
- if(!root||doc.getElementsByTagNameNS('*','parsererror').length)throw Error('Het IDS-bestand bevat ongeldige XML.');
- if(root.namespaceURI!==IDS||root.localName!=='ids')throw Error('Verwacht een IDS-bestand met de officiële IDS-namespace.');
- const schema=attribute(root,'version'),location=root.getAttributeNS(XSI,'schemaLocation')||'',parts=location.trim().split(/\s+/),index=parts.indexOf(IDS),schemaUrl=index>=0?parts[index+1]:'';
- if(schema&&schema!=='1.0'&&schema!=='1.0.0'||!/^https?:\/\/standards\.buildingsmart\.org\/IDS\/1\.0\/ids\.xsd$/.test(schemaUrl||''))throw Error('Alleen IDS 1.0 met een expliciete IDS/1.0/ids.xsd-verwijzing wordt ondersteund.');
- let count=0;const walk=(node,depth=0)=>{if(++count>20000||depth>64)throw Error('Het IDS-bestand bevat te veel of te diep geneste XML-elementen.');if(![IDS,XS].includes(node.namespaceURI))throw Error('Het IDS-bestand bevat een onbekende XML-namespace.');children(node).forEach(n=>walk(n,depth+1));};walk(root);
- const info=one(root,'info'),specs=one(root,'specifications');
- if(!info||!one(info,'title')||!specs||children(root).some(n=>n.namespaceURI!==IDS||!['info','specifications'].includes(n.localName)))throw Error('De IDS-opbouw is ongeldig: info/title en specifications zijn vereist.');
- const specificationNodes=named(specs,'specification');
- if(!specificationNodes.length||specificationNodes.length>MAX_SPECIFICATIONS||children(specs).length!==specificationNodes.length)throw Error('Verwacht 1 tot 200 IDS-specificaties.');
- const known=entities(catalog),specifications=[];let requirementCount=0;
- for(const [si,spec] of specificationNodes.entries()){
-  const app=one(spec,'applicability'),reqs=one(spec,'requirements'),name=attribute(spec,'name'),ifcVersions=attribute(spec,'ifcVersion').trim().split(/\s+/),reasons=[];
-  if(!field(name)||!ifcVersions.length||ifcVersions.some(v=>!['IFC2X3','IFC4','IFC4X3_ADD2'].includes(v)))reasons.push('Naam of IFC-versie ontbreekt of wordt niet ondersteund.');
-  if(!app||named(spec,'requirements').length>1||children(spec).some(n=>n.namespaceURI!==IDS||!['applicability','requirements'].includes(n.localName))||!supportedAttributes(spec,['name','ifcVersion','identifier','description','instructions']))reasons.push('De specificatie heeft een niet ondersteunde structuur.');
-  const entity=one(app,'entity'),entityName=literal(one(entity,'name')),entityCode=known.find(e=>e.toUpperCase()===entityName)||'';
-  if(!entity||!entityCode)reasons.push('Kiesbare IFC-entiteit ontbreekt; alleen één letterlijke IFC-naam uit de geladen catalogus wordt ondersteund.');
-  if(app&&(!supportedAttributes(app,['minOccurs','maxOccurs'])||children(app).some(n=>n.namespaceURI!==IDS||n.localName!=='entity')||children(app).length!==1)||entity&&(!supportedAttributes(entity,[])||children(entity).some(n=>n.namespaceURI!==IDS||n.localName!=='name')||children(entity).length!==1))reasons.push('Voorwaardelijke toepassing of predefinedType kan niet door UDPS worden uitgevoerd.');
-  const min=app?.hasAttribute('minOccurs')?attribute(app,'minOccurs'):'1',max=app?.hasAttribute('maxOccurs')?attribute(app,'maxOccurs'):'1';
-  if(!/^\d+$/.test(min)||!(max==='unbounded'||/^\d+$/.test(max))||max==='0'||max!=='unbounded'&&Number(min)>Number(max))reasons.push(max==='0'?'Deze specificatie verbiedt de toepassing; er worden geen gewenste properties toegevoegd.':'Niet ondersteunde toepassingsaantallen.');
-  const requirements=[];
-  for(const [ri,node] of children(reqs).entries()){
-   if(++requirementCount>MAX_REQUIREMENTS)throw Error('Het IDS-bestand bevat meer dan 2000 eisen.');
-   const issues=[...reasons],kind=node.localName,cardinality=node.hasAttribute('cardinality')?attribute(node,'cardinality'):'required',pset=literal(one(node,'propertySet')),property=literal(one(node,'baseName')),ifcDataType=attribute(node,'dataType'),dataType=datatypeMap[ifcDataType]||'';
-   if(node.namespaceURI!==IDS||kind!=='property')issues.push('Dit '+kind+'-facet is geen rechtstreeks te koppelen IFC-property.');
-   if(cardinality!=='required')issues.push(cardinality==='prohibited'?'Verboden property; niet toevoegen.':cardinality==='optional'?'Optionele property; niet als verplichte koppeling toegevoegd.':'Onbekende cardinaliteit.');
-   if(kind==='property'){
-    if(!identity(pset)||!identity(property))issues.push('Alleen letterlijke propertyset- en propertynamen zonder begin-/eindspaties of besturingstekens worden ondersteund; geen patronen of naamrestricties.');
-    if(pset.startsWith('Qto_'))issues.push('Quantity sets hebben een afzonderlijke exportroute nodig.');
-    if(!dataType)issues.push('Het IDS-datatype ontbreekt of heeft geen ondersteunde UDPS-vertaling.');
-    if(children(node).some(n=>n.namespaceURI!==IDS||!['propertySet','baseName'].includes(n.localName)))issues.push('Waarde-eisen of andere propertyvoorwaarden worden bewaard, maar kunnen hier niet worden uitgevoerd.');
-    if(!supportedAttributes(node,['dataType','cardinality','uri','instructions']))issues.push('Niet ondersteunde eigenschapsattributen.');
-   }
-   requirements.push({id:'spec:'+si+'/requirement:'+ri,kind,cardinality,entity:entityCode,propertySet:pset,property,ifcDataType,dataType,instructions:attribute(node,'instructions'),uri:attribute(node,'uri'),eligible:!issues.length,reasons:[...new Set(issues)],xml:sourceXml(node)});
-  }
-  specifications.push({id:'spec:'+si,name:name||'Naamloze specificatie',identifier:attribute(spec,'identifier'),ifcVersions,description:attribute(spec,'description'),instructions:attribute(spec,'instructions'),minOccurs:min,maxOccurs:max,applicabilityXml:app?sourceXml(app):'',reasons:[...new Set(reasons)],requirements});
+const literal=value=>value?.kind==='literal'?value.value:'';
+function finiteNames(value){
+ if(Object.keys(value?.wrapperAttributes||{}).length)return null;
+ if(value?.kind==='literal'&&!Object.keys(value.attributes||{}).length)return [value.value];
+ const xs='http://www.w3.org/2001/XMLSchema';
+ // Only a pure string enumeration is a proven union. Patterns/bounds/unknown
+ // facets or QName namespaces need explicit resolution, never a JS-regexp guess.
+ if(value?.kind==='restriction'&&value.baseNamespace===xs&&value.base?.split(':').at(-1)==='string'&&Object.keys(value.attributes||{}).every(k=>['base','id'].includes(k))&&Array.isArray(value.facets)&&value.facets.length&&value.facets.every(f=>f.kind==='enumeration'&&f.namespace===xs&&typeof f.value==='string'&&Object.keys(f.attributes||{}).every(k=>['value','id'].includes(k))))return unique(value.facets.map(f=>f.value));
+ return null;
+}
+const hasValue=value=>value!==undefined&&value!==null;
+function unknownValueMetadata(value){
+ if(!value||typeof value!=='object')return false;
+ if(Object.keys(value.wrapperAttributes||{}).length)return true;
+ if(value.kind==='literal')return Object.keys(value.attributes||{}).length>0;
+ if(value.kind==='restriction'){
+  const xs='http://www.w3.org/2001/XMLSchema',operators=['enumeration','pattern','minInclusive','maxInclusive','minExclusive','maxExclusive','length','minLength','maxLength','totalDigits','fractionDigits','whiteSpace'];
+  return value.baseNamespace!==xs||Object.keys(value.attributes||{}).some(k=>!['base','id'].includes(k))||(value.facets||[]).some(f=>f.namespace!==xs||!operators.includes(f.kind)||Object.keys(f.attributes||{}).some(k=>!['value','id'].includes(k)));
  }
- const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(xml)),id='sha256:'+Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
- return {schema:1,id,fileName,title:one(info,'title').textContent.trim()||fileName,xml,specifications};
+ return ['unknown','ambiguous'].includes(value.kind)||(value.values||[]).some(unknownValueMetadata);
+}
+function sourceRecord(preview){
+ const record={schema:1,id:preview.id,fileName:preview.fileName,xml:preview.xml,selectedRequirementIds:[]};
+ for(const k of ['documentSchema','sourceEncoding','sourceByteDigest'])if(preview[k]!==undefined)record[k]=preview[k];
+ return record;
+}
+function mergedDecisions(preview,decisions,draft=false){return checkedDecisions({...preview.decisions,...decisions},draft);}
+
+/** Translate a full IDS document into explicit, reviewable parameter proposals.
+ * No restriction is executed as a JavaScript regexp, and no subclass is inferred.
+ */
+export function mappingProposals(preview,catalog,decisions={}){
+ const choices=mergedDecisions(preview,decisions,true),known=entities(catalog),byUpper=new Map(known.map(e=>[e.toUpperCase(),e])),proposals=[];
+ for(const s of preview.specifications||[]){
+  const modern=Array.isArray(s.applicability),app=modern?s.applicability:[],entityFacets=app.filter(f=>f.kind==='entity');
+  const unknownDocument=(preview.unknown||[]).length>0||Object.keys(preview.attributes||{}).some(k=>!['xsi:schemaLocation','version'].includes(k)&&!k.endsWith(':schemaLocation'));
+  const entityFacet=entityFacets.length===1?entityFacets[0]:null,sourceNames=entityFacet?finiteNames(entityFacet.parameters?.name):null;
+  const completeNames=sourceNames?.length&&sourceNames.every(n=>identity(n)&&byUpper.has(n));
+  const sourceEntities=completeNames?unique(sourceNames.map(n=>byUpper.get(n))):[];
+  const min=String(s.minOccurs??'1'),max=String(s.maxOccurs??'unbounded'),prohibited=min==='0'&&max==='0';
+  const validOccurs=(min==='1'||min==='0')&&max==='unbounded'||prohibited;
+  const conditional=modern&&(app.length!==1||entityFacets.length!==1||Object.keys(entityFacet?.parameters||{}).some(k=>k!=='name')||Object.keys(entityFacet?.attributes||{}).length>0||Object.keys(s.applicabilityAttributes||{}).some(k=>!['minOccurs','maxOccurs'].includes(k))||(s.unknown||[]).length>0||(entityFacet?.unknown||[]).length>0||unknownDocument||Object.keys(s.attributes||{}).some(k=>!['name','ifcVersion','identifier','description','instructions'].includes(k)));
+  for(const r of s.requirements||[]){
+   const decision=choices[r.id]||{},parameters=r.parameters||{},attrs=r.attributes||{},issues=[],warnings=[];
+   const sourceSet=modern?literal(parameters.propertySet):r.propertySet||'',sourceProperty=modern?literal(parameters.baseName):r.property||'';
+   const propertySet=decision.propertySet??sourceSet,property=decision.property??sourceProperty;
+   const ifcDataType=modern?attrs.dataType||'':r.ifcDataType||'',dataType=decision.dataType??datatypeMap[ifcDataType]??'';
+   const cardinality=r.cardinality||'required';
+   let targets=own(decision,'entities')?decision.entities:modern?sourceEntities:r.entity?[r.entity]:[];
+   const manualTargets=own(decision,'entities')&&JSON.stringify([...targets].sort())!==JSON.stringify([...sourceEntities].sort());
+   const scopeReview=conditional||manualTargets||modern&&!sourceEntities.length;
+   const valueReview=modern?(hasValue(parameters.value)||Object.keys(parameters).some(k=>!['propertySet','baseName','value'].includes(k))||Object.keys(attrs).some(k=>!['dataType','cardinality','uri','instructions'].includes(k))||(r.unknown||[]).length>0||Object.values(parameters).some(unknownValueMetadata)||(s.requirementsAttributes||[]).some(a=>Object.keys(a).some(k=>k!=='description'))):false;
+   const optional=cardinality==='optional';
+   if(preview.format?.mappingAllowed===false)issues.push('Deze IDS-versie of documentstructuur wordt alleen als bron bewaard; omzetten naar UDPS is niet beschikbaar.');
+   if(r.kind!=='property')issues.push('Dit '+r.kind+'-facet gebruikt een andere IFC-route dan een UDPS-property; de volledige eis blijft bewaard.');
+   if(prohibited)issues.push('Deze specificatie verbiedt de toepassing; geen positieve parameterkoppeling toevoegen.');
+   else if(!validOccurs)issues.push('Niet ondersteunde toepassingsaantallen; controleer de IDS-bron.');
+   if(cardinality==='prohibited')issues.push('Verboden property; geen positieve parameterkoppeling toevoegen.');
+   else if(optional&&!decision.includeOptional)issues.push('Optionele property: bevestig dat je hiervoor een parameterdefinitie wilt toevoegen.');
+   else if(!['required','optional'].includes(cardinality))issues.push('Onbekende cardinaliteit.');
+   if(!modern&&r.eligible===false&&cardinality==='required')issues.push(...r.reasons||['Deze IDS-eis is niet beschikbaar.']);
+   if(!targets.length||targets.some(e=>!known.includes(e)))issues.push('Kies concrete bekende IFC-entiteiten; een onbekend of gedeeltelijk bekend doel wordt niet stilzwijgend overgeslagen.');
+   if(!identity(propertySet)||!identity(property))issues.push('Kies een exacte eigenschapsnaam en propertysetnaam zonder begin-/eindspaties of besturingstekens. Naamrestricties blijven in de bron bewaard.');
+   if(sourceSet.startsWith('Qto_')||propertySet.startsWith('Qto_'))issues.push('Quantity sets hebben een afzonderlijke exportroute nodig en kunnen hier niet als gewone property worden gekoppeld.');
+   if(!coreTypes.has(dataType))issues.push('Het IDS-datatype ontbreekt of heeft geen ondersteunde UDPS-vertaling; kies het datatype expliciet.');
+   if(scopeReview){warnings.push('UDPS voert de IDS-toepassingsvoorwaarden niet uit. De gekozen entiteiten krijgen een parameterdefinitie.');if(!decision.acknowledgeScope)issues.push('Bevestig de gekozen IFC-doelen en de toepassing: UDPS bewaakt de IDS-toepassingsvoorwaarden niet.');}
+   if(valueReview){warnings.push('UDPS controleert of vult de vereiste IDS-waarden niet in.');if(!decision.acknowledgeValues)issues.push('Bevestig dat de IDS-waardevoorwaarden afzonderlijk worden gecontroleerd.');}
+   if(optional&&decision.includeOptional)warnings.push('De optionele IDS-property wordt op uitdrukkelijke keuze als parameterdefinitie toegevoegd.');
+   if(['entities','propertySet','property','dataType'].some(k=>own(decision,k)))warnings.push('Handmatige keuzes zijn vastgelegd; de oorspronkelijke IDS-eis blijft behouden.');
+   if((s.ifcVersions||[]).some(v=>!['IFC2X3','IFC4','IFC4X3_ADD2'].includes(v)))warnings.push('Controleer de IFC-versie van de bron met de beoogde exporter en het model.');
+   targets=unique(targets);
+   const conditions={specificationId:s.id,minOccurs:min,maxOccurs:max,applicabilityIds:app.map(f=>f.id).filter(Boolean),conditional:scopeReview};
+   const values={requirementId:r.id,parameter:'value',constrained:valueReview};
+   const requiresReview=scopeReview||valueReview||optional||Object.keys(decision).length>0||!identity(sourceSet)||!identity(sourceProperty)||!datatypeMap[ifcDataType];
+   proposals.push({...r,id:r.id,specificationId:s.id,specificationName:s.name,kind:r.kind,cardinality,propertySet,property,ifcDataType,dataType,entities:targets,entity:targets[0]||'',direct:r.kind==='property'&&!requiresReview&&!issues.length,eligible:!issues.length,reasons:unique(issues),warnings:unique(warnings),requiresReview,decision,conditions,values,appliedTargets:{propertySet,property,dataType,entities:targets}});
+  }
+ }
+ return proposals;
 }
 
+function checkProjectBudget(data){if(byteLength(JSON.stringify(data,null,2))>IDS_PROJECT_MAX_BYTES)throw Error('Het project zou groter dan 32 MiB zijn. Bewaar minder IDS-bronnen of koppelingen in dit project.');}
 function addHeaders(data,fields){for(const field of fields)if(!data.headers.includes(field)){data.headers.push(field);data.rows.forEach(r=>r[field]='');}}
-function references(value){if(!value)return [];try{const result=JSON.parse(value);if(Array.isArray(result)&&result.length<=MAX_REQUIREMENTS&&result.every(x=>typeof x.documentId==='string'&&typeof x.requirementId==='string'&&typeof x.specificationId==='string'))return result;}catch{}throw Error('Bestaande IDS-herkomst is niet leesbaar; er wordt niets overschreven.');}
-export function planIdsImport(data,catalog,preview,selectedIds){
- if(!Array.isArray(selectedIds)||!selectedIds.length||new Set(selectedIds).size!==selectedIds.length)throw Error('Selecteer één of meer ondersteunde IDS-eigenschappen.');
- const next=structuredClone(data),known=new Set(entities(catalog)),requirements=new Map((preview.specifications||[]).flatMap(s=>s.requirements.map(r=>[r.id,{requirement:r,specification:s}])));
- const docs=validateIdsImports(next.idsImports)||[],record={schema:1,id:preview.id,fileName:preview.fileName,xml:preview.xml,selectedRequirementIds:[]};
- validateIdsImports([record]);const previous=docs.find(d=>d.id===preview.id);if(previous&&previous.xml!==preview.xml)throw Error('Dezelfde IDS-bronidentiteit heeft verschillende inhoud.');
+function references(value){if(!value)return [];try{const result=JSON.parse(value);if(Array.isArray(result)&&result.length<=MAX_REFERENCES&&result.every(x=>x&&digest(x.documentId)&&requirementId(x.requirementId)&&/^spec:\d+$/.test(x.specificationId)))return result;}catch{}throw Error('Bestaande IDS-herkomst is niet leesbaar; er wordt niets overschreven.');}
+function retainSource(data,preview,decisions,selected=[]){
+ const docs=validateIdsImports(data.idsImports)||[],record=sourceRecord(preview);validateIdsImports([record]);
+ const previous=docs.find(d=>d.id===preview.id);
+ if(previous&&previous.xml!==preview.xml)throw Error('Dezelfde IDS-bronidentiteit heeft verschillende inhoud.');
+ const saved=previous||record;saved.selectedRequirementIds=unique([...saved.selectedRequirementIds,...selected]);
+ // Merge raw records first: an explicit {} replaces (clears) that requirement,
+ // while an omitted requirement keeps its saved choice. Validate only afterwards.
+ const choices=checkedDecisions({...saved.decisions,...preview.decisions,...decisions});
+ if(Object.keys(choices).length)saved.decisions=choices;else delete saved.decisions;
+ for(const k of ['documentSchema','sourceEncoding','sourceByteDigest'])if(record[k]!==undefined)saved[k]=record[k];
+ if(!previous)docs.push(saved);
+ data.idsImports=validateIdsImports(docs);return !previous;
+}
+// Source-only retention is useful even when the document has no UDPS-compatible facets.
+export function saveIdsSource(data,preview,decisions={}){
+ const next={idsImports:data.idsImports},saved=retainSource(next,preview,decisions);
+ checkProjectBudget({...data,idsImports:next.idsImports});
+ data.idsImports=next.idsImports;return {saved,id:preview.id};
+}
+export function planIdsImport(data,catalog,preview,selectedIds,decisions={}){
+ if(!Array.isArray(selectedIds)||!selectedIds.length||selectedIds.length>MAX_REFERENCES||new Set(selectedIds).size!==selectedIds.length)throw Error('Selecteer één of meer ondersteunde IDS-eigenschappen.');
+ const next=structuredClone(data),stored=(validateIdsImports(next.idsImports)||[]).find(d=>d.id===preview.id),effective={...stored?.decisions,...preview.decisions,...decisions};
+ const proposals=new Map(mappingProposals(preview,catalog,effective).map(p=>[p.id,p]));
+ // Validate retention before changing any output, then validate its final size again below.
+ retainSource(next,preview,effective,selectedIds);
  let added=0,skipped=0;
  for(const id of selectedIds){
-  const entry=requirements.get(id),r=entry?.requirement,s=entry?.specification;
-  if(!r?.eligible||r.kind!=='property'||r.cardinality!=='required')throw Error('IDS-eis is niet beschikbaar: '+(r?.reasons?.join(' ')||id));
-  if(!known.has(r.entity)||!identity(r.propertySet)||!identity(r.property)||datatypeMap[r.ifcDataType]!==r.dataType)throw Error('Ongeldige IFC-entiteit, eigenschapsnaam of datatype in IDS-selectie.');
-  const matches=next.rows.filter(row=>row['Y/N']==='x'&&row[r.entity]==='x'&&row.Export_tabblad===r.propertySet&&row.IFC_parameter===r.property);
-  if(matches.length>1)throw Error('Bestaande dubbele IFC-koppeling: '+r.propertySet+' / '+r.property+'. Los deze eerst op.');
-  if(matches[0]&&matches[0].Data_type!==r.dataType)throw Error('Conflicterend datatype voor '+r.propertySet+' / '+r.property+' / '+r.entity+'. Er is niets toegevoegd.');
-  addHeaders(next,['Mapping_pending','Mapping_origin','Uniform_id','IDS_requirements',r.entity]);
-  let row=matches[0];
-  if(row)skipped++;
-  else{if(next.rows.length>=10000)throw Error('Het project zou meer dan 10.000 regels bevatten.');row=Object.fromEntries(next.headers.map(h=>[h,'']));Object.assign(row,{'Y/N':'x',Revit_parameter:'',IFC_parameter:r.property,Export_tabblad:r.propertySet,Data_type:r.dataType,Mapping_pending:'x',Mapping_origin:'ids',Uniform_id:'ids:'+preview.id+':'+id,[r.entity]:'x'});next.rows.push(row);added++;}
-  const refs=references(row.IDS_requirements),ref={documentId:preview.id,requirementId:id,specificationId:s.id};if(!refs.some(x=>JSON.stringify(x)===JSON.stringify(ref)))refs.push(ref);row.IDS_requirements=JSON.stringify(refs);
+  const r=proposals.get(id);
+  if(!r?.eligible||r.kind!=='property')throw Error('IDS-eis is niet beschikbaar: '+(r?.reasons?.join(' ')||id));
+  for(const entity of r.entities){
+   const matches=next.rows.filter(row=>row['Y/N']==='x'&&row[entity]==='x'&&row.Export_tabblad===r.propertySet&&row.IFC_parameter===r.property);
+   if(matches.length>1)throw Error('Bestaande dubbele IFC-koppeling: '+r.propertySet+' / '+r.property+'. Los deze eerst op.');
+   if(matches[0]&&matches[0].Data_type!==r.dataType)throw Error('Conflicterend datatype voor '+r.propertySet+' / '+r.property+' / '+entity+'. Er is niets toegevoegd.');
+   addHeaders(next,['Mapping_pending','Mapping_origin','Uniform_id','IDS_requirements',entity]);
+   let row=matches[0];
+   if(row)skipped++;
+   else{if(next.rows.length>=10000)throw Error('Het project zou meer dan 10.000 regels bevatten.');row=Object.fromEntries(next.headers.map(h=>[h,'']));Object.assign(row,{'Y/N':'x',Revit_parameter:'',IFC_parameter:r.property,Export_tabblad:r.propertySet,Data_type:r.dataType,Mapping_pending:'x',Mapping_origin:'ids',Uniform_id:'ids:'+preview.id+':'+id+':'+entity,[entity]:'x'});next.rows.push(row);added++;}
+   const refs=references(row.IDS_requirements),ref={documentId:preview.id,requirementId:id,specificationId:r.specificationId};
+   if(r.requiresReview||r.entities.length>1){ref.decisions=r.decision;ref.conditions=r.conditions;ref.values=r.values;ref.appliedTargets=r.appliedTargets;}
+   // A re-import updates the reviewed snapshot for this source requirement, without duplicating it.
+   const index=refs.findIndex(x=>x.documentId===ref.documentId&&x.requirementId===id&&x.specificationId===ref.specificationId);
+   if(index>=0)refs[index]=ref;else refs.push(ref);
+   if(refs.length>MAX_REFERENCES)throw Error('Te veel IDS-verwijzingen op één parameterregel.');
+   row.IDS_requirements=JSON.stringify(refs);
+  }
  }
- const saved=previous||record;saved.selectedRequirementIds=[...new Set([...saved.selectedRequirementIds,...selectedIds])];if(!previous)docs.push(saved);next.idsImports=validateIdsImports(docs);
+ // Count provenance references project-wide, including existing mappings.
+ let refCount=0;for(const row of next.rows){refCount+=references(row.IDS_requirements).length;if(refCount>MAX_REFERENCES)throw Error('Het project zou meer dan 50.000 IDS-verwijzingen bevatten.');}
+ checkProjectBudget(next);
  return {project:next,added,skipped,selected:selectedIds.length};
 }
-export function applyIdsImport(data,catalog,preview,selectedIds){const result=planIdsImport(data,catalog,preview,selectedIds);data.headers=result.project.headers;data.rows=result.project.rows;data.idsImports=result.project.idsImports;return {added:result.added,skipped:result.skipped,selected:result.selected};}
+export function applyIdsImport(data,catalog,preview,selectedIds,decisions={}){const result=planIdsImport(data,catalog,preview,selectedIds,decisions);data.headers=result.project.headers;data.rows=result.project.rows;data.idsImports=result.project.idsImports;return {added:result.added,skipped:result.skipped,selected:result.selected};}

@@ -1,0 +1,1719 @@
+{
+  "sourceRepository": "https://github.com/buildingSMART/IDS",
+  "sourceCommit": "870f9c4e6e8f414e737b4d84ca1aa9b46fc6c8f3",
+  "sourceDirectory": "Documentation/ImplementersDocumentation/TestCases",
+  "sourceURL": "https://github.com/buildingSMART/IDS/tree/870f9c4e6e8f414e737b4d84ca1aa9b46fc6c8f3/Documentation/ImplementersDocumentation/TestCases",
+  "license": {
+    "spdx": "CC-BY-ND-4.0",
+    "attribution": "Copyright buildingSMART International Ltd.",
+    "sourceLicense": "https://github.com/buildingSMART/IDS/blob/870f9c4e6e8f414e737b4d84ca1aa9b46fc6c8f3/LICENSE",
+    "terms": "https://creativecommons.org/licenses/by-nd/4.0/"
+  },
+  "purpose": "Unmodified IDS XML fixtures for reading and source-retention checks. This is not an IDS audit, XSD validation, or IFC-model conformance suite. Pass/fail/invalid filename labels retain the upstream test meaning; they are not parser acceptance labels. Original IFC model fixtures are deliberately not included.",
+  "copiedAt": "2026-11-17",
+  "fileCount": 334,
+  "totalBytes": 380272,
+  "specificationCount": 334,
+  "counts": {
+    "applicability": {
+      "entity": 334
+    },
+    "requirements": {
+      "attribute": 96,
+      "classification": 27,
+      "entity": 29,
+      "material": 29,
+      "partOf": 34,
+      "property": 118
+    },
+    "restrictionElements": {
+      "restriction": 96,
+      "enumeration": 30,
+      "pattern": 62,
+      "minInclusive": 7,
+      "maxInclusive": 7,
+      "minExclusive": 5,
+      "maxExclusive": 5,
+      "length": 2,
+      "minLength": 4,
+      "maxLength": 4
+    },
+    "filenameLabels": {
+      "fail": 120,
+      "invalid": 27,
+      "pass": 187
+    }
+  },
+  "files": [
+    {
+      "path": "attribute/fail-a_prohibited_facet_returns_the_opposite_of_a_required_facet.ids",
+      "bytes": 1043,
+      "sha256": "21b216b63037df1fd0684b93e61035e19a6dd2092ace44633bbf380c535d8897"
+    },
+    {
+      "path": "attribute/fail-an_optional_attribute_fails_if_empty.ids",
+      "bytes": 1078,
+      "sha256": "cc26ae29702bdd536ae5c91f658a9aab83c02646c9ef79dcb548096fe0a26f39"
+    },
+    {
+      "path": "attribute/fail-attributes_are_not_inherited_by_the_occurrence.ids",
+      "bytes": 1082,
+      "sha256": "191697f15ebb769fdea5ed5c294a2f9c54efc0ca8e9dad01f7f544dc930677cf"
+    },
+    {
+      "path": "attribute/fail-attributes_should_check_strings_case_sensitively_2_2.ids",
+      "bytes": 1087,
+      "sha256": "f9a0972132be1bd6d7e7ba9e68e2c20e4344a9f7c07ccd461b912a8a93dbb0e8"
+    },
+    {
+      "path": "attribute/fail-attributes_with_a_logical_unknown_always_fail.ids",
+      "bytes": 1015,
+      "sha256": "26ec2f1182ebdb322d3cdfbcd3e20f85e9c643cfe3dd22d6fb3c8849081eb88b"
+    },
+    {
+      "path": "attribute/fail-attributes_with_an_empty_list_always_fail.ids",
+      "bytes": 1015,
+      "sha256": "d2c3fdc6f206b1a5878f2912fb0fb07ac977e148bff798c243bc40c66d116b49"
+    },
+    {
+      "path": "attribute/fail-attributes_with_an_empty_set_always_fail.ids",
+      "bytes": 1009,
+      "sha256": "7680a165473c52c5f7f1ee568083bcdf65802a2be030d2b73fa85e48a4ede7e1"
+    },
+    {
+      "path": "attribute/fail-attributes_with_empty_strings_always_fail.ids",
+      "bytes": 982,
+      "sha256": "11f68e9d14a323b52d568ce318a4a0b09584370fa4dc8878ac4f043975fc51d4"
+    },
+    {
+      "path": "attribute/fail-attributes_with_null_values_always_fail.ids",
+      "bytes": 978,
+      "sha256": "4091837a836ed72142264c0ff4b689ebea1282ee3bfadb8b0d5ae54fc1764eeb"
+    },
+    {
+      "path": "attribute/fail-booleans_must_be_specified_as_lowercase_strings_1_3.ids",
+      "bytes": 1090,
+      "sha256": "6fe428e029232d3bce772ea774810370921c84bc90377a5f2e21f37323ad8f8a"
+    },
+    {
+      "path": "attribute/fail-dates_are_treated_as_strings_1_2.ids",
+      "bytes": 1061,
+      "sha256": "7a127e6658bbde8b45d209500b9b1db5dfdd0275e2c4c946cd1c748792bba80b"
+    },
+    {
+      "path": "attribute/fail-durations_are_treated_as_strings_2_2.ids",
+      "bytes": 1063,
+      "sha256": "b852530117e98afc62dd3b39ee86e42905f1b2393860be3082af8cf61bab3310"
+    },
+    {
+      "path": "attribute/fail-ids_does_not_handle_string_truncation_such_as_for_identifiers.ids",
+      "bytes": 1376,
+      "sha256": "5afc870e0c0b487e6ddc855699cc3bda6d7df86a17cbc25fcd18a4b7d781458e"
+    },
+    {
+      "path": "attribute/fail-numeric_values_are_checked_using_type_casting_4_4.ids",
+      "bytes": 1106,
+      "sha256": "3c67ff5a12d066e0d6520039cca49c149a5c2e47a288c0e982000de03fc819ba"
+    },
+    {
+      "path": "attribute/fail-value_restrictions_may_be_used_3_3.ids",
+      "bytes": 1171,
+      "sha256": "62f9648a1db08a751d48abf4d80511e0cad1a5233b9fce2fadbdb590f08d8acc"
+    },
+    {
+      "path": "attribute/invalid-booleans_must_be_specified_as_lowercase_strings_2_3.ids",
+      "bytes": 1091,
+      "sha256": "a271564afd04ce2ed617631d9a96c6d912161701b615201764de97e362b77ee8"
+    },
+    {
+      "path": "attribute/invalid-derived_attributes_cannot_be_checked_and_always_fail.ids",
+      "bytes": 1013,
+      "sha256": "66ab48e294b4c99797d95db4f054895f3897f5c108ee7da9cb13e187f423696e"
+    },
+    {
+      "path": "attribute/invalid-integers_cannot_be_expressed_as_floating_point_numbers_2_2.ids",
+      "bytes": 1107,
+      "sha256": "b34377ed8f5077282337670438c6cc77ea69d7e3b5ddf21ad85cb3840becbb5c"
+    },
+    {
+      "path": "attribute/invalid-invalid_attribute_names_always_fail.ids",
+      "bytes": 976,
+      "sha256": "c79e4594d46acd6824cfaec796432cf088682c2e8cd2856d6a9ecb7ab43e04c4"
+    },
+    {
+      "path": "attribute/invalid-inverse_attributes_cannot_be_checked_and_always_fail.ids",
+      "bytes": 1011,
+      "sha256": "733bfee5130f18eaaf40f2f2882812179f27672dbef0091e4ee5e618221e5bcb"
+    },
+    {
+      "path": "attribute/invalid-only_specifically_formatted_numbers_are_allowed_1_4.ids",
+      "bytes": 1112,
+      "sha256": "877005e141b44f84f566980d67f4eb0618795ed8af52d5dead91c147b012e19b"
+    },
+    {
+      "path": "attribute/invalid-only_specifically_formatted_numbers_are_allowed_2_4.ids",
+      "bytes": 1115,
+      "sha256": "26d27484cf35c660550e5e27bf3cafd2dbb9345e0005422fe53d2294946708be"
+    },
+    {
+      "path": "attribute/invalid-specifying_a_float_when_the_value_is_an_integer_is_invalid.ids",
+      "bytes": 1184,
+      "sha256": "60e0ae92b9c5f3791fa5334198406e945285272bf418444ccb97335b237d60bf"
+    },
+    {
+      "path": "attribute/invalid-value_checks_always_fail_for_lists.ids",
+      "bytes": 1068,
+      "sha256": "38ee34b8a3f93074dff9482d9df5b449caae876bf049588f8020a22bf20bbcaa"
+    },
+    {
+      "path": "attribute/invalid-value_checks_always_fail_for_objects.ids",
+      "bytes": 1052,
+      "sha256": "70b5f4a605f9e499261d4b7ef5a20f862a58fdc4bd7cdfa466232510a47e3195"
+    },
+    {
+      "path": "attribute/invalid-value_checks_always_fail_for_selects.ids",
+      "bytes": 1081,
+      "sha256": "2b317d0504c16b5013b5ee678e879d7970b1e151717830db2b1990c992496ab0"
+    },
+    {
+      "path": "attribute/pass-a_required_facet_checks_all_parameters_as_normal.ids",
+      "bytes": 996,
+      "sha256": "d13449e261f270585810015bf23fa3e9970394fbf25eaf0fdd08a3a658f31cc6"
+    },
+    {
+      "path": "attribute/pass-an_optional_attribute_passes_if_null.ids",
+      "bytes": 1078,
+      "sha256": "d798ee265551c438ff0f0c7934d49f578ca52cb7297642f2b9fa2a0e39afb112"
+    },
+    {
+      "path": "attribute/pass-an_optional_attribute_passes_if_specified.ids",
+      "bytes": 1088,
+      "sha256": "56a164b5672c70a6da968ab11b17e2ddf30039546551e1b819ca438c020ba254"
+    },
+    {
+      "path": "attribute/pass-attributes_referencing_an_object_should_pass.ids",
+      "bytes": 985,
+      "sha256": "dc932360120b6ed15fef9cdaaf33af67c40f54f4326cd1be5429e67554d80046"
+    },
+    {
+      "path": "attribute/pass-attributes_should_check_strings_case_sensitively_1_2.ids",
+      "bytes": 1087,
+      "sha256": "9dd342a855c659a85b85d37d2880ec31d1e4157e1467d7fa6250054ad2c0f6b4"
+    },
+    {
+      "path": "attribute/pass-attributes_with_a_boolean_false_should_pass.ids",
+      "bytes": 989,
+      "sha256": "cd77d2a3e9942ddf8201c86953c83d29b33b8eb84c902a9185ce4e0ebbc007c1"
+    },
+    {
+      "path": "attribute/pass-attributes_with_a_boolean_true_should_pass.ids",
+      "bytes": 987,
+      "sha256": "d56110f887c60103b66a41cbe21d8126496cde5b6b1f16d7e05330ece34a6d8c"
+    },
+    {
+      "path": "attribute/pass-attributes_with_a_select_referencing_a_primitive_should_pass.ids",
+      "bytes": 1046,
+      "sha256": "a53db3ed87b0370d8f36b50d66db281eb66314552e92e479c00121c40824ae65"
+    },
+    {
+      "path": "attribute/pass-attributes_with_a_select_referencing_an_object_should_pass.ids",
+      "bytes": 1042,
+      "sha256": "28b097d450906a998d35bf4fb79f13503e7de1601af0b19ab3eb5c6c38d2854e"
+    },
+    {
+      "path": "attribute/pass-attributes_with_a_string_value_should_pass.ids",
+      "bytes": 984,
+      "sha256": "fb7f2ad4e90697420495cc604a07439a7bd806b7bbdee8fbcebcbfb5edfe80b9"
+    },
+    {
+      "path": "attribute/pass-attributes_with_a_zero_duration_should_pass.ids",
+      "bytes": 995,
+      "sha256": "98d29bb24f6880f6e0027061eaa69874b02a393baafdab5f114b2157719bdc65"
+    },
+    {
+      "path": "attribute/pass-attributes_with_a_zero_number_have_meaning_and_should_pass.ids",
+      "bytes": 1031,
+      "sha256": "f2b4bee1f4bf5bcb45effebc19e59687264ceb5599b9c953094afc57746a6c98"
+    },
+    {
+      "path": "attribute/pass-booleans_must_be_specified_as_lowercase_strings_3_3.ids",
+      "bytes": 1091,
+      "sha256": "d1bbce1c84ff0433863503339bcf106d9a3ec0c90edd057a4a29016e836bd84e"
+    },
+    {
+      "path": "attribute/pass-dates_are_treated_as_strings_2_2.ids",
+      "bytes": 1061,
+      "sha256": "71fe23d1caa800af2495970dbbe72042d3b8c286784bc277bf9cce153dc1f435"
+    },
+    {
+      "path": "attribute/pass-durations_are_treated_as_strings_1_2.ids",
+      "bytes": 1063,
+      "sha256": "8403ff73f9848f133e2af581a408e9c2f7fc115546babdd7201132e18133476f"
+    },
+    {
+      "path": "attribute/pass-globalids_are_treated_as_strings_and_not_expanded.ids",
+      "bytes": 1101,
+      "sha256": "815d94923ede56519c011b9b378317b9347ac21303c2f6f223d2283fa0f9a09b"
+    },
+    {
+      "path": "attribute/pass-integers_follow_the_same_rules_as_numbers.ids",
+      "bytes": 1071,
+      "sha256": "f0b47ff636c79646bf2d0092e6159fa7209806e8e168051688d76cb5ad471775"
+    },
+    {
+      "path": "attribute/pass-name_restrictions_will_match_any_result_1_3.ids",
+      "bytes": 1076,
+      "sha256": "fa9ae5f1d18ca451753dd346686a971bcfcd9ae23d04d13ee1ebd3d97285eb69"
+    },
+    {
+      "path": "attribute/pass-name_restrictions_will_match_any_result_2_3.ids",
+      "bytes": 1117,
+      "sha256": "3904f544aa01cd706aeee98023c94f9ee2dce35387c1a9fadb397db091e2db43"
+    },
+    {
+      "path": "attribute/pass-name_restrictions_will_match_any_result_3_3.ids",
+      "bytes": 1117,
+      "sha256": "7da82b990d6b7dd8a1088e2be0be1c9c4d6578e2022162bca2306268ad9b9eed"
+    },
+    {
+      "path": "attribute/pass-non_ascii_characters_are_treated_without_encoding.ids",
+      "bytes": 1101,
+      "sha256": "713c21056264cc30c49f79556357c62694cd1ca4d3640de7bf447e0a3b11bfe1"
+    },
+    {
+      "path": "attribute/pass-numeric_values_are_checked_using_type_casting_1_4.ids",
+      "bytes": 1106,
+      "sha256": "74a4785cc59da7ba0c29175bd337678f0aa0903ae9233c0fde84ec1ba08a4817"
+    },
+    {
+      "path": "attribute/pass-numeric_values_are_checked_using_type_casting_2_4.ids",
+      "bytes": 1107,
+      "sha256": "cd7bf788fa4aef7c960a837c0e4fc63b1ba995dfeb590dbb0d3fc344de349930"
+    },
+    {
+      "path": "attribute/pass-numeric_values_are_checked_using_type_casting_3_4.ids",
+      "bytes": 1108,
+      "sha256": "ced9435077d05574b173cd202cb73a4b54db79a77b6a2cf49f0149b3a2fd10cb"
+    },
+    {
+      "path": "attribute/pass-only_specifically_formatted_numbers_are_allowed_3_4.ids",
+      "bytes": 1116,
+      "sha256": "b4b31d752779bb8a7cb5f579f63aafcca47cde1b1b8fa92aa79dbdc981c5a097"
+    },
+    {
+      "path": "attribute/pass-only_specifically_formatted_numbers_are_allowed_4_4.ids",
+      "bytes": 1116,
+      "sha256": "d072e33e2d2df2e09dca1fb2188acfd6db07eaf80d8d5555357e60778d212e43"
+    },
+    {
+      "path": "attribute/pass-strict_numeric_checking_may_be_done_with_a_bounds_restriction.ids",
+      "bytes": 1254,
+      "sha256": "8a1dc8da5f8680b037caf50abd4130c8de8dfe9208304e42d5bfa698d73d728c"
+    },
+    {
+      "path": "attribute/pass-typecast_checking_may_also_occur_within_enumeration_restrictions.ids",
+      "bytes": 1258,
+      "sha256": "aec7e855231b5c41ba2e2cb7b790629aeb0583423c228927a53a59afd0923453"
+    },
+    {
+      "path": "attribute/pass-value_restrictions_may_be_used_1_3.ids",
+      "bytes": 1171,
+      "sha256": "3cd2d071d3042d299808a9c720c82c7212e89c92bba56b2d7acd6411e8e36124"
+    },
+    {
+      "path": "attribute/pass-value_restrictions_may_be_used_2_3.ids",
+      "bytes": 1171,
+      "sha256": "91a9ac5b6641214cb116515d0de8ab100e300f06bdb0d7fcb650dc84fac47c8c"
+    },
+    {
+      "path": "classification/fail-a_classification_facet_with_no_data_matches_any_classification_1_2.ids",
+      "bytes": 1119,
+      "sha256": "46feda3d88d510642987bcca6ef3de3a7e073ccc4b127ab690190124cc95191e"
+    },
+    {
+      "path": "classification/fail-a_prohibited_classification_reference_returns_the_opposite_of_a_required_facet.ids",
+      "bytes": 1175,
+      "sha256": "45d0d66548c22f28309370796b2f8b1f4601ac9a352284155a2e39946a9788df"
+    },
+    {
+      "path": "classification/fail-a_prohibited_facet_returns_the_opposite_of_a_required_facet.ids",
+      "bytes": 1130,
+      "sha256": "26738673df72d4b82f5d8a3222030f15dec450f137e48228c3bea7adcbc566f0"
+    },
+    {
+      "path": "classification/fail-a_required_classification_system_fails_if_no_match.ids",
+      "bytes": 1017,
+      "sha256": "76b17d064ce89c5f5e402b24b43d8cf7c3ca8f74f7a53f4182c2e6a52b3a3273"
+    },
+    {
+      "path": "classification/fail-an_optional_classification_value_fails_if_no_match.ids",
+      "bytes": 1200,
+      "sha256": "5f3ce490dee28d80bf8ef738be54a2aaffb5c60e12c46a4594cd90c5dcee1ff7"
+    },
+    {
+      "path": "classification/fail-both_system_and_value_must_match__all__not_any__if_specified_2_2.ids",
+      "bytes": 1124,
+      "sha256": "49a92c342ebfe56f3718267bd3f558221fae112f368af13f1720067a9871260b"
+    },
+    {
+      "path": "classification/fail-occurrences_override_the_type_classification_per_system_2_3.ids",
+      "bytes": 1184,
+      "sha256": "0e37f1d2c73aa54039e1d00136493ea9a573c64206b2e836d83c9488d3ab858a"
+    },
+    {
+      "path": "classification/fail-restrictions_can_be_used_for_systems_1_2.ids",
+      "bytes": 1069,
+      "sha256": "28b89b7c94216d307a79d02f6de247b2cc43ef98cc3bca65667dd7ba694302ff"
+    },
+    {
+      "path": "classification/fail-restrictions_can_be_used_for_values_3_3.ids",
+      "bytes": 1219,
+      "sha256": "7e98dbb432701e37964421d9a999244633656dc60e4864e12146aa3fd2b3cf24"
+    },
+    {
+      "path": "classification/fail-systems_should_match_exactly_2_5.ids",
+      "bytes": 980,
+      "sha256": "48d11c8a9d0fe26f87b3b1346ae764ffd673e8af6c66fc33e2aff9e7c60f4795"
+    },
+    {
+      "path": "classification/pass-a_classification_facet_with_no_data_matches_any_classification_2_2.ids",
+      "bytes": 1119,
+      "sha256": "349ca8a143f80b902810f365db75f5af5659847f445023eb720e1c786e96d79f"
+    },
+    {
+      "path": "classification/pass-a_required_facet_checks_all_parameters_as_normal.ids",
+      "bytes": 1083,
+      "sha256": "013a11835ba8b8e27c5ebb2bad20d89d08f5e4eeaeb871518d4fbb52c71f8c54"
+    },
+    {
+      "path": "classification/pass-an_optional_classification_value_passes_if_null.ids",
+      "bytes": 1194,
+      "sha256": "52adc800c4fd2b3bfca951b86f70c639112e8e2157f6eb416a1c5d7dabd2b002"
+    },
+    {
+      "path": "classification/pass-an_optional_classification_value_passes_if_specified.ids",
+      "bytes": 1204,
+      "sha256": "11948d7d023993be1ca5eed77a0aed7a1fd21df2bd9e8cb6bf5eaade582bbe0d"
+    },
+    {
+      "path": "classification/pass-both_system_and_value_must_match__all__not_any__if_specified_1_2.ids",
+      "bytes": 1122,
+      "sha256": "4aea71cf821d91b7981921678c7b861a594829887426d66f2529b5439595cbf2"
+    },
+    {
+      "path": "classification/pass-non_rooted_resources_that_have_external_classification_references_should_also_pass.ids",
+      "bytes": 1226,
+      "sha256": "a65a9ad91f1030124626bb85c72c901d82b8190bf261c62d3ea92ef6767221a4"
+    },
+    {
+      "path": "classification/pass-occurrences_override_the_type_classification_per_system_1_3.ids",
+      "bytes": 1184,
+      "sha256": "4e40d512257b6456e9b7da59450edf04c7c9583a1c93a63efa0aff2ee294e236"
+    },
+    {
+      "path": "classification/pass-occurrences_override_the_type_classification_per_system_3_3.ids",
+      "bytes": 1183,
+      "sha256": "842fb891f3c40030d00b0c5f37fa36bb4ca54c3612cdbd788cb0065d572aedc1"
+    },
+    {
+      "path": "classification/pass-restrictions_can_be_used_for_systems_2_2.ids",
+      "bytes": 1069,
+      "sha256": "edfae6a1da66a34973d110e991698d2d86a850303d96b6a69312abdff41a4fbd"
+    },
+    {
+      "path": "classification/pass-restrictions_can_be_used_for_values_1_3.ids",
+      "bytes": 1219,
+      "sha256": "0dafd97071c05e22cf2391995c0c1c12fd03321d335ffcb83688201e531b7b1d"
+    },
+    {
+      "path": "classification/pass-restrictions_can_be_used_for_values_2_3.ids",
+      "bytes": 1221,
+      "sha256": "2c0edb91a5d0a20c0948d9d89e94d6dda3a8317b99af83c34a180dba17b8de05"
+    },
+    {
+      "path": "classification/pass-systems_should_match_exactly_1_5.ids",
+      "bytes": 983,
+      "sha256": "c62e3372f4362851f8b4397ce9dc5c176e668da93e7ad66b06eaa8eae42bb7c6"
+    },
+    {
+      "path": "classification/pass-systems_should_match_exactly_3_5.ids",
+      "bytes": 980,
+      "sha256": "cc19ba894bd62901db0c8b339f6b03f1d1a640d3faf7f87c7207b4e5a1d6de7b"
+    },
+    {
+      "path": "classification/pass-systems_should_match_exactly_4_5.ids",
+      "bytes": 982,
+      "sha256": "44424d6ed0e1db3b8f96927f05b9a76d72526879688ad1dc84039f1886bc2d3f"
+    },
+    {
+      "path": "classification/pass-systems_should_match_exactly_5_5.ids",
+      "bytes": 980,
+      "sha256": "c66c551dca663ac274a89f378dea728a5168e4605c8151e59547ff7a597ef8df"
+    },
+    {
+      "path": "classification/pass-values_match_subreferences_if_full_classifications_are_used__e_g__ef_25_10_should_match_ef_25_10_25__ef_25_10_30__etc_.ids",
+      "bytes": 1301,
+      "sha256": "f469b27311b78928c4952f56f8ff8e599ebb1c8e00833dd8e7c241cff202a6a7"
+    },
+    {
+      "path": "classification/pass-values_should_match_exactly_if_lightweight_classifications_are_used.ids",
+      "bytes": 1199,
+      "sha256": "4edc7297c85e9a335cb44c5281502baf2454c1bf993a0a83b7f5ff6789e65e79"
+    },
+    {
+      "path": "entity/fail-a_null_predefined_type_should_always_fail_a_specified_predefined_types.ids",
+      "bytes": 1134,
+      "sha256": "73720597f3922651fe8c1152b7cf258945875456b2a623a52787ee16f76f7238"
+    },
+    {
+      "path": "entity/fail-a_predefined_type_from_an_enumeration_must_be_uppercase.ids",
+      "bytes": 1104,
+      "sha256": "bcd884f0b1da6ee559f799ea2101f200266a8f8396a14ff3e08d359afabc2420"
+    },
+    {
+      "path": "entity/fail-an_entity_not_matching_a_specified_predefined_type_will_fail.ids",
+      "bytes": 1114,
+      "sha256": "d68da4e05ee1a8cd760361ddcba45293ee64aaf803962c91ba9fb5e29d4fa2fd"
+    },
+    {
+      "path": "entity/fail-in_ifc2x3_a_user_defined_airterminal_predefined_type_resolves_via_the_type_mapping_table_2_2.ids",
+      "bytes": 1196,
+      "sha256": "d5345fcb80f6fe192c22f0ecf7befc61c8c6849405898609e1630108c27df5b7"
+    },
+    {
+      "path": "entity/fail-in_ifc2x3_an_airterminal_can_be_checked_by_name_via_the_type_mapping_table_2_2.ids",
+      "bytes": 1215,
+      "sha256": "d7fedd7dc5e297bcffecf84e00d57c311d49cbfb48b17c1f00cb59037e6991bf"
+    },
+    {
+      "path": "entity/fail-in_ifc2x3_an_airterminal_predefined_type_resolves_via_the_type_mapping_table_2_2.ids",
+      "bytes": 1169,
+      "sha256": "9c16789667ce6a73e8819013cc7bb9ca835d579ac5ef8cb761bf7ccdcd2c02ef"
+    },
+    {
+      "path": "entity/fail-in_ifc2x3_there_must_be_an_airterminal_per_the_type_mapping_table_2_2.ids",
+      "bytes": 877,
+      "sha256": "2807a497724152891ee9cf9d02e2d13cfb243b1a84a3b5799a3db333dc096ff2"
+    },
+    {
+      "path": "entity/fail-restrictions_can_be_specified_for_the_predefined_type_3_3.ids",
+      "bytes": 1178,
+      "sha256": "bee34de874ed759cbc714c75969d6dc71eea6c03abdbac7a3b119e66c13ea488"
+    },
+    {
+      "path": "entity/fail-user_defined_types_are_checked_case_sensitively.ids",
+      "bytes": 1084,
+      "sha256": "bcf5487272346f9bb9d4f5022d5bde8233dd8cca64fdc185c210a57a25f16da4"
+    },
+    {
+      "path": "entity/invalid-an_entity_not_matching_the_specified_class_should_fail.ids",
+      "bytes": 1005,
+      "sha256": "9a497cc1c6e4c2d1bf5c1a1bcc30347c30e858d9e70b1c4b2d26ca0cb4bbff39"
+    },
+    {
+      "path": "entity/invalid-entities_can_be_specified_as_a_xsd_regex_pattern_1_2.ids",
+      "bytes": 1077,
+      "sha256": "7ec7b9a8c1da46ec897986e4686da285aaf913871537ea40bc82f927e21a300b"
+    },
+    {
+      "path": "entity/invalid-entities_can_be_specified_as_an_enumeration_3_3.ids",
+      "bytes": 1118,
+      "sha256": "9c3c4c78af8709194b3d65f6b51c7210bfe87ca638953cf3f07d9a203e0a2268"
+    },
+    {
+      "path": "entity/invalid-entities_must_be_specified_as_uppercase_strings.ids",
+      "bytes": 991,
+      "sha256": "3daa3a1392e5b901a8fb2af818e9d14f5e21ed9b65eecd7c0fead9e424e6c1cd"
+    },
+    {
+      "path": "entity/invalid-invalid_entities_always_fail.ids",
+      "bytes": 955,
+      "sha256": "d04a6d4dfb094c34144c22877ec1d26bcbafac2301d8ee8f55b75ea4564677d4"
+    },
+    {
+      "path": "entity/invalid-subclasses_are_not_considered_as_matching.ids",
+      "bytes": 991,
+      "sha256": "55d2c452a44398e569c151224e6528c40a924278bc28b8b48684fce0943c8826"
+    },
+    {
+      "path": "entity/pass-a_matching_entity_should_pass.ids",
+      "bytes": 955,
+      "sha256": "5bc74f706bf78585ddb4700f9a051911e8e4650eab13e2ea2d9ca3660df2ab2b"
+    },
+    {
+      "path": "entity/pass-a_matching_predefined_type_should_pass.ids",
+      "bytes": 1070,
+      "sha256": "c88bb902691d1fe23f282fe46538d29ec14b939accd1549223628f241c9eca2f"
+    },
+    {
+      "path": "entity/pass-a_predefined_type_may_specify_a_user_defined_element_type.ids",
+      "bytes": 1119,
+      "sha256": "93795cecaa6650f3c4dc2e423ce6b23280a8e4e13167d053c3fe1f980ba9bd66"
+    },
+    {
+      "path": "entity/pass-a_predefined_type_may_specify_a_user_defined_object_type.ids",
+      "bytes": 1102,
+      "sha256": "cad4eecae7cc112df12c2110dba83b733445d1232121490fb609f412d2cdc184"
+    },
+    {
+      "path": "entity/pass-a_predefined_type_may_specify_a_user_defined_process_type.ids",
+      "bytes": 1112,
+      "sha256": "8b2beadfc9cca79de9ba2b9115f3eb9b29774174cbfdfcad9b79b113a98de327"
+    },
+    {
+      "path": "entity/pass-an_matching_entity_should_pass_regardless_of_predefined_type.ids",
+      "bytes": 1017,
+      "sha256": "467630f552ba5377cf8afcdebd99442f6c79f56248ed72187a7b83c6f84eee42"
+    },
+    {
+      "path": "entity/pass-entities_can_be_specified_as_a_xsd_regex_pattern_2_2.ids",
+      "bytes": 1081,
+      "sha256": "bafef86092848ed59e6ba82ac427ae93695ab4affdcad49169e6b8433bab8619"
+    },
+    {
+      "path": "entity/pass-entities_can_be_specified_as_an_enumeration_1_3.ids",
+      "bytes": 1118,
+      "sha256": "df2eb0ec179ddc3378e92a0efc7aa5f58df4199b417d95db48d640dfa282af0c"
+    },
+    {
+      "path": "entity/pass-entities_can_be_specified_as_an_enumeration_2_3.ids",
+      "bytes": 1118,
+      "sha256": "37324c443f602457e60c35ea3e63fb949fbb70b6072b15c7f01337b46035cc9d"
+    },
+    {
+      "path": "entity/pass-in_ifc2x3_a_user_defined_airterminal_predefined_type_resolves_via_the_type_mapping_table_1_2.ids",
+      "bytes": 1196,
+      "sha256": "dda8d8b18ef39f30b34ae6592bfb5029eb6ccd4462e98ad3df2646dc59deb834"
+    },
+    {
+      "path": "entity/pass-in_ifc2x3_an_airterminal_can_be_checked_by_name_via_the_type_mapping_table_1_2.ids",
+      "bytes": 1215,
+      "sha256": "19ce04eea9cce146380dea48f55fac6c649879c54c1b55276a83397d8f952e7f"
+    },
+    {
+      "path": "entity/pass-in_ifc2x3_an_airterminal_predefined_type_resolves_via_the_type_mapping_table_1_2.ids",
+      "bytes": 1169,
+      "sha256": "3ec85ef52468d1e58ef998e0c8d18826533a59d0bd969b646ab2927fc7d850f1"
+    },
+    {
+      "path": "entity/pass-in_ifc2x3_there_must_be_an_airterminal_per_the_type_mapping_table_1_2.ids",
+      "bytes": 877,
+      "sha256": "1b22fbc8b59e61eeef3acdbabdc9549cadfe82d0da1f3e4a7a2a828218d36e5e"
+    },
+    {
+      "path": "entity/pass-inherited_predefined_types_should_pass.ids",
+      "bytes": 1062,
+      "sha256": "80375797f6f5ec1cb7c9a6ea13cbc11aa61ff3fe19674fdbce2322e168d1df7c"
+    },
+    {
+      "path": "entity/pass-overridden_predefined_types_should_pass.ids",
+      "bytes": 1064,
+      "sha256": "4f9d8af39f933c81180e632b8001893bb9bac911d307134a728fa2815fccdce1"
+    },
+    {
+      "path": "entity/pass-restrictions_can_be_specified_for_the_predefined_type_1_3.ids",
+      "bytes": 1178,
+      "sha256": "a7f1b8e25b015c25429f4d8ce7f10fff0c0033788bde9009ab8c489ab0eabcad"
+    },
+    {
+      "path": "entity/pass-restrictions_can_be_specified_for_the_predefined_type_2_3.ids",
+      "bytes": 1178,
+      "sha256": "f56494a974e29447a4885c059d1fc44008dc8c6b4e765b1611f5cd2bf9fb367b"
+    },
+    {
+      "path": "entity/pass-userdefined_predefined_types_may_be_specified.ids",
+      "bytes": 1101,
+      "sha256": "9a4b3d58a31002385d57f3ea159080de70b5b889b94fc9ea00fb2f80e527c1a8"
+    },
+    {
+      "path": "ids/fail-a_minimal_ids_can_check_a_minimal_ifc_1_2.ids",
+      "bytes": 1075,
+      "sha256": "721b2c2051190df70ee79eaac1f7dca7ad6635618ad4180a0c2fd1070faf1be3"
+    },
+    {
+      "path": "ids/fail-a_specification_passes_only_if_all_requirements_pass_1_2.ids",
+      "bytes": 1317,
+      "sha256": "6b701d601087f844bf2eb24d65664aa624d548e97c4e7f540d023069a517c872"
+    },
+    {
+      "path": "ids/fail-prohibited_specifications_fails_if_the_applicability_matches.ids",
+      "bytes": 858,
+      "sha256": "a6dc5db171ae1843bc77df020b2250d3a16a9f4aa813b711133eade63f2f07d2"
+    },
+    {
+      "path": "ids/fail-required_specifications_need_at_least_one_applicable_entity_2_2.ids",
+      "bytes": 1107,
+      "sha256": "a1572781c920c907834de1ff0e0071f3a330ea08b05f12f34db05412eebf95e4"
+    },
+    {
+      "path": "ids/invalid-prohibited_specifications_invalid_if_requirements_are_specified.ids",
+      "bytes": 1109,
+      "sha256": "e9e2ff7191feab36802fd5bb189355d3d16a97b0d3af767c2771362122816994"
+    },
+    {
+      "path": "ids/pass-a_minimal_ids_can_check_a_minimal_ifc_2_2.ids",
+      "bytes": 1075,
+      "sha256": "929e13d7034274c8e1c2cdd9e7350faae8850784bfc65afeefc15a45ce0a6ad7"
+    },
+    {
+      "path": "ids/pass-a_specification_passes_only_if_all_requirements_pass_2_2.ids",
+      "bytes": 1317,
+      "sha256": "80249ce79ab6a75c6f72473a19fb7a73da2390843068002c4e6dfe38a59ac06b"
+    },
+    {
+      "path": "ids/pass-optional_specifications_may_still_pass_if_nothing_is_applicable.ids",
+      "bytes": 1117,
+      "sha256": "3df14e65d89921b223c7c6ac04af22934a9b5ddf997f101406c4a68fab56c07e"
+    },
+    {
+      "path": "ids/pass-prohibited_specifications_passes_if_the_applicability_does_not_matches.ids",
+      "bytes": 880,
+      "sha256": "4542c0a387edb612189294f348d91e1b4be8be0046adc155e6bd756dfb7d1627"
+    },
+    {
+      "path": "ids/pass-required_specifications_need_at_least_one_applicable_entity_1_2.ids",
+      "bytes": 1107,
+      "sha256": "86e1d053e2bd028fccb0ca952373fc8559ca6266a6d884e5bea77d1feca5555e"
+    },
+    {
+      "path": "ids/pass-specification_optionality_and_facet_optionality_can_be_combined.ids",
+      "bytes": 1350,
+      "sha256": "236bb14be180bf91f612890352054b35edfe603cc5c41fd90ddedd112ddbaff1"
+    },
+    {
+      "path": "ids/pass-specification_version_is_purely_metadata_and_does_not_impact_pass_or_fail_result.ids",
+      "bytes": 1151,
+      "sha256": "58fb69ac0a32cb91b428c9dcaad136cb14ba0de624f1e81b12d22d60030154d7"
+    },
+    {
+      "path": "material/fail-a_constituent_set_with_no_data_will_fail_a_value_check.ids",
+      "bytes": 1007,
+      "sha256": "b2c01c4c1cfcaaf7dc9f2957677d37ea1a2a74d50c604c304fe84b527e6a8dda"
+    },
+    {
+      "path": "material/fail-a_material_list_with_no_data_will_fail_a_value_check.ids",
+      "bytes": 1003,
+      "sha256": "c924cf837d48975c3b02c12ae0ddc33e8c08a9dc0acb7184d7c8cd27e443b639"
+    },
+    {
+      "path": "material/fail-a_prohibited_facet_returns_the_opposite_of_a_required_facet.ids",
+      "bytes": 944,
+      "sha256": "28d332c3ac3fba66899498827df4de80bb78aa7710b6074cd36f32043eb456cb"
+    },
+    {
+      "path": "material/fail-an_optional_material_fails_if_no_value_matches.ids",
+      "bytes": 1014,
+      "sha256": "7645964574eed4bde6e8076a28e29fe2f776a0686afd0bcddd7c37dccdf6959d"
+    },
+    {
+      "path": "material/fail-elements_without_a_material_always_fail.ids",
+      "bytes": 879,
+      "sha256": "a544f2714013a15e88d344c6bc9853770902077d2bcd3762cc81cf452659e0de"
+    },
+    {
+      "path": "material/fail-material_with_no_data_will_fail_a_value_check.ids",
+      "bytes": 989,
+      "sha256": "67fc95870eb3776a20d3fed8aa81bde07f9ec93783eade85e12e474d951b3d55"
+    },
+    {
+      "path": "material/pass-a_layer_set_name_will_pass_a_value_check.ids",
+      "bytes": 983,
+      "sha256": "920318673a8af8c30923da9a0d419682588ae432693896d35021e8c76cc05021"
+    },
+    {
+      "path": "material/pass-a_material_category_may_pass_the_value_check.ids",
+      "bytes": 987,
+      "sha256": "2cf3f81296447e099a370891efea766b6ee0b88f7f17586c8bd659baaaf169c3"
+    },
+    {
+      "path": "material/pass-a_material_name_may_pass_the_value_check.ids",
+      "bytes": 979,
+      "sha256": "0385800c6a69ab4963651045f9f152f7d89465331bf4a716218e025f7429f6d4"
+    },
+    {
+      "path": "material/pass-a_required_facet_checks_all_parameters_as_normal.ids",
+      "bytes": 897,
+      "sha256": "7d5da14da0d3f408b6f6426673d773f3f0e8ce298d70467baade853bed9bf779"
+    },
+    {
+      "path": "material/pass-an_optional_material_passes_if_null.ids",
+      "bytes": 992,
+      "sha256": "afe989bcbd78c217aaa912acc8fdeca60c99e8b33965e5a25cb4cc8bc8d02683"
+    },
+    {
+      "path": "material/pass-an_optional_material_passes_if_specified.ids",
+      "bytes": 1002,
+      "sha256": "e8c1f22c1c2ec119fa2c224147a2a633ac212ff035a585577f29e93502756020"
+    },
+    {
+      "path": "material/pass-any_constituent_category_in_a_constituent_set_will_pass_a_value_check.ids",
+      "bytes": 1037,
+      "sha256": "50085141c603420bb02bac8789c97ab99e160e1739618e6209b82d3028fa4527"
+    },
+    {
+      "path": "material/pass-any_constituent_name_in_a_constituent_set_will_pass_a_value_check.ids",
+      "bytes": 1029,
+      "sha256": "cfc124cf980781e98d1c6fa35def429027921434087afc1b18f0ac873e8414b7"
+    },
+    {
+      "path": "material/pass-any_layer_category_in_a_layer_set_will_pass_a_value_check.ids",
+      "bytes": 1013,
+      "sha256": "8ced5c27e09f34d1003430b86eda7d25673829fa4d75fb6d85f5b8205cd5026e"
+    },
+    {
+      "path": "material/pass-any_layer_name_in_a_layer_set_will_pass_a_value_check.ids",
+      "bytes": 1005,
+      "sha256": "97b589f1728cf6e149111522f2bf9c2517d02523d734cda2717051934c40c04c"
+    },
+    {
+      "path": "material/pass-any_material_category_in_a_constituent_set_will_pass_a_value_check.ids",
+      "bytes": 1031,
+      "sha256": "2f638500e2dc2e19cdf9e35677e42f4e97d82d5b6d6e51310e7e2ecc036b788f"
+    },
+    {
+      "path": "material/pass-any_material_category_in_a_layer_set_will_pass_a_value_check.ids",
+      "bytes": 1019,
+      "sha256": "2c22f83141550f6ca71a97f8cac3082c459ee8393df1377db8b0e9551c6c9604"
+    },
+    {
+      "path": "material/pass-any_material_category_in_a_list_will_pass_a_value_check.ids",
+      "bytes": 1009,
+      "sha256": "0eeb348e3fa1d37584368af59e4455889eb2303c617cdba2a5dadfa0c466c2d2"
+    },
+    {
+      "path": "material/pass-any_material_category_in_a_profile_set_will_pass_a_value_check.ids",
+      "bytes": 1023,
+      "sha256": "3a1640f1b7a8872955404cde9e5201638ad50ed2807f1047294aac35f4306e88"
+    },
+    {
+      "path": "material/pass-any_material_name_in_a_constituent_set_will_pass_a_value_check.ids",
+      "bytes": 1023,
+      "sha256": "4b9193ed5084dd8eb22d311990c02fb527ceeb49a65aea0b0236664e5a116aac"
+    },
+    {
+      "path": "material/pass-any_material_name_in_a_layer_set_will_pass_a_value_check.ids",
+      "bytes": 1011,
+      "sha256": "3cbfbf9899e993fb2ece4068f1aca5b150db037991011cb20123794046828e14"
+    },
+    {
+      "path": "material/pass-any_material_name_in_a_list_will_pass_a_value_check.ids",
+      "bytes": 1001,
+      "sha256": "498beaea752a7b23444f3285e1bb1d562d8ab4902e77555b551963a41e79139a"
+    },
+    {
+      "path": "material/pass-any_material_name_in_a_profile_set_will_pass_a_value_check.ids",
+      "bytes": 1015,
+      "sha256": "7c6dd83548e3864726c85a1958c759f7f152c6f72e782d073c61972923e976f7"
+    },
+    {
+      "path": "material/pass-any_profile_category_in_a_profile_set_will_pass_a_value_check.ids",
+      "bytes": 1021,
+      "sha256": "3d3af91ebd9b26b21af50276ef5bbf2c289f99d37ffe66eab82b5b2e54eeb0b0"
+    },
+    {
+      "path": "material/pass-any_profile_name_in_a_profile_set_will_pass_a_value_check.ids",
+      "bytes": 1013,
+      "sha256": "1a99f4260e8cbca9fcbf2372d65365192488521d7e84f838f2fa7af0124f08d8"
+    },
+    {
+      "path": "material/pass-elements_with_any_material_will_pass_an_empty_material_facet.ids",
+      "bytes": 921,
+      "sha256": "54437fe61a146a8b53343155b81b1ef0d764fe36a7c4177c7d3aab3538dad7e1"
+    },
+    {
+      "path": "material/pass-occurrences_can_inherit_materials_from_their_types.ids",
+      "bytes": 999,
+      "sha256": "57387b563b8611b8966fb90ab8c3e728bf45d1467028af96f7adb40dea7bd2f0"
+    },
+    {
+      "path": "material/pass-occurrences_can_override_materials_from_their_types.ids",
+      "bytes": 1001,
+      "sha256": "2a2b2208fc6a1731bb240b18e20d299655ca6c754bd5c323c5af01c511aa2653"
+    },
+    {
+      "path": "partof/fail-a_group_entity_must_match_exactly_1_2.ids",
+      "bytes": 1060,
+      "sha256": "31c5efab203f339d223f47b22caa17eeaf0d9db25b65bd675b07075de795ce0c"
+    },
+    {
+      "path": "partof/fail-a_non_aggregated_element_fails_an_aggregate_relationship.ids",
+      "bytes": 1155,
+      "sha256": "f5f3f266bbeeccbb256108006fb54d6149afe8f477093aebacaf22f51b31ae80"
+    },
+    {
+      "path": "partof/fail-a_non_grouped_element_fails_a_group_relationship.ids",
+      "bytes": 1154,
+      "sha256": "040e8fa5e769e4b8e8d1aa010c61c0356e2848213a8c8c4fc9d7fae45911d6e7"
+    },
+    {
+      "path": "partof/fail-a_prohibited_facet_returns_the_opposite_of_a_required_facet.ids",
+      "bytes": 1186,
+      "sha256": "feb4015c2bdd94445a08118d84bbaf3da3e1a3bd235a67f9eb207b5d669d7207"
+    },
+    {
+      "path": "partof/fail-an_aggregate_may_specify_the_entity_of_the_whole_2_2.ids",
+      "bytes": 1074,
+      "sha256": "05ec64a32d997e8f77196e0e943c4aba53ca8a60b0d6a84487bbbc1f90574807"
+    },
+    {
+      "path": "partof/fail-an_aggregate_may_specify_the_predefined_type_of_the_whole_2_2.ids",
+      "bytes": 1202,
+      "sha256": "5ba846576553c58cf85a22186d81ee36d9052097507cc64e3ba29c57129f3eea"
+    },
+    {
+      "path": "partof/fail-any_contained_element_passes_a_containment_relationship_1_2.ids",
+      "bytes": 1189,
+      "sha256": "b7fcde2f4945657eeb802686326a4452a286a2bd1646e828272950b5678d3408"
+    },
+    {
+      "path": "partof/fail-any_nested_whole_fails_a_nest_relationship.ids",
+      "bytes": 1120,
+      "sha256": "f2dc512f7a3531ed6f081343ab5fb0b5748b99bb856d41e8a55833e3ba0057b4"
+    },
+    {
+      "path": "partof/fail-the_aggregated_whole_fails_an_aggregate_relationship.ids",
+      "bytes": 1158,
+      "sha256": "e6942d23437e88e6a57c4c2332143a8f7d8c6959f45e5fe1d4ee2e3398f20d23"
+    },
+    {
+      "path": "partof/fail-the_container_entity_must_match_exactly_1_2.ids",
+      "bytes": 1084,
+      "sha256": "bb4c9e32b72c4f36e1ff276324ce02e6c3bf9cc0034a79995d210e12aae190d5"
+    },
+    {
+      "path": "partof/fail-the_container_itself_always_fails.ids",
+      "bytes": 1127,
+      "sha256": "e7e4b27f9cf0059c4817515ca5a05cf01d557350fdfbba505fac5c3a03f4d42f"
+    },
+    {
+      "path": "partof/fail-the_container_must_be_related_using_specified_relation_2_2.ids",
+      "bytes": 1104,
+      "sha256": "f1b05684d318a450c6ee979de8d1acda242f48a56c42cadd72444470dbf71d82"
+    },
+    {
+      "path": "partof/fail-the_container_predefined_type_must_match_exactly_1_2.ids",
+      "bytes": 1203,
+      "sha256": "ff698a74b85b0d6e39daab1539423e175e26310e9dda4b90ad4f5c7be97c46b0"
+    },
+    {
+      "path": "partof/fail-the_containment_can_be_indirect_2_2.ids",
+      "bytes": 1044,
+      "sha256": "dd329a80910a68048caaaf17260a8b42fab794c9278f5ced65bbf106a0f7bd50"
+    },
+    {
+      "path": "partof/fail-the_nest_entity_must_match_exactly_1_2.ids",
+      "bytes": 1054,
+      "sha256": "a8a3721af2320dab47fe5284170e0edeb718789576ec784f9795802e06521dee"
+    },
+    {
+      "path": "partof/fail-the_nest_predefined_type_must_match_exactly_1_2.ids",
+      "bytes": 1180,
+      "sha256": "054b7b1064dbace7f6150d8ca6e6de95e6e205073f48bdbb80e7bfd5f62c09b7"
+    },
+    {
+      "path": "partof/invalid-a_group_predefined_type_must_match_exactly_1_2.ids",
+      "bytes": 1190,
+      "sha256": "3ce15e6c7c2e1e00f6d1527251cb399353a7f8de112ba0e263d3fb8ca9feb7c3"
+    },
+    {
+      "path": "partof/pass-a_group_entity_must_match_exactly_2_2.ids",
+      "bytes": 1064,
+      "sha256": "7b4ff715ece76cd7db89874729bebc0aac61102eac8b664709221f9c044ad233"
+    },
+    {
+      "path": "partof/pass-a_group_predefined_type_must_match_exactly_2_2.ids",
+      "bytes": 1181,
+      "sha256": "820f523b7d5c3fc426fd17633827e8fe5056413e80634e5b153b97b264cc76e5"
+    },
+    {
+      "path": "partof/pass-a_grouped_element_passes_a_group_relationship.ids",
+      "bytes": 1148,
+      "sha256": "2a70c2c123a05433ee0ae28b2f4dad3cb33235010fc333cbe473f6c6027ca434"
+    },
+    {
+      "path": "partof/pass-a_required_facet_checks_all_parameters_as_normal.ids",
+      "bytes": 1139,
+      "sha256": "b7cc2e29917d7cea34348d566a4a0b4900a783c8e374f022139e90369c1dd4ba"
+    },
+    {
+      "path": "partof/pass-an_aggregate_entity_may_pass_any_ancestral_whole_passes.ids",
+      "bytes": 1091,
+      "sha256": "bf52a3c9f65a65fe54196c73057962dfa55fc0c2902c8509d05af71eaab5ff21"
+    },
+    {
+      "path": "partof/pass-an_aggregate_may_specify_the_entity_of_the_whole_1_2.ids",
+      "bytes": 1074,
+      "sha256": "ff0abb52e6f1ef877d2c2488320046e5a3e13e9208118d3f988b45cb041af0b1"
+    },
+    {
+      "path": "partof/pass-an_aggregate_may_specify_the_predefined_type_of_the_whole_1_2.ids",
+      "bytes": 1201,
+      "sha256": "4611ee2e0043a9225197191b7f1d3ad3832cf62c5dba889d01191a66bb977ada"
+    },
+    {
+      "path": "partof/pass-any_contained_element_passes_a_containment_relationship_2_2.ids",
+      "bytes": 1189,
+      "sha256": "5ed44a6bcfe78cc6f61a1059e63783b0e9af3cd1f6680749c87ad2525a9df494"
+    },
+    {
+      "path": "partof/pass-any_nested_part_passes_a_nest_relationship.ids",
+      "bytes": 1135,
+      "sha256": "3665b1b0d4a2c2ba7b2176e984e23ff501788df0037e5302757dbb09e6cae1f2"
+    },
+    {
+      "path": "partof/pass-nesting_may_be_indirect.ids",
+      "bytes": 1023,
+      "sha256": "c1c8fe74bfc5680b4967c6353b74fa79567fdfc50b4bfd3f6aa38bf6d317b17a"
+    },
+    {
+      "path": "partof/pass-the_aggregated_part_passes_an_aggregate_relationship.ids",
+      "bytes": 1147,
+      "sha256": "9187e8897196fcf2835053482caa8b32c42b39097ad1a2f18b8cd1a224e44e0f"
+    },
+    {
+      "path": "partof/pass-the_container_entity_must_match_exactly_2_2.ids",
+      "bytes": 1085,
+      "sha256": "878c6b233a92e2265e0fb085a75fa3001efe1be132c744046d51024ff438cc06"
+    },
+    {
+      "path": "partof/pass-the_container_must_be_related_using_specified_relation_1_2.ids",
+      "bytes": 1104,
+      "sha256": "1cd088bab3b00f026f55fc190456479fb1f5154193cae7f09109ae6e7366ed6b"
+    },
+    {
+      "path": "partof/pass-the_container_predefined_type_must_match_exactly_2_2.ids",
+      "bytes": 1203,
+      "sha256": "629b5a00716ab226fbc20c36437fda738947362367ab7c98c40ef62c065df6fa"
+    },
+    {
+      "path": "partof/pass-the_containment_can_be_indirect_1_2.ids",
+      "bytes": 1044,
+      "sha256": "9adfd2035ad13ce6e58c8de8ac27031fd211ab827ff9dbff1c8a6c1bb794ab7a"
+    },
+    {
+      "path": "partof/pass-the_nest_entity_must_match_exactly_2_2.ids",
+      "bytes": 1052,
+      "sha256": "b28c24c0bfd71c04cb3cce5048a9c21575b2e4eddaea31cd9668dea7b0c69aeb"
+    },
+    {
+      "path": "partof/pass-the_nest_predefined_type_must_match_exactly_2_2.ids",
+      "bytes": 1182,
+      "sha256": "3ca2f965510fc1f6e946af300bd8f10d22bfcfb154999e351ab52271c4f9012a"
+    },
+    {
+      "path": "property/fail-a_logical_unknown_is_considered_false_and_will_not_pass.ids",
+      "bytes": 1146,
+      "sha256": "58e8518c864bef8bb126d9755517e75b7b6ccc7b1a956f83029c4ad8b37dbbe0"
+    },
+    {
+      "path": "property/fail-a_prohibited_facet_returns_the_opposite_of_a_required_facet.ids",
+      "bytes": 1144,
+      "sha256": "445680946c25d7d3f37d873f8c7e1a22550c849dc975b4e94362b3da0fdee6ee"
+    },
+    {
+      "path": "property/fail-all_matching_properties_must_satisfy_requirements_3_3.ids",
+      "bytes": 1281,
+      "sha256": "578c44cf15484b171e2aa983db4f21df49996ce615e427c303f90c9f7e026e35"
+    },
+    {
+      "path": "property/fail-all_matching_property_sets_must_satisfy_requirements_2_3.ids",
+      "bytes": 1206,
+      "sha256": "54196f452605a42bd19305392aa6ff62860e9fd0acf1142d57ede0baa95cbe9d"
+    },
+    {
+      "path": "property/fail-an_empty_string_is_considered_false_and_will_not_pass.ids",
+      "bytes": 1141,
+      "sha256": "2512a6653c81c51bf6a51f254e2d8c90c217fa2865be50fd6d196de1cba0d4b6"
+    },
+    {
+      "path": "property/fail-any_matching_value_in_a_bounded_property_will_pass_4_4.ids",
+      "bytes": 1215,
+      "sha256": "796460528c0c13ab4232a6666b473b44432e1ad7e190e22ad7474bfeb82ab5c0"
+    },
+    {
+      "path": "property/fail-any_matching_value_in_a_list_property_will_pass_3_3.ids",
+      "bytes": 1201,
+      "sha256": "a96536e8e3efe21643d525e5370c528b121aa473a9774d78de0061eefae5d115"
+    },
+    {
+      "path": "property/fail-any_matching_value_in_a_table_property_will_pass_3_3.ids",
+      "bytes": 1203,
+      "sha256": "71a5399e49e71164e85b86a529f9979ebcf4f1370ee82a2d086e5d582ef6838a"
+    },
+    {
+      "path": "property/fail-booleans_must_be_specified_as_lowercase_strings_1_3.ids",
+      "bytes": 1206,
+      "sha256": "99615a8275274fb9574cf5039ad20067e5a867bc5e8d6f229bb70991264fe904"
+    },
+    {
+      "path": "property/fail-complex_properties_are_not_supported_1_2.ids",
+      "bytes": 1109,
+      "sha256": "277a174e9c7ce75ae521a230faa16018a6c4bde758817354df65dd38021bc1a0"
+    },
+    {
+      "path": "property/fail-complex_properties_are_not_supported_2_2.ids",
+      "bytes": 1110,
+      "sha256": "a96ca8526cff359109d5a2d9a676ae23aadec1a96b583106d5b370d0b19083a7"
+    },
+    {
+      "path": "property/fail-dates_are_treated_as_strings_2_2.ids",
+      "bytes": 1164,
+      "sha256": "e8929e72c4e9824eec6d7396441b142a5e09f9247b4260b56827ca99f4c319d0"
+    },
+    {
+      "path": "property/fail-durations_are_treated_as_strings_1_2.ids",
+      "bytes": 1171,
+      "sha256": "c314b5fceeca318c430023814078212ed5bd171c9ab296bbde7834c0440de701"
+    },
+    {
+      "path": "property/fail-elements_with_a_matching_pset_but_no_property_also_fail.ids",
+      "bytes": 1131,
+      "sha256": "9f7e3200c306c24108d110c34ea9a6c8655798d309fa68e46a7f7ad64f53d601"
+    },
+    {
+      "path": "property/fail-elements_with_no_properties_always_fail.ids",
+      "bytes": 1099,
+      "sha256": "8cbab8e35d325f38c60a763be6b6a3eb62385f8a41574f194b0963cbdf92f68f"
+    },
+    {
+      "path": "property/fail-ids_does_not_handle_string_truncation_such_as_for_identifiers.ids",
+      "bytes": 1490,
+      "sha256": "4bbba80a68b8f24a266e837e006f02a70940c2620ab5e121473b58d24cf6bcdb"
+    },
+    {
+      "path": "property/fail-if_multiple_properties_are_matched__all_values_must_satisfy_requirements_2_2.ids",
+      "bytes": 1448,
+      "sha256": "e4f92fcd5f597293aa724e60ee569ea2f795900a6c5f8b038a5bcdceeea1acd3"
+    },
+    {
+      "path": "property/fail-material_properties_that_are_absent_fail_under_ifc2x3.ids",
+      "bytes": 1130,
+      "sha256": "e750cbc7ed47cb233634fdee4c3f56eb2f5206ecec0bd23fa7e90c6447ae6b2d"
+    },
+    {
+      "path": "property/fail-material_properties_that_are_absent_fail_under_ifc4.ids",
+      "bytes": 1124,
+      "sha256": "7f4aa0079c7a912238084ee94772ea26959f2950d547303996e596b6fe52a473"
+    },
+    {
+      "path": "property/fail-measures_are_used_to_specify_an_ifc_data_type_1_2.ids",
+      "bytes": 1203,
+      "sha256": "8cab00ea054d1d559cea4dbb9423b4795622a3a246747315808a55d136b1c59a"
+    },
+    {
+      "path": "property/fail-no_matching_value_in_an_enumerated_property_will_fail_3_3.ids",
+      "bytes": 1219,
+      "sha256": "9965e314e11da0c4859a8201bdb1e41aad07048e95d370b5f82bc127ba3be62a"
+    },
+    {
+      "path": "property/fail-predefined_properties_are_supported_but_discouraged_2_2.ids",
+      "bytes": 1244,
+      "sha256": "e13cd48e3f1a34a17bf49642528ff8ab8b7de78d2aebe637912bd70a5d9773d4"
+    },
+    {
+      "path": "property/fail-project_properties_that_are_absent_fail_under_ifc2x3_via_ifcobject.ids",
+      "bytes": 1155,
+      "sha256": "354c61c51fd9726be108292c0372a7cb1bae92f964625b52f720a974841ed641"
+    },
+    {
+      "path": "property/fail-project_properties_that_are_absent_fail_under_ifc4_via_ifccontext.ids",
+      "bytes": 1151,
+      "sha256": "9ee2ba3b27a28d4d238603c7251bf13fa5fb852f9bd7307042e60ca1765bf3e0"
+    },
+    {
+      "path": "property/fail-properties_can_be_associated_to_relevant_object_types.ids",
+      "bytes": 1350,
+      "sha256": "d5e0e62037e46038aff69f46f0dd7f0ed1de512c2d6db76cce0d6e1539147c41"
+    },
+    {
+      "path": "property/fail-properties_can_be_overriden_by_an_occurrence_2_2.ids",
+      "bytes": 1201,
+      "sha256": "d3802256253118cfdf98ef798103440a35534bc8ccbcd0b55620ee242f0c31f7"
+    },
+    {
+      "path": "property/fail-properties_with_a_null_value_fail.ids",
+      "bytes": 1087,
+      "sha256": "1ccbb6a4e0cd3e5fc54a172f16ac8b9aa885e87276557045093e62167d5c01f3"
+    },
+    {
+      "path": "property/fail-quantities_must_also_match_the_appropriate_measure.ids",
+      "bytes": 1127,
+      "sha256": "dfcd0f04a0c6b8057693ae1fc2b2a8cba88fd06ea1c37c8b14cbd944b87195f1"
+    },
+    {
+      "path": "property/fail-reference_properties_are_treated_as_objects_and_not_supported.ids",
+      "bytes": 1143,
+      "sha256": "3b8317b10ef668e42bd4ce4d0878dfa5f69806997aa860ae171e6483a772636d"
+    },
+    {
+      "path": "property/fail-specifying_a_value_fails_against_different_values.ids",
+      "bytes": 1199,
+      "sha256": "2861678e4e94c50da1389e91d2311aeb632fad8df7df189d1ff32a3b47516165"
+    },
+    {
+      "path": "property/fail-specifying_a_value_performs_a_case_sensitive_match_2_2.ids",
+      "bytes": 1209,
+      "sha256": "267562cc415897bd2f00dee9b3f8315b7df4308c2b655b624ca8c02e37f9270b"
+    },
+    {
+      "path": "property/fail-unit_conversions_shall_take_place_to_ids_nominated_standard_units_1_2.ids",
+      "bytes": 1245,
+      "sha256": "c7f162bd06a63d1ea18fe0d6e53a919b81bb6c853850625370d080d77606421f"
+    },
+    {
+      "path": "property/invalid-booleans_must_be_specified_as_lowercase_strings_3_3.ids",
+      "bytes": 1207,
+      "sha256": "2b674a714aabd119b8ac59a577e9b8b569d962e37859cd0a0b3881e0cf6968d2"
+    },
+    {
+      "path": "property/invalid-integer_values_are_checked_using_type_casting_4_4.ids",
+      "bytes": 1202,
+      "sha256": "fce8511d7ee3272d335bd913cdb36c565109ac4da592c24df369d2c1765fbbc9"
+    },
+    {
+      "path": "property/invalid-integer_values_cannot_be_stored_with_decimal_2_4.ids",
+      "bytes": 1199,
+      "sha256": "aae437d792236dbbaa2c15a927527fde083900c90673535219bbb6d6b2d5546d"
+    },
+    {
+      "path": "property/invalid-integer_values_cannot_be_stored_with_decimal_3_4.ids",
+      "bytes": 1200,
+      "sha256": "d7b2d9975bc0107e2687fa4b43111e9779117cf4806e617145a669588b4fd8c7"
+    },
+    {
+      "path": "property/invalid-only_specifically_formatted_numbers_are_allowed_1_4.ids",
+      "bytes": 1203,
+      "sha256": "53cdd6b959da9504f3c0423e0cb295f26edb7ce33c8d93943fdcbf97a0f86791"
+    },
+    {
+      "path": "property/invalid-only_specifically_formatted_numbers_are_allowed_2_4.ids",
+      "bytes": 1206,
+      "sha256": "0df09011971cd03aae02788d4cf21fb827fb6a5618c7e5eb55c86dabd9c8470d"
+    },
+    {
+      "path": "property/pass-a_name_check_will_match_any_property_with_any_string_value.ids",
+      "bytes": 1137,
+      "sha256": "afac76ea96d442f8e8d530a8ab53212581c08741fd78585055d6a31ea782937a"
+    },
+    {
+      "path": "property/pass-a_name_check_will_match_any_quantity_with_any_value.ids",
+      "bytes": 1131,
+      "sha256": "1d75e0a2a58364cc3846460d7820a4e8bb87acef0a46bae2e43a233de5d6845b"
+    },
+    {
+      "path": "property/pass-a_number_specified_as_a_string_is_treated_as_a_string.ids",
+      "bytes": 1205,
+      "sha256": "33018c48c9f1b07667df75d924d0375839cd5f89a61e9f9bbaafb65de018ed43"
+    },
+    {
+      "path": "property/pass-a_property_set_to_false_is_still_considered_a_value_and_will_pass_a_name_check.ids",
+      "bytes": 1179,
+      "sha256": "eaa9bc27ccd1a0f26f16b7f59861939265ffda1fc20cf3f6182122f8e03e2492"
+    },
+    {
+      "path": "property/pass-a_property_set_to_true_will_pass_a_name_check.ids",
+      "bytes": 1113,
+      "sha256": "e41becf73a4b9d85b1e115411e03148faade3b435fc2653f33347cb1493d94b6"
+    },
+    {
+      "path": "property/pass-a_required_facet_checks_all_parameters_as_normal.ids",
+      "bytes": 1117,
+      "sha256": "53123f1bc74c3e98806cb5d1672fb2cbe9a30e1f4e04fefdb07d89ed53f6df50"
+    },
+    {
+      "path": "property/pass-a_zero_duration_will_pass.ids",
+      "bytes": 1067,
+      "sha256": "d470364e803f2810a73a1f27e3bd6f3c28bcb170629504bb54954d3dacf1b3e8"
+    },
+    {
+      "path": "property/pass-all_matching_properties_must_satisfy_requirements_1_3.ids",
+      "bytes": 1281,
+      "sha256": "244fa00d77c16cdaee747395f09fc73cb3b16827791e322490d19c5ac8b6182c"
+    },
+    {
+      "path": "property/pass-all_matching_properties_must_satisfy_requirements_2_3.ids",
+      "bytes": 1281,
+      "sha256": "d53652a00f0367c1c9e3c0b38487a572aa78d9ed0cb14113b694c1abb1c7f22b"
+    },
+    {
+      "path": "property/pass-all_matching_property_sets_must_satisfy_requirements_1_3.ids",
+      "bytes": 1206,
+      "sha256": "9e30813889f736d353dcc9c76c2ff408332527c2640c2dc9be3c5f56c1986edf"
+    },
+    {
+      "path": "property/pass-all_matching_property_sets_must_satisfy_requirements_3_3.ids",
+      "bytes": 1206,
+      "sha256": "10b212deb764d36bf10049fe6a6d80695dc6d3462767d27e2df8bdef4769211e"
+    },
+    {
+      "path": "property/pass-an_optional_facet_always_passes_regardless_of_outcome_1_2.ids",
+      "bytes": 1158,
+      "sha256": "784efcb871b9b672aa216bf55e8fc8e8e0692ba540c5a8f0b13c10e821fe7616"
+    },
+    {
+      "path": "property/pass-an_optional_facet_always_passes_regardless_of_outcome_2_2.ids",
+      "bytes": 1158,
+      "sha256": "4a1902cfa4c92e7018579162fd0d8db6429d2c7f4537c9927aaa271d7d9f4c51"
+    },
+    {
+      "path": "property/pass-any_matching_value_in_a_bounded_property_will_pass_1_4.ids",
+      "bytes": 1215,
+      "sha256": "346c35f9c6c1619f1e4d2b5905f527e66958618d856b57adc8ec9e02b3d30b71"
+    },
+    {
+      "path": "property/pass-any_matching_value_in_a_bounded_property_will_pass_2_4.ids",
+      "bytes": 1215,
+      "sha256": "a366d5a642950b3d2d60f00dc6973b9fd42545814d9803b27ae013395c2f9553"
+    },
+    {
+      "path": "property/pass-any_matching_value_in_a_bounded_property_will_pass_3_4.ids",
+      "bytes": 1215,
+      "sha256": "77844b1aee012cd2d50702d59873cf025a2951a4dc44e79c8f0d41af9298a033"
+    },
+    {
+      "path": "property/pass-any_matching_value_in_a_list_property_will_pass_1_3.ids",
+      "bytes": 1201,
+      "sha256": "2209e880e42ea298a21c930515866dff32eb0b33b15c69432e5c3736cf86c89e"
+    },
+    {
+      "path": "property/pass-any_matching_value_in_a_list_property_will_pass_2_3.ids",
+      "bytes": 1201,
+      "sha256": "ef500478e284968fd0d082fd8b429eaeaf9d967f2c10fc9c905186733dd3f7d9"
+    },
+    {
+      "path": "property/pass-any_matching_value_in_a_table_property_will_pass_1_3.ids",
+      "bytes": 1203,
+      "sha256": "ee83a01bfee0589a7732e0fdd6620dc4df37b399b6b05fa1f4dd557af24704f0"
+    },
+    {
+      "path": "property/pass-any_matching_value_in_a_table_property_will_pass_2_3.ids",
+      "bytes": 1211,
+      "sha256": "71a8c0bc9f0280134e345ca6e330d87287d8c30390834a31980de0b6dfe205a3"
+    },
+    {
+      "path": "property/pass-any_matching_value_in_an_enumerated_property_will_pass_1_3.ids",
+      "bytes": 1226,
+      "sha256": "03fe1a33d5b261cbc31ccbc3dc09b3002b1de200156cb9c0874c758fde619f14"
+    },
+    {
+      "path": "property/pass-any_matching_value_in_an_enumerated_property_will_pass_2_3.ids",
+      "bytes": 1226,
+      "sha256": "89b77e7a98a86cab2cdc9b502d98625daeae44dc1dbea83f2dc6c1037f8422a7"
+    },
+    {
+      "path": "property/pass-booleans_must_be_specified_as_lowercase_strings_2_3.ids",
+      "bytes": 1207,
+      "sha256": "8c3da8ceff586d3a94eaadedcb521206f6d136a7bf0449835387e4f124fde488"
+    },
+    {
+      "path": "property/pass-dates_are_treated_as_strings_1_2.ids",
+      "bytes": 1164,
+      "sha256": "2fb7a6517116c89e63dabe638194d7bc4fe2210ad8e97a99b74b61c7abec6d08"
+    },
+    {
+      "path": "property/pass-durations_are_treated_as_strings_2_2.ids",
+      "bytes": 1171,
+      "sha256": "ed85a9085ba327e9eed502d05f3c8b079230622a473eea5cca6bfdfa3012ec5b"
+    },
+    {
+      "path": "property/pass-if_multiple_properties_are_matched__all_values_must_satisfy_requirements_1_2.ids",
+      "bytes": 1448,
+      "sha256": "2a5ed21a35d81da5618afb74d6d1f038e565b1b8735803fd1cf5088649e4c91a"
+    },
+    {
+      "path": "property/pass-integer_values_are_checked_using_type_casting_1_4.ids",
+      "bytes": 1200,
+      "sha256": "09df7f85558933c795e5e4780dd685cb35c8996a5cba67f6fcb2c991f31f114f"
+    },
+    {
+      "path": "property/pass-material_properties_are_supported_under_ifc2x3_via_extendedmaterialproperties.ids",
+      "bytes": 1182,
+      "sha256": "294f7d97e8f2fe250a2de8128ac5a8492622b1e8d12868194ac455c448a899d1"
+    },
+    {
+      "path": "property/pass-material_properties_are_supported_under_ifc4_via_ifcmaterialproperties.ids",
+      "bytes": 1162,
+      "sha256": "63c745415956274c04491cf999400878f69fb66ca956b67d3be48b873632dd51"
+    },
+    {
+      "path": "property/pass-measures_are_used_to_specify_an_ifc_data_type_2_2.ids",
+      "bytes": 1203,
+      "sha256": "f2a7796e086e47818f313fbaea9760a47c07ed0209a2ed9235b5083acdc9093e"
+    },
+    {
+      "path": "property/pass-non_ascii_characters_are_treated_without_encoding.ids",
+      "bytes": 1222,
+      "sha256": "323c43bcdc511d31508305a7dfb1ae958886b941098008cd75f908f7b5b619b0"
+    },
+    {
+      "path": "property/pass-only_specifically_formatted_numbers_are_allowed_3_4.ids",
+      "bytes": 1207,
+      "sha256": "9b6a424a7a6f677fd145bf78c0393f28721f65c679027e51b84decd2d0346762"
+    },
+    {
+      "path": "property/pass-only_specifically_formatted_numbers_are_allowed_4_4.ids",
+      "bytes": 1207,
+      "sha256": "53fb6ef3a3a429834ebbd4d41a0860dcaa7e508f4fb9f61e6e918c03ea81dc4d"
+    },
+    {
+      "path": "property/pass-predefined_properties_are_supported_but_discouraged_1_2.ids",
+      "bytes": 1244,
+      "sha256": "d04e1a359ae35aba56643f9cfebb48f32482728ddcd7a7408484af9fa02061dd"
+    },
+    {
+      "path": "property/pass-project_properties_are_supported_under_ifc2x3_via_ifcobject.ids",
+      "bytes": 1141,
+      "sha256": "6c08341d3fc7146100c2c2812d3976a8d6ecaf1236a0fb8d4a5f0eb5a5860488"
+    },
+    {
+      "path": "property/pass-project_properties_are_supported_under_ifc4_via_ifccontext.ids",
+      "bytes": 1137,
+      "sha256": "5c4a943e2154fc8b0fdbfb75563403ed0f19a254a43f60383ba636793ef6930c"
+    },
+    {
+      "path": "property/pass-properties_can_be_inherited_from_the_type_1_2.ids",
+      "bytes": 1111,
+      "sha256": "662a039817408d784172a0c8585b1024478a36e54e224424cd8c30727d204aed"
+    },
+    {
+      "path": "property/pass-properties_can_be_inherited_from_the_type_2_2.ids",
+      "bytes": 1115,
+      "sha256": "048a5bae40dad973273fac03d68678153ca4bc9d6c4f81349c3fcd696e3ded46"
+    },
+    {
+      "path": "property/pass-properties_can_be_overriden_by_an_occurrence_1_2.ids",
+      "bytes": 1197,
+      "sha256": "382e34d8353c238e60d639c350982ec16f1f26eb1bc87ece999f045b9aa03b06"
+    },
+    {
+      "path": "property/pass-real_values_are_checked_using_type_casting_1_3.ids",
+      "bytes": 1191,
+      "sha256": "c7ce27d1d0674486ad3e14f6272249fecb52c5215afe63183794d5c4d0ee9cfc"
+    },
+    {
+      "path": "property/pass-real_values_are_checked_using_type_casting_2_3.ids",
+      "bytes": 1193,
+      "sha256": "76e4d624c14758b39815cd4c2259bb93e7212acff427e50d649e81facdf8ec44"
+    },
+    {
+      "path": "property/pass-real_values_are_checked_using_type_casting_3_3.ids",
+      "bytes": 1193,
+      "sha256": "f2a4ddde5ddeedead02e80f573bfa614124c7169329456cdc985e85a6aa6b03d"
+    },
+    {
+      "path": "property/pass-specifying_a_value_performs_a_case_sensitive_match_1_2.ids",
+      "bytes": 1209,
+      "sha256": "69d08bcf6e8f0baea4b7fc08cc4fd1a1134bf71a1737c68156dff7cb88eda25d"
+    },
+    {
+      "path": "property/pass-unit_conversions_shall_take_place_to_ids_nominated_standard_units_2_2.ids",
+      "bytes": 1245,
+      "sha256": "90d9190d191130005610b7aa2c44a67d2349cdea7be0838883223a1fb7e74d90"
+    },
+    {
+      "path": "restriction/fail-a_bound_can_be_exclusive_1_3.ids",
+      "bytes": 1187,
+      "sha256": "266bef95fb10428afb213fb02f64ca3a059e8d4f0386e78a21d7cbde10a21a56"
+    },
+    {
+      "path": "restriction/fail-a_bound_can_be_exclusive_3_3.ids",
+      "bytes": 1187,
+      "sha256": "77ed9bfbd87b27709925a7314d8ca73e5987f5ac6a1b272b138df0f80d57fbe1"
+    },
+    {
+      "path": "restriction/fail-a_bound_can_be_inclusive_4_4.ids",
+      "bytes": 1187,
+      "sha256": "22c4f25c4ad799eddf27199e18a9f5598fe854697b9c5cc1599931486d54af98"
+    },
+    {
+      "path": "restriction/fail-an_enumeration_matches_case_sensitively_3_3.ids",
+      "bytes": 1189,
+      "sha256": "0eacfd55144474ef8bb1bed8394aa18f803cdb92d9cd05160ca7d5b313c54736"
+    },
+    {
+      "path": "restriction/fail-an_enumeration_matches_case_sensitively_4_3.ids",
+      "bytes": 1189,
+      "sha256": "667966fb339c909ed9d9dc148e80b6e54915b362cf7dd030d5889ad224ee846c"
+    },
+    {
+      "path": "restriction/fail-length_checks_can_be_used_1_2.ids",
+      "bytes": 1109,
+      "sha256": "45013bbdf7f35e3dadf552bdc869f7b5bbbb07a323f346839ffc90d63d9c7239"
+    },
+    {
+      "path": "restriction/fail-max_and_min_length_checks_can_be_used_1_3.ids",
+      "bytes": 1177,
+      "sha256": "44892c72d0aaa31381d23b9285667b6d3ce63af13125e609eb42ac8a2e0eb15e"
+    },
+    {
+      "path": "restriction/fail-max_and_min_length_checks_can_be_used_4_3.ids",
+      "bytes": 1177,
+      "sha256": "2f76b70f39bcd30ac17d7a2baf14a44f05cca18a752b9dd96195bc8f05d12662"
+    },
+    {
+      "path": "restriction/fail-regex_patterns_can_be_used_3_3.ids",
+      "bytes": 1127,
+      "sha256": "5286d41dddc428cd269f80d06a02a78c3e4a781863ef429216d7decec258300a"
+    },
+    {
+      "path": "restriction/fail-regex_patterns_work_in_OR_3_3.ids",
+      "bytes": 1179,
+      "sha256": "49e742579c6a3bc158bce5bd2d8721106dbf5bf25bbbb282995739a72f18bec7"
+    },
+    {
+      "path": "restriction/invalid-patterns_always_fail_on_any_number.ids",
+      "bytes": 1170,
+      "sha256": "a6d373feda2e6ea6188b3544949a27606fad3cd9211b0ee4894425f9dddbe26a"
+    },
+    {
+      "path": "restriction/invalid-patterns_only_work_on_strings_and_nothing_else.ids",
+      "bytes": 1174,
+      "sha256": "41324c36feaa48fe80e1bad2b144c63cde01d19bd591fbb48d5a53539bdd7c86"
+    },
+    {
+      "path": "restriction/pass-a_bound_can_be_exclusive_2_3.ids",
+      "bytes": 1187,
+      "sha256": "d31446699d0916792e97dc98ef0cee877e1b4d3994bac02ddf8a546f8e732c52"
+    },
+    {
+      "path": "restriction/pass-a_bound_can_be_inclusive_1_4.ids",
+      "bytes": 1187,
+      "sha256": "e83d0d0a3529944781f63e093d6a0f156c00aa04f26277e08db3c4a567f515ac"
+    },
+    {
+      "path": "restriction/pass-a_bound_can_be_inclusive_2_4.ids",
+      "bytes": 1187,
+      "sha256": "caebfe6b6a079817ea52aca3a9e56ecee10ef201b873e1c51d60554672545535"
+    },
+    {
+      "path": "restriction/pass-a_bound_can_be_inclusive_3_4.ids",
+      "bytes": 1187,
+      "sha256": "e6500e9ce59398ec0c2deb9c75fad5235ee236ecd4e3831f312fe632a6dd2c80"
+    },
+    {
+      "path": "restriction/pass-an_enumeration_matches_case_sensitively_1_3.ids",
+      "bytes": 1189,
+      "sha256": "ad2df0991dd84e437ab6f6c56d0865e72f113535a1bb3cf6fcace847227b43b6"
+    },
+    {
+      "path": "restriction/pass-an_enumeration_matches_case_sensitively_2_3.ids",
+      "bytes": 1189,
+      "sha256": "3c2d5c0a05383808552e96f63941196c8733bbaebce65dba904a86764fdf849d"
+    },
+    {
+      "path": "restriction/pass-length_checks_can_be_used_2_2.ids",
+      "bytes": 1109,
+      "sha256": "f5d6b00b684a2020b633ca7cc6eeec3f56e731fb57c59fda1849b9be8e6a32eb"
+    },
+    {
+      "path": "restriction/pass-max_and_min_length_checks_can_be_used_2_3.ids",
+      "bytes": 1177,
+      "sha256": "b09c724a706c9b9bf716d7f316481315655082f3ef31b09c9cfb0233163eb601"
+    },
+    {
+      "path": "restriction/pass-max_and_min_length_checks_can_be_used_3_3.ids",
+      "bytes": 1177,
+      "sha256": "5010f98e747438c1e5a68dd6c91930077dde353261b9f8c985e8c1307ee29066"
+    },
+    {
+      "path": "restriction/pass-regex_patterns_can_be_used_1_3.ids",
+      "bytes": 1127,
+      "sha256": "2cc7e100f657c9161ea59792883807657b4c3371aec64b675871ebf283105787"
+    },
+    {
+      "path": "restriction/pass-regex_patterns_can_be_used_2_3.ids",
+      "bytes": 1127,
+      "sha256": "52472b52532a8f19cb2683d85bbca79374906194132c9b3b9d459b19cfb7f51f"
+    },
+    {
+      "path": "restriction/pass-regex_patterns_work_in_OR_1_3.ids",
+      "bytes": 1179,
+      "sha256": "0cfbb682558725a7681598a201db66c696a847bcad3c49b6bf7c67bf837f86ad"
+    },
+    {
+      "path": "restriction/pass-regex_patterns_work_in_OR_2_3.ids",
+      "bytes": 1179,
+      "sha256": "8634549b28b3d467638b6f96fe30a796675f31487cd5c96084a8179eac61de94"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_negative_high_number_lower_bound.ids",
+      "bytes": 1260,
+      "sha256": "17003016a8423515c9ef3c1a4ea7b5e48a68204e136ea7e89666aec5595a8ac3"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_negative_high_number_upper_bound.ids",
+      "bytes": 1260,
+      "sha256": "e0264e8078ddff40254af2bcd62c44237283047e7f84d23206536eb78230ec00"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_negative_low_number_lower_bound.ids",
+      "bytes": 1259,
+      "sha256": "2c83229d0714e1d949ff1bdb749f1aee53f062ad0f0241e7f0cb2aa820a1a8a1"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_negative_low_number_upper_bound.ids",
+      "bytes": 1259,
+      "sha256": "de8bae22a28722da027f65314a20b0e0690fb926045436e869270c0ff07dfedf"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_negative_one_lower_bound.ids",
+      "bytes": 1238,
+      "sha256": "334b266835ad847bffd8d71e36f0f2a777ac9dcb78d06c938dcc19f80ac70f45"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_negative_one_upper_bound.ids",
+      "bytes": 1238,
+      "sha256": "f246eba9e951b1ed2d89de3d669abb8a39681713a888d53c4b752c1c30a4ef7e"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_one_lower_bound.ids",
+      "bytes": 1219,
+      "sha256": "67fb7ca890d2ac9f16f5f42e21f1c2b7c62d6733c0916815f067bdd7d3082645"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_one_upper_bound.ids",
+      "bytes": 1219,
+      "sha256": "f68a6e2a2cb23f4d6fbe340d99cd540b4b454be097188597bcf3b849c063d41b"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_positive_high_number_lower_bound.ids",
+      "bytes": 1258,
+      "sha256": "88e119e390bab052b3d0a41761a23d10e7180f15b881acb272899b5d00493735"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_positive_high_number_upper_bound.ids",
+      "bytes": 1258,
+      "sha256": "c350498ef2d566951e755e5a80ebee346123f570f6c6fdd8a0c977d24e8b9d07"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_positive_low_number_lower_bound.ids",
+      "bytes": 1258,
+      "sha256": "a36318f711ebb86330762bae1c9de3352a34bb418b08953c46535cdbc6f10cd5"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_positive_low_number_upper_bound.ids",
+      "bytes": 1258,
+      "sha256": "261bbc9497ef31636ae4112caa8c55817a28c9ba7764894d69e48fe2ce5a1c68"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_range_greater_than_zero_exclusive.ids",
+      "bytes": 1334,
+      "sha256": "1e2cf2df260918b0ea19d8384971a2f9f57be8bb2a445138f839716a533733e2"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_range_greater_than_zero_inclusive.ids",
+      "bytes": 1334,
+      "sha256": "1d882a3bd6442ac746c34b370b325b0541e7f9ab0bfd1105bbdcc4c9f35eaee1"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_range_lower_than_zero_exclusive.ids",
+      "bytes": 1330,
+      "sha256": "445efa4f6d1b7576c0760f2aaa67b37a9238395e10c95ac76c86316f6e6a812c"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_range_lower_than_zero_inclusive.ids",
+      "bytes": 1330,
+      "sha256": "6250c4cde0466f08686fb6066964134bbdb1653ffe7ed5df8df749ca839b50f7"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_zero_lower_bound.ids",
+      "bytes": 1221,
+      "sha256": "b8652b6fba6be997f1dbe3d1732c484aad86e2cd9f85c98e577b7df8a31210de"
+    },
+    {
+      "path": "tolerance/fail-comparison_tolerance_for_floating_point_zero_upper_bound.ids",
+      "bytes": 1221,
+      "sha256": "ff1c6ba680095352bf735c5b23323e50f9c369ccb0b65ca15a9ccfd84609347e"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_negative_high_number_lower_bound.ids",
+      "bytes": 1260,
+      "sha256": "09372ba29aab6806b40c018c000fb7c9ce0799346aee3502bf7fe67588487115"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_negative_high_number_upper_bound.ids",
+      "bytes": 1260,
+      "sha256": "9cafb8e0e1c0dc19b39ddca389f6a98c59c045a7088bb104b8a7121c4e55b850"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_negative_low_number_lower_bound.ids",
+      "bytes": 1259,
+      "sha256": "8f438b9bc6ebbc27131e0053ba5825ffe0c4cc4a252cc03e16d60c6d557a0d84"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_negative_low_number_upper_bound.ids",
+      "bytes": 1259,
+      "sha256": "65533b569dba70c64b0a7b49603d49e34da427b2fe586aac1bb62ffbac71ec44"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_negative_one_lower_bound.ids",
+      "bytes": 1238,
+      "sha256": "4a4f02144d73a8d8f1c7eb1e5bd89af90ce70f0971679b08873f20c103d96847"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_negative_one_upper_bound.ids",
+      "bytes": 1238,
+      "sha256": "c7604d5ce628c4d5ddc2a88e80d77147dc9bcb08e05ce941f7f5eaa94a3bde8b"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_one_lower_bound.ids",
+      "bytes": 1219,
+      "sha256": "fe759703a5f4593a1ef2519e07dc2d9a096eb488a3ac5c7433bad70c6b052c17"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_one_upper_bound.ids",
+      "bytes": 1219,
+      "sha256": "f3e5b8abace4536dfae259875e8cd9e2d9c1898b8f58014be60a150e98793318"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_positive_high_number_lower_bound.ids",
+      "bytes": 1258,
+      "sha256": "129decc752caf6c857185787e6c56b1ee81c6742537fdbfa3152f4efc16d2d33"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_positive_high_number_upper_bound.ids",
+      "bytes": 1258,
+      "sha256": "3aec29056f8448bc9f8c67cf59575f396cb1f1783fc16aa9f7e1c2572a59d94e"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_positive_low_number_lower_bound.ids",
+      "bytes": 1258,
+      "sha256": "8f0e520dd28fd007ac613add9b0d3c6f762efb0dd81a4d0e912a6a8687ee691a"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_positive_low_number_upper_bound.ids",
+      "bytes": 1258,
+      "sha256": "66b3b326c59fb5c091dea5898ebf67fa5eb17a2672b7b28fcc72f338cee75f51"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_range_greater_than_zero_exclusive.ids",
+      "bytes": 1334,
+      "sha256": "11d3e895ae8561500ed87e0803b529a4c5ed1053f73d08a5bb5669004192f6da"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_range_greater_than_zero_inclusive.ids",
+      "bytes": 1334,
+      "sha256": "5e872a95fed9403dd470afc7f1f5d0aa0dabb53cebaba1c740506369564f97c5"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_range_lower_than_zero_exclusive.ids",
+      "bytes": 1330,
+      "sha256": "6ca5fba699a9d0f99069892c880a770d5cc07ce6c7d18bdcbf4089547df37414"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_range_lower_than_zero_inclusive.ids",
+      "bytes": 1330,
+      "sha256": "8ad88ae510350c3b5b38afd3c5dcb8db917cb3aa0babacb8b8c6d14807255b97"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_zero_lower_bound.ids",
+      "bytes": 1221,
+      "sha256": "2b70f5696a856cd15d02b0511fc87fc17fb19e6a8b0b194ef26b9448f3253084"
+    },
+    {
+      "path": "tolerance/pass-comparison_tolerance_for_floating_point_zero_upper_bound.ids",
+      "bytes": 1221,
+      "sha256": "6a18c1da3528c758e27f776651d7aaddf7cf70c04b31059d07c0395ad3a40894"
+    }
+  ]
+}
