@@ -14,9 +14,22 @@ Gecontroleerde basis: main `8dd81cff62c4d060d235945b5f79ba7ce1537657`, versie 1.
 
 Deze grenzen zijn bruikbaar. Er is bij de gerichte nulmeting geen noodzaak aangetoond voor een frameworkmigratie, backend of algemene herbouw.
 
+Vanaf 1.9.0 bezit `ids.js` de begrensde IDS-preview, importplanning en bronbewaring;
+`ids-ui.js` bezit de bediening. Het oorspronkelijke IDS wordt lokaal als passieve
+projectmetadata bewaard. [IDS-import](ids-import.md) beschrijft de ondersteunde
+eisen en bewijsgrenzen; [Raam/Dakraam](bsdd-window-mapping.md) bezit het concrete
+bSDD-brononderzoek. De bestaande bron- en IFC-validaties blijven van toepassing.
+
 ## Contracten die behouden moeten blijven
 
 - Een bron-URI bepaalt bronidentiteit. Gelijke namen bewijzen geen gelijke betekenis; samenbrengen vraagt een inhoudelijke onderbouwing.
+- IDS-eisen worden geen bSDD-bronrelaties. Alleen expliciet ondersteunde eisen
+  worden als voorstel toegevoegd; conditionele toepassing wordt niet tot een
+  hele IFC-entiteit verbreed. Ontbrekende Revit-namen blijven export blokkeren.
+  Herhaling behoudt bestaande namen en bronverwijzingen; conflicten wijzen de
+  selectie atomair af. De oorspronkelijke XML en eisverwijzingen overleven
+  bewaren en heropenen in 1.9.0. Oudere appversies bewaren `idsImports` niet;
+  bewaar daarom de nieuwe projectbackup voordat je terugvalt.
 - Elke actieve combinatie van IFC-entiteit, propertyset en property heeft maximaal één mapping. Conflicten blokkeren zowel downloaden als kopiëren; zonder koppelingen zijn beide acties uitgeschakeld.
 - Bronrelaties, onderdelen en vergelijkbare begrippen leiden niet automatisch tot overname of gelijkstelling. Eigen IFC-afspraken blijven expliciet herkenbaar.
 - Centrale standaardwijzigingen behouden afwijkende toepassingen, tenzij de gebruiker alle afwijkingen bewust vervangt. Een opgeslagen lege Revit-standaard is een waarde, geen ontbrekende instelling.

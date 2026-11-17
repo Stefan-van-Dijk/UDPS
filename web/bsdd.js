@@ -1,4 +1,4 @@
-import {IFC,ILS} from './sources.js?v=1.8.1';
+import {IFC,ILS} from './sources.js?v=1.9.0';
 const API='https://api.bsdd.buildingsmart.org/api/';
 export const defaults=[{uri:ILS,name:'ILS Ontwerp en Engineering 2'},{uri:IFC,name:'IFC 4.3'}];
 export const httpsUri=s=>{try{const u=new URL(s);return u.protocol==='https:'&&!u.username&&!u.password?u.href:'';}catch{return '';}};
@@ -15,10 +15,10 @@ export function normalizeClass(d){
  if(!httpsUri(d.uri)||!Array.isArray(d.classProperties))throw Error('Klasse-eigenschappen ontbreken.');
  const rejected=[],properties=[];
  for(const p of d.classProperties){const reasons=[];if(!httpsUri(p.propertyUri))reasons.push('geen geldige eigenschap-URI');if(!p.propertySet)reasons.push('geen propertyset in de bron');if(!p.propertyCode&&!p.name)reasons.push('geen naam of code');if(reasons.length){rejected.push({name:p.name||p.propertyCode||'Naamloos',reason:reasons.join('; ')});continue;}properties.push({kind:'property',uri:p.propertyUri,code:p.propertyCode||p.name,name:p.name||p.propertyCode,propertySet:p.propertySet,dataType:p.dataType||'',units:p.units||[],description:p.description||p.definition||'',allowedValues:p.allowedValues||[],constraints:Object.fromEntries(['isRequired','isWritable','predefinedValue','minInclusive','maxInclusive','minExclusive','maxExclusive','pattern'].filter(k=>p[k]!==undefined&&p[k]!==null).map(k=>[k,p[k]])),classUri:d.uri,className:d.name||d.code,relationUri:p.uri,propertyDictionaryUri:p.propertyDictionaryUri||d.dictionaryUri||'',propertyDictionaryName:p.propertyDictionaryName||'',valueKind:p.propertyValueKind||'Single'});}
- return {uri:d.uri,name:d.name||d.code,code:d.code,classType:d.classType||'Class',dictionaryUri:d.dictionaryUri||'',classRelations:d.classRelations||[],relatedIfcEntityNames:d.relatedIfcEntityNames||[],properties,rejected,propertyCount:d.classProperties.length,propertySchema:4,checkedAt:new Date().toISOString()};
+ return {uri:d.uri,name:d.name||d.code,code:d.code,classType:d.classType||'Class',dictionaryUri:d.dictionaryUri||'',parentClassReference:d.parentClassReference||null,childClassReferences:d.childClassReferences||[],hierarchy:d.hierarchy||[],classRelations:d.classRelations||[],relatedIfcEntityNames:d.relatedIfcEntityNames||[],properties,rejected,propertyCount:d.classProperties.length,propertySchema:5,checkedAt:new Date().toISOString()};
 }
 export async function classDetails(uri,fetcher=fetch){
- const d=await get('Class/v1',{Uri:uri,IncludeClassRelations:true,languageCode:'nl-NL'},fetcher);if(d.uri!==uri)throw Error('Onverwachte bronklasse.');
+ const d=await get('Class/v1',{Uri:uri,IncludeClassRelations:true,IncludeChildClassReferences:true,languageCode:'nl-NL'},fetcher);if(d.uri!==uri)throw Error('Onverwachte bronklasse.');
  let properties=[],offset=0,total;const seen=new Set(),confirmedUris=new Set([uri]);
  do {const page=await get('Class/Properties/v1',{ClassUri:uri,Offset:offset,Limit:1000,languageCode:'nl-NL'},fetcher);
  if(page.classProperties==null&&page.totalCount===0&&page.count===0)page.classProperties=[];

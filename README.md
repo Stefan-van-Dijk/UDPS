@@ -1,8 +1,30 @@
 # UDPS generator
 
-Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.8.1.
+Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.9.0.
 
 Actuele bediening en parameterafspraken staan bij [1.8.0 — Centrale eigenschappen en bSDD-relaties](#180--centrale-eigenschappen-en-bsdd-relaties). De versiehoofdstukken daarvóór beschrijven de ontwikkeling en het toen uitgevoerde controlebewijs; ze zijn geen actuele takenlijst.
+
+## 1.9.0 — Bronklassen verkennen en IDS-eisen inladen
+
+De productkeuze toont nu de gepubliceerde hiërarchie en uitgaande klasserelaties,
+ook voordat eigenschappen zijn toegevoegd. Open een verwante klasse om haar eigen
+bron, eigenschappen en IFC-relatie te bekijken. De app neemt geen eigenschappen
+automatisch over. [Raam en Dakraam](docs/bsdd-window-mapping.md) documenteert de
+gecontroleerde bronroute en de verschillende vaste ObjectType-waarden.
+
+**IDS inladen** bij stap 02 toont IDS 1.0-specificaties en hun eisen. Selecteer
+ondersteunde verplichte properties met een letterlijke IFC-entiteit, propertyset,
+propertynaam en ondersteund datatype. Koppel daarna de Revit-parameters bij de
+exportregels. Voorwaarden die de UDPS-export niet kan uitvoeren blijven zichtbaar
+met een reden; zij worden niet stilzwijgend verbreed. Het oorspronkelijke IDS-bestand
+blijft bij toevoegen in het JSON-project bewaard en kan opnieuw worden bekeken.
+Dit is geen volledige IDS-validator of bewijs van modelconformiteit. Zie
+[ondersteuning, proefbestand en grenzen](docs/ids-import.md).
+
+Nieuwe IDS-mappings blijven export blokkeren zolang een Revit-naam ontbreekt.
+Bestaande koppelingen en hun Revit-namen blijven behouden; een datatypeconflict
+wijst de hele selectie af. Bewaar het project vóór gebruik van een oudere appversie:
+1.8.1 bewaart de nieuwe IDS-bronmetadata niet bij opnieuw opslaan.
 
 ## 1.8.1 — Gegevensbehoud en betrouwbare uitvoer
 

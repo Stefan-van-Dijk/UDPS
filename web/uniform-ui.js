@@ -1,12 +1,12 @@
-import {propertyGroups,uniformDefaults,setUniformDefaults,updateApplication,addApplication,mergeProperties,compatibility,ensureHeaders,parseJson} from './uniform.js?v=1.8.1';
-import {propertyLinks,propertyDetails,relationMeaning} from './linked-data.js?v=1.8.1';
-import {httpsUri} from './bsdd.js?v=1.8.1';
-import {entities,types} from './core.js?v=1.8.1';
-import {availableEntities} from './mapping.js?v=1.8.1';
-import {loadDetails} from './source-store.js?v=1.8.1';
+import {propertyGroups,uniformDefaults,setUniformDefaults,updateApplication,addApplication,mergeProperties,compatibility,ensureHeaders,parseJson} from './uniform.js?v=1.9.0';
+import {propertyLinks,propertyDetails,relationMeaning} from './linked-data.js?v=1.9.0';
+import {httpsUri} from './bsdd.js?v=1.9.0';
+import {entities,types} from './core.js?v=1.9.0';
+import {availableEntities} from './mapping.js?v=1.9.0';
+import {loadDetails} from './source-store.js?v=1.9.0';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const link=(uri,label)=>httpsUri(uri)?`<a href="${esc(httpsUri(uri))}" target="_blank" rel="noopener noreferrer">${esc(label)} ↗</a>`:esc(label);
-const origin=r=>({user:'Eigen afspraak',bsdd:'bSDD',library:'Eigen bibliotheek',legacy:'Eerdere koppeling'}[r.Mapping_origin]||'Eerdere koppeling · niet opnieuw bevestigd');
+const origin=r=>({user:'Eigen afspraak',bsdd:'bSDD',ids:'IDS-eis',library:'Eigen bibliotheek',legacy:'Eerdere koppeling'}[r.Mapping_origin]||'Eerdere koppeling · niet opnieuw bevestigd');
 export function initUniformUI(api,services={propertyLinks,propertyDetails,loadDetails}){
  let current=null,ticket=0,shown=[],relations=[];
  function render(){const q=$('uniformSearch').value.toLowerCase();shown=propertyGroups(api.data()).filter(g=>[g.name,...g.rows.flatMap(({row:r})=>[r.Revit_parameter,r.IFC_parameter,r.Export_tabblad,r.Source_uri,...entities(api.data()).filter(e=>r[e]==='x')])].join(' ').toLowerCase().includes(q));$('uniformCount').textContent=shown.length+' centrale eigenschappen';$('uniformList').innerHTML=shown.map((g,i)=>{const rows=g.rows.map(x=>x.row),es=[...new Set(rows.flatMap(r=>entities(api.data()).filter(e=>r[e]==='x')))],rv=[...new Set(rows.map(r=>r.Revit_parameter||'Nog koppelen'))];return `<button class="uniform-card" data-uniform="${i}"><span><strong>${esc(g.name)}</strong><small>${esc(es.join(', ')||'Nog geen IFC-toepassing')}</small></span><span>${esc(rv.join(' · '))}<small>${new Set(rows.map(r=>r.Source_uri).filter(Boolean)).size} broneigenschap(pen) · ${rows.length} exportregel(s)</small></span><span>Beheren →</span></button>`;}).join('')||'<p>Geen eigenschappen. Voeg broneigenschappen of een eigen parameter toe.</p>';}

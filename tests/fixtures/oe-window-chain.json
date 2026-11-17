@@ -1,0 +1,808 @@
+{
+  "schema": 1,
+  "purpose": "Stored bSDD responses observed 17 November 2026 for UDPS-T008; hierarchy does not imply property inheritance.",
+  "responses": [
+    {
+      "className": "Raam",
+      "endpoint": "Class/v1",
+      "url": "https://api.bsdd.buildingsmart.org/api/Class/v1?Uri=https%3A%2F%2Fdigitalbuildingdata.tech%2Fils-ontwerp-en-engineering-2%2F093a3c6b-133b-4ab3-a731-cbc2f81bf167&IncludeClassRelations=true&IncludeChildClassReferences=true&languageCode=nl-NL",
+      "checkedAt": "2026-11-17T01:03:33.710121+00:00",
+      "response": {
+        "classType": "Class",
+        "referenceCode": "Raam",
+        "relatedIfcEntityNames": [
+          "IfcWindow"
+        ],
+        "parentClassReference": {
+          "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/f12bce5f-55be-44c0-8072-309ba718644b",
+          "name": "BOUWPRODUCT",
+          "code": "BOUWPRODUCT"
+        },
+        "classRelations": [
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/bf61d21d-9a04-542c-8cd8-c809f28358e0",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/34512ac1-962a-47b0-a831-68857d53c44b",
+            "relatedClassName": "(31.10) buitenwandopeningen; niet gevuld, algemeen (verzamelniveau)"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/e1655c44-bda4-5c82-b72b-848883c9a75d",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/9e2e5774-37b6-4c1f-89e8-0680cb94b857",
+            "relatedClassName": "(31.20) buitenwandopeningen; gevuld met ramen, algemeen (verzamelniveau)"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/0f8e67ee-3a4e-50b8-963d-f7e227710afd",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/416490b9-582f-4fee-8f17-cf8dda8ec4b1",
+            "relatedClassName": "(31.21) buitenwandopeningen; gevuld met ramen, gesloten ramen"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/1bcd0750-6030-5c55-b80d-470fa5a752e1",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/3fe6fe12-31b3-42cb-8239-fb3c9448b809",
+            "relatedClassName": "(31.22) buitenwandopeningen; gevuld met ramen, ramen draaiend aan een kant"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/1d6545d1-5d66-53f0-8a7c-a815869d1ef9",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/e021049f-d941-4a2f-96ab-445a195e6dfb",
+            "relatedClassName": "(31.23) buitenwandopeningen; gevuld met ramen, schuiframen"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/eac09553-9da8-5e10-b240-e072f52435cd",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/9a2897b9-19b0-464c-8d72-703754c676f7",
+            "relatedClassName": "(31.24) buitenwandopeningen; gevuld met ramen, ramen draaiend op verticale of horizontale as"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/5b616357-ee23-52bc-af51-5a90ec73d722",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/aa66665b-307f-4025-911e-a18e143e5bd7",
+            "relatedClassName": "(31.25) buitenwandopeningen; gevuld met ramen, combinatieramen"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/3f32c184-1066-50ae-9e80-c193718ba8ff",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/99cb0a16-02be-46db-9bb9-65a121e4666e",
+            "relatedClassName": "(32.10) binnenwandopeningen; niet gevuld, algemeen (verzamelniveau)"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/e2c55443-cb3d-5a3e-a4c8-63c5f42f0ee9",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/bb91e345-e0d7-48e9-a76a-28a26d2ac41b",
+            "relatedClassName": "(32.20) binnenwandopeningen; gevuld met ramen, algemeen (verzamelniveau)"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/d5425ebd-58eb-57ad-b22d-37da6bbb678c",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/89c8f079-f744-4951-90a1-a61f2b64055c",
+            "relatedClassName": "(32.21) binnenwandopeningen; gevuld met ramen, gesloten ramen"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/3b1b4e85-bd62-5de2-bd29-b52a3e311520",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/d5271846-0d6a-46fa-998e-88a2d72e663e",
+            "relatedClassName": "(32.22) binnenwandopeningen; gevuld met ramen, ramen draaiend aan een kant"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/68808d99-bf9f-5a48-910c-81c7b891d1a5",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/0f085de5-3d12-4f8f-bf84-1b22320e21b3",
+            "relatedClassName": "(32.23) binnenwandopeningen; gevuld met ramen, schuiframen"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/4527d870-c453-5a8b-8c6d-d6155ff9a4b0",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/8fe59d50-181a-4818-92a2-9af352b4bff3",
+            "relatedClassName": "(32.24) binnenwandopeningen; gevuld met ramen, ramen draaiend op verticale of horizontale as"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/50dd2883-8909-5f77-884d-12c475038321",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/0afca0e2-95ed-468b-baff-3cf98a6305cf",
+            "relatedClassName": "(32.25) binnenwandopeningen; gevuld met ramen, combinatieramen"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/369573a1-6302-5d1a-a266-40736b90598f",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/2021dc80-4186-4d20-9b18-78282d59866a",
+            "relatedClassName": "(37.20) dakopeningen; gevuld, algemeen (verzamelniveau)"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/f884a13a-fed7-54d4-9207-2787748e69e1",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/01b36a50-f5ff-4433-9196-8434edff4530",
+            "relatedClassName": "(37.21) dakopeningen; gevuld, gesloten ramen"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/61c69553-ee0a-5f96-a518-33cc4c0c309d",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/9c769bdf-c028-4d8e-a3a9-8e397295cc30",
+            "relatedClassName": "(37.22) dakopeningen; gevuld, ramen draaiend aan één kant"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/d27b6be1-d7f3-542b-8746-6e3bb4ea49a1",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/11c62567-1e0c-4c9e-9e8b-b521d63cf1a8",
+            "relatedClassName": "(37.23) dakopeningen; gevuld, schuiframen"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/e2d959d6-6f50-5fc1-b4e3-cf2dff69249f",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/1548fbbb-6132-4523-818a-1dd7bf21f5db",
+            "relatedClassName": "(37.24) dakopeningen; gevuld, ramen draaiend op een as"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/5586287a-5dbf-51e1-af5b-fcfad8093d81",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/669ef950-af78-4572-9a9b-feb55a926003",
+            "relatedClassName": "(37.25) dakopeningen; gevuld, combinatieramen"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/ab43daff-956a-51ec-b6d0-3191015065b4",
+            "relationType": "HasPart",
+            "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/67931c65-5058-4f68-8404-9269b7d7021c",
+            "relatedClassName": "Kierdichting"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/bec3d03e-cfa1-5a03-81d5-afda047401dd",
+            "relationType": "HasPart",
+            "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c7e9021f-0721-4a99-a669-39ea4d4557d2",
+            "relatedClassName": "Kozijn"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/744cca42-d40d-5ba6-9ff0-f48ffbe6f37e",
+            "relationType": "HasPart",
+            "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/37b3d397-3d18-4524-a11e-d69161f4cb40",
+            "relatedClassName": "Luchtrooster"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/0c41f0ec-2323-50b6-ad66-52973935fb75",
+            "relationType": "HasPart",
+            "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/98f346f1-c686-45d2-8877-feb9516a071d",
+            "relatedClassName": "Paneel"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/relclass/ee6b4753-0fb3-5384-8fa1-25d67d0a69ff",
+            "relationType": "HasPart",
+            "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/02611d9d-8b50-4904-8106-e137b937be29",
+            "relatedClassName": "Stelkozijn"
+          },
+          {
+            "relationType": "HasReference",
+            "relatedClassUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/IfcWindow",
+            "relatedClassName": "Window"
+          }
+        ],
+        "childClassReferences": [
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85",
+            "name": "Dakraam",
+            "code": "Dakraam"
+          }
+        ],
+        "hierarchy": [
+          {
+            "level": 1,
+            "name": "BOUWPRODUCT",
+            "code": "BOUWPRODUCT",
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/f12bce5f-55be-44c0-8072-309ba718644b"
+          },
+          {
+            "level": 2,
+            "name": "Raam",
+            "code": "Raam",
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167"
+          }
+        ],
+        "dictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "activationDateUtc": "9999-12-31T23:59:59Z",
+        "code": "Raam",
+        "countriesOfUse": [
+          "NL"
+        ],
+        "countryOfOrigin": "NL",
+        "name": "Raam",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167",
+        "replacedObjectCodes": [],
+        "replacingObjectCodes": [],
+        "status": "Active",
+        "subdivisionsOfUse": [],
+        "uid": "093a3c6b-133b-4ab3-a731-cbc2f81bf167",
+        "versionDateUtc": "2026-10-27T00:00:00Z"
+      }
+    },
+    {
+      "className": "Raam",
+      "endpoint": "Class/Properties/v1",
+      "url": "https://api.bsdd.buildingsmart.org/api/Class/Properties/v1?ClassUri=https%3A%2F%2Fdigitalbuildingdata.tech%2Fils-ontwerp-en-engineering-2%2F093a3c6b-133b-4ab3-a731-cbc2f81bf167&Offset=0&Limit=1000&languageCode=nl-NL",
+      "checkedAt": "2026-11-17T01:03:38.811649+00:00",
+      "response": {
+        "classUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167",
+        "classProperties": [
+          {
+            "name": "Name",
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/prop/31b2230e-94c1-52b5-9b5e-fe9f4b91eaf1",
+            "description": "Optional name for use by the participating software systems or users. For some subtypes of [[IfcRoot]] the insertion of the [[Name]] attribute may be required. This would be enforced by a where rule.",
+            "definition": "Optional name for use by the participating software systems or users. For some subtypes of [[IfcRoot]] the insertion of the [[Name]] attribute may be required. This would be enforced by a where rule.",
+            "dataType": "String",
+            "isRequired": false,
+            "propertyCode": "Name",
+            "propertyDictionaryName": "IFC",
+            "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+            "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/Name",
+            "propertySet": "Attributes",
+            "propertyStatus": "Active",
+            "propertyValueKind": "Single",
+            "sortNumber": 1
+          },
+          {
+            "name": "Object Type",
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/prop/18f61907-1035-52f4-a1ae-3bc26f98da9a",
+            "description": "The type denotes a particular type that indicates the object further. The use has to be established at the level of instantiable subtypes. In particular it holds the user defined type, if the enumeration of the attribute PredefinedType is set to [[USERDEFINED]] or when the concrete entity instantiated does not have a PredefinedType attribute. The latter is the case in some exceptional leaf classes and when instantiating [[IfcBuiltElement]] directly.",
+            "definition": "The type denotes a particular type that indicates the object further. The use has to be established at the level of instantiable subtypes. In particular it holds the user defined type, if the enumeration of the attribute PredefinedType is set to [[USERDEFINED]] or when the concrete entity instantiated does not have a PredefinedType attribute. The latter is the case in some exceptional leaf classes and when instantiating [[IfcBuiltElement]] directly.",
+            "dataType": "String",
+            "isWritable": false,
+            "allowedValues": [
+              {
+                "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/prop/18f61907-1035-52f4-a1ae-3bc26f98da9a/value/cc0c3958-5f81-5945-8087-26955411b63f",
+                "code": "Raam",
+                "value": "Raam",
+                "sortNumber": 1
+              }
+            ],
+            "predefinedValue": "Raam",
+            "propertyCode": "ObjectType",
+            "propertyDictionaryName": "IFC",
+            "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+            "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/ObjectType",
+            "propertySet": "Attributes",
+            "propertyStatus": "Active",
+            "propertyValueKind": "Single",
+            "sortNumber": 2
+          }
+        ],
+        "totalCount": 2,
+        "offset": 0,
+        "count": 2
+      }
+    },
+    {
+      "className": "Dakraam",
+      "endpoint": "Class/v1",
+      "url": "https://api.bsdd.buildingsmart.org/api/Class/v1?Uri=https%3A%2F%2Fdigitalbuildingdata.tech%2Fils-ontwerp-en-engineering-2%2Fe741a31f-fd64-4b72-aac2-292f3a559e85&IncludeClassRelations=true&IncludeChildClassReferences=true&languageCode=nl-NL",
+      "checkedAt": "2026-11-17T01:03:33.489931+00:00",
+      "response": {
+        "classType": "Class",
+        "referenceCode": "Dakraam",
+        "synonyms": [
+          "Lichtkoepel",
+          "Lichtstraat"
+        ],
+        "relatedIfcEntityNames": [
+          "IfcWindow",
+          "IfcWindowSKYLIGHT"
+        ],
+        "parentClassReference": {
+          "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167",
+          "name": "Raam",
+          "code": "Raam"
+        },
+        "classRelations": [
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/relclass/5590edc1-eed6-56d3-800e-5e9f4ae193a3",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/416490b9-582f-4fee-8f17-cf8dda8ec4b1",
+            "relatedClassName": "(31.21) buitenwandopeningen; gevuld met ramen, gesloten ramen"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/relclass/c455dd7b-5760-5ea7-ace0-b998e8e3d6ca",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/3fe6fe12-31b3-42cb-8239-fb3c9448b809",
+            "relatedClassName": "(31.22) buitenwandopeningen; gevuld met ramen, ramen draaiend aan een kant"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/relclass/39ade3cd-7832-5204-9fe6-5eb2e3d6d3c1",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/7e1bf1da-cfd0-4f5a-b1e0-a6c4a24da804",
+            "relatedClassName": "(37.10) dakopeningen; niet gevuld, algemeen (verzamelniveau)"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/relclass/18e23a20-0be2-59ec-b537-aeaee4f479f3",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/01b36a50-f5ff-4433-9196-8434edff4530",
+            "relatedClassName": "(37.21) dakopeningen; gevuld, gesloten ramen"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/relclass/4e5e2524-c899-5003-971a-e30820eb1fc5",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/9c769bdf-c028-4d8e-a3a9-8e397295cc30",
+            "relatedClassName": "(37.22) dakopeningen; gevuld, ramen draaiend aan één kant"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/relclass/ec26c1e7-df42-5e1f-8531-7e4a2fa9373f",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/11c62567-1e0c-4c9e-9e8b-b521d63cf1a8",
+            "relatedClassName": "(37.23) dakopeningen; gevuld, schuiframen"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/relclass/8fac2cb3-1d1e-5aee-82d9-aaf7fb9ab991",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/1548fbbb-6132-4523-818a-1dd7bf21f5db",
+            "relatedClassName": "(37.24) dakopeningen; gevuld, ramen draaiend op een as"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/relclass/f5c86746-8767-5b29-b38e-0c43f7ebbb2e",
+            "relationType": "HasReference",
+            "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/669ef950-af78-4572-9a9b-feb55a926003",
+            "relatedClassName": "(37.25) dakopeningen; gevuld, combinatieramen"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/relclass/b0f7e5b7-613a-5114-92e5-2707daaa4384",
+            "relationType": "HasPart",
+            "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/67931c65-5058-4f68-8404-9269b7d7021c",
+            "relatedClassName": "Kierdichting"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/relclass/8024f06f-08a9-587f-a233-ce522df686f2",
+            "relationType": "HasPart",
+            "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c7e9021f-0721-4a99-a669-39ea4d4557d2",
+            "relatedClassName": "Kozijn"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/relclass/78920227-a6ec-5022-91d2-334c32e45cdb",
+            "relationType": "HasPart",
+            "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/37b3d397-3d18-4524-a11e-d69161f4cb40",
+            "relatedClassName": "Luchtrooster"
+          },
+          {
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/relclass/fd5575c1-dd10-5337-9b3b-cfa6a13a599a",
+            "relationType": "HasPart",
+            "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/98f346f1-c686-45d2-8877-feb9516a071d",
+            "relatedClassName": "Paneel"
+          },
+          {
+            "relationType": "HasReference",
+            "relatedClassUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/IfcWindow",
+            "relatedClassName": "Window"
+          },
+          {
+            "relationType": "HasReference",
+            "relatedClassUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/IfcWindowSKYLIGHT",
+            "relatedClassName": "Sky Light"
+          }
+        ],
+        "hierarchy": [
+          {
+            "level": 1,
+            "name": "BOUWPRODUCT",
+            "code": "BOUWPRODUCT",
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/f12bce5f-55be-44c0-8072-309ba718644b"
+          },
+          {
+            "level": 2,
+            "name": "Raam",
+            "code": "Raam",
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167"
+          },
+          {
+            "level": 3,
+            "name": "Dakraam",
+            "code": "Dakraam",
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85"
+          }
+        ],
+        "dictionaryUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2",
+        "activationDateUtc": "9999-12-31T23:59:59Z",
+        "code": "Dakraam",
+        "countriesOfUse": [
+          "NL"
+        ],
+        "countryOfOrigin": "NL",
+        "name": "Dakraam",
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85",
+        "replacedObjectCodes": [],
+        "replacingObjectCodes": [],
+        "status": "Active",
+        "subdivisionsOfUse": [],
+        "uid": "e741a31f-fd64-4b72-aac2-292f3a559e85",
+        "versionDateUtc": "2026-10-27T00:00:00Z"
+      }
+    },
+    {
+      "className": "Dakraam",
+      "endpoint": "Class/Properties/v1",
+      "url": "https://api.bsdd.buildingsmart.org/api/Class/Properties/v1?ClassUri=https%3A%2F%2Fdigitalbuildingdata.tech%2Fils-ontwerp-en-engineering-2%2Fe741a31f-fd64-4b72-aac2-292f3a559e85&Offset=0&Limit=1000&languageCode=nl-NL",
+      "checkedAt": "2026-11-17T01:03:39.011974+00:00",
+      "response": {
+        "classUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85",
+        "classProperties": [
+          {
+            "name": "Name",
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/prop/85ed324e-9e90-55d4-8e69-8c2e2bdde65d",
+            "description": "Optional name for use by the participating software systems or users. For some subtypes of [[IfcRoot]] the insertion of the [[Name]] attribute may be required. This would be enforced by a where rule.",
+            "definition": "Optional name for use by the participating software systems or users. For some subtypes of [[IfcRoot]] the insertion of the [[Name]] attribute may be required. This would be enforced by a where rule.",
+            "dataType": "String",
+            "isRequired": false,
+            "propertyCode": "Name",
+            "propertyDictionaryName": "IFC",
+            "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+            "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/Name",
+            "propertySet": "Attributes",
+            "propertyStatus": "Active",
+            "propertyValueKind": "Single",
+            "sortNumber": 1
+          },
+          {
+            "name": "Object Type",
+            "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/prop/379eca7d-7890-5d1c-b140-1360a4acced3",
+            "description": "The type denotes a particular type that indicates the object further. The use has to be established at the level of instantiable subtypes. In particular it holds the user defined type, if the enumeration of the attribute PredefinedType is set to [[USERDEFINED]] or when the concrete entity instantiated does not have a PredefinedType attribute. The latter is the case in some exceptional leaf classes and when instantiating [[IfcBuiltElement]] directly.",
+            "definition": "The type denotes a particular type that indicates the object further. The use has to be established at the level of instantiable subtypes. In particular it holds the user defined type, if the enumeration of the attribute PredefinedType is set to [[USERDEFINED]] or when the concrete entity instantiated does not have a PredefinedType attribute. The latter is the case in some exceptional leaf classes and when instantiating [[IfcBuiltElement]] directly.",
+            "dataType": "String",
+            "isWritable": false,
+            "allowedValues": [
+              {
+                "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/prop/379eca7d-7890-5d1c-b140-1360a4acced3/value/32a40b52-dd22-545a-8d1f-e67233ecbc36",
+                "code": "Dakraam",
+                "value": "Dakraam",
+                "sortNumber": 1
+              }
+            ],
+            "predefinedValue": "Dakraam",
+            "propertyCode": "ObjectType",
+            "propertyDictionaryName": "IFC",
+            "propertyDictionaryUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+            "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/ObjectType",
+            "propertySet": "Attributes",
+            "propertyStatus": "Active",
+            "propertyValueKind": "Single",
+            "sortNumber": 2
+          }
+        ],
+        "totalCount": 2,
+        "offset": 0,
+        "count": 2
+      }
+    }
+  ],
+  "comparison": {
+    "Raam": {
+      "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167",
+      "versionDateUtc": "2026-10-27T00:00:00Z",
+      "parent": {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/f12bce5f-55be-44c0-8072-309ba718644b",
+        "name": "BOUWPRODUCT",
+        "code": "BOUWPRODUCT"
+      },
+      "children": [
+        {
+          "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85",
+          "name": "Dakraam",
+          "code": "Dakraam"
+        }
+      ],
+      "hierarchy": [
+        {
+          "level": 1,
+          "name": "BOUWPRODUCT",
+          "code": "BOUWPRODUCT",
+          "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/f12bce5f-55be-44c0-8072-309ba718644b"
+        },
+        {
+          "level": 2,
+          "name": "Raam",
+          "code": "Raam",
+          "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167"
+        }
+      ],
+      "relatedIfcEntityNames": [
+        "IfcWindow"
+      ],
+      "relations": [
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/34512ac1-962a-47b0-a831-68857d53c44b",
+          "relatedClassName": "(31.10) buitenwandopeningen; niet gevuld, algemeen (verzamelniveau)"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/9e2e5774-37b6-4c1f-89e8-0680cb94b857",
+          "relatedClassName": "(31.20) buitenwandopeningen; gevuld met ramen, algemeen (verzamelniveau)"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/416490b9-582f-4fee-8f17-cf8dda8ec4b1",
+          "relatedClassName": "(31.21) buitenwandopeningen; gevuld met ramen, gesloten ramen"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/3fe6fe12-31b3-42cb-8239-fb3c9448b809",
+          "relatedClassName": "(31.22) buitenwandopeningen; gevuld met ramen, ramen draaiend aan een kant"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/e021049f-d941-4a2f-96ab-445a195e6dfb",
+          "relatedClassName": "(31.23) buitenwandopeningen; gevuld met ramen, schuiframen"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/9a2897b9-19b0-464c-8d72-703754c676f7",
+          "relatedClassName": "(31.24) buitenwandopeningen; gevuld met ramen, ramen draaiend op verticale of horizontale as"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/aa66665b-307f-4025-911e-a18e143e5bd7",
+          "relatedClassName": "(31.25) buitenwandopeningen; gevuld met ramen, combinatieramen"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/99cb0a16-02be-46db-9bb9-65a121e4666e",
+          "relatedClassName": "(32.10) binnenwandopeningen; niet gevuld, algemeen (verzamelniveau)"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/bb91e345-e0d7-48e9-a76a-28a26d2ac41b",
+          "relatedClassName": "(32.20) binnenwandopeningen; gevuld met ramen, algemeen (verzamelniveau)"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/89c8f079-f744-4951-90a1-a61f2b64055c",
+          "relatedClassName": "(32.21) binnenwandopeningen; gevuld met ramen, gesloten ramen"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/d5271846-0d6a-46fa-998e-88a2d72e663e",
+          "relatedClassName": "(32.22) binnenwandopeningen; gevuld met ramen, ramen draaiend aan een kant"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/0f085de5-3d12-4f8f-bf84-1b22320e21b3",
+          "relatedClassName": "(32.23) binnenwandopeningen; gevuld met ramen, schuiframen"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/8fe59d50-181a-4818-92a2-9af352b4bff3",
+          "relatedClassName": "(32.24) binnenwandopeningen; gevuld met ramen, ramen draaiend op verticale of horizontale as"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/0afca0e2-95ed-468b-baff-3cf98a6305cf",
+          "relatedClassName": "(32.25) binnenwandopeningen; gevuld met ramen, combinatieramen"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/2021dc80-4186-4d20-9b18-78282d59866a",
+          "relatedClassName": "(37.20) dakopeningen; gevuld, algemeen (verzamelniveau)"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/01b36a50-f5ff-4433-9196-8434edff4530",
+          "relatedClassName": "(37.21) dakopeningen; gevuld, gesloten ramen"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/9c769bdf-c028-4d8e-a3a9-8e397295cc30",
+          "relatedClassName": "(37.22) dakopeningen; gevuld, ramen draaiend aan één kant"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/11c62567-1e0c-4c9e-9e8b-b521d63cf1a8",
+          "relatedClassName": "(37.23) dakopeningen; gevuld, schuiframen"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/1548fbbb-6132-4523-818a-1dd7bf21f5db",
+          "relatedClassName": "(37.24) dakopeningen; gevuld, ramen draaiend op een as"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/669ef950-af78-4572-9a9b-feb55a926003",
+          "relatedClassName": "(37.25) dakopeningen; gevuld, combinatieramen"
+        },
+        {
+          "relationType": "HasPart",
+          "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/67931c65-5058-4f68-8404-9269b7d7021c",
+          "relatedClassName": "Kierdichting"
+        },
+        {
+          "relationType": "HasPart",
+          "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c7e9021f-0721-4a99-a669-39ea4d4557d2",
+          "relatedClassName": "Kozijn"
+        },
+        {
+          "relationType": "HasPart",
+          "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/37b3d397-3d18-4524-a11e-d69161f4cb40",
+          "relatedClassName": "Luchtrooster"
+        },
+        {
+          "relationType": "HasPart",
+          "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/98f346f1-c686-45d2-8877-feb9516a071d",
+          "relatedClassName": "Paneel"
+        },
+        {
+          "relationType": "HasPart",
+          "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/02611d9d-8b50-4904-8106-e137b937be29",
+          "relatedClassName": "Stelkozijn"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/IfcWindow",
+          "relatedClassName": "Window"
+        }
+      ],
+      "propertyCount": 2,
+      "propertyPagesComplete": true,
+      "properties": [
+        {
+          "name": "Name",
+          "propertyCode": "Name",
+          "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/Name",
+          "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/prop/31b2230e-94c1-52b5-9b5e-fe9f4b91eaf1",
+          "propertySet": "Attributes",
+          "dataType": "String",
+          "predefinedValue": null,
+          "allowedValues": null,
+          "isWritable": null
+        },
+        {
+          "name": "Object Type",
+          "propertyCode": "ObjectType",
+          "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/ObjectType",
+          "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/prop/18f61907-1035-52f4-a1ae-3bc26f98da9a",
+          "propertySet": "Attributes",
+          "dataType": "String",
+          "predefinedValue": "Raam",
+          "allowedValues": [
+            {
+              "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167/prop/18f61907-1035-52f4-a1ae-3bc26f98da9a/value/cc0c3958-5f81-5945-8087-26955411b63f",
+              "code": "Raam",
+              "value": "Raam",
+              "sortNumber": 1
+            }
+          ],
+          "isWritable": false
+        }
+      ]
+    },
+    "Dakraam": {
+      "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85",
+      "versionDateUtc": "2026-10-27T00:00:00Z",
+      "parent": {
+        "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167",
+        "name": "Raam",
+        "code": "Raam"
+      },
+      "children": [],
+      "hierarchy": [
+        {
+          "level": 1,
+          "name": "BOUWPRODUCT",
+          "code": "BOUWPRODUCT",
+          "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/f12bce5f-55be-44c0-8072-309ba718644b"
+        },
+        {
+          "level": 2,
+          "name": "Raam",
+          "code": "Raam",
+          "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/093a3c6b-133b-4ab3-a731-cbc2f81bf167"
+        },
+        {
+          "level": 3,
+          "name": "Dakraam",
+          "code": "Dakraam",
+          "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85"
+        }
+      ],
+      "relatedIfcEntityNames": [
+        "IfcWindow",
+        "IfcWindowSKYLIGHT"
+      ],
+      "relations": [
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/416490b9-582f-4fee-8f17-cf8dda8ec4b1",
+          "relatedClassName": "(31.21) buitenwandopeningen; gevuld met ramen, gesloten ramen"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/3fe6fe12-31b3-42cb-8239-fb3c9448b809",
+          "relatedClassName": "(31.22) buitenwandopeningen; gevuld met ramen, ramen draaiend aan een kant"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/7e1bf1da-cfd0-4f5a-b1e0-a6c4a24da804",
+          "relatedClassName": "(37.10) dakopeningen; niet gevuld, algemeen (verzamelniveau)"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/01b36a50-f5ff-4433-9196-8434edff4530",
+          "relatedClassName": "(37.21) dakopeningen; gevuld, gesloten ramen"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/9c769bdf-c028-4d8e-a3a9-8e397295cc30",
+          "relatedClassName": "(37.22) dakopeningen; gevuld, ramen draaiend aan één kant"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/11c62567-1e0c-4c9e-9e8b-b521d63cf1a8",
+          "relatedClassName": "(37.23) dakopeningen; gevuld, schuiframen"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/1548fbbb-6132-4523-818a-1dd7bf21f5db",
+          "relatedClassName": "(37.24) dakopeningen; gevuld, ramen draaiend op een as"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://data.ketenstandaard.nl/publications/nlsfb/2021/669ef950-af78-4572-9a9b-feb55a926003",
+          "relatedClassName": "(37.25) dakopeningen; gevuld, combinatieramen"
+        },
+        {
+          "relationType": "HasPart",
+          "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/67931c65-5058-4f68-8404-9269b7d7021c",
+          "relatedClassName": "Kierdichting"
+        },
+        {
+          "relationType": "HasPart",
+          "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/c7e9021f-0721-4a99-a669-39ea4d4557d2",
+          "relatedClassName": "Kozijn"
+        },
+        {
+          "relationType": "HasPart",
+          "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/37b3d397-3d18-4524-a11e-d69161f4cb40",
+          "relatedClassName": "Luchtrooster"
+        },
+        {
+          "relationType": "HasPart",
+          "relatedClassUri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/98f346f1-c686-45d2-8877-feb9516a071d",
+          "relatedClassName": "Paneel"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/IfcWindow",
+          "relatedClassName": "Window"
+        },
+        {
+          "relationType": "HasReference",
+          "relatedClassUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/class/IfcWindowSKYLIGHT",
+          "relatedClassName": "Sky Light"
+        }
+      ],
+      "propertyCount": 2,
+      "propertyPagesComplete": true,
+      "properties": [
+        {
+          "name": "Name",
+          "propertyCode": "Name",
+          "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/Name",
+          "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/prop/85ed324e-9e90-55d4-8e69-8c2e2bdde65d",
+          "propertySet": "Attributes",
+          "dataType": "String",
+          "predefinedValue": null,
+          "allowedValues": null,
+          "isWritable": null
+        },
+        {
+          "name": "Object Type",
+          "propertyCode": "ObjectType",
+          "propertyUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3/prop/ObjectType",
+          "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/prop/379eca7d-7890-5d1c-b140-1360a4acced3",
+          "propertySet": "Attributes",
+          "dataType": "String",
+          "predefinedValue": "Dakraam",
+          "allowedValues": [
+            {
+              "uri": "https://digitalbuildingdata.tech/ils-ontwerp-en-engineering-2/e741a31f-fd64-4b72-aac2-292f3a559e85/prop/379eca7d-7890-5d1c-b140-1360a4acced3/value/32a40b52-dd22-545a-8d1f-e67233ecbc36",
+              "code": "Dakraam",
+              "value": "Dakraam",
+              "sortNumber": 1
+            }
+          ],
+          "isWritable": false
+        }
+      ]
+    }
+  }
+}
