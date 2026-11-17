@@ -5,7 +5,7 @@ Deze route leest een lokaal IDS-bestand als bron voor voorgestelde parameterkopp
 ## Ondersteunde selectie
 
 - Eén letterlijke IFC-entiteit per specificatie, zonder aanvullende toepassingsfilters. De naam moet exact overeenkomen met een entiteit uit de geladen catalogus, na omzetting van de hoofdletters die IDS voorschrijft.
-- Een `property`-eis met cardinaliteit `required` (ook de door IDS gedefinieerde standaard), een letterlijke propertyset en propertynaam en een expliciet ondersteund IFC-datatype.
+- Een `property`-eis met cardinaliteit `required` (ook de door IDS gedefinieerde standaard), een letterlijke propertyset en propertynaam en een expliciet ondersteund IFC-datatype. De letterlijke IDS-tekst blijft exact behouden: begin-/eindspaties en besturingstekens in uitvoernamen worden niet weggehaald, maar sluiten de eis uit omdat UDPS die identiteit niet betrouwbaar kan bewaren.
 - `minOccurs="0"` op een specificatie betekent dat de objecten optioneel voorkomen. Dat maakt de vereiste property op eventuele overeenkomende objecten niet optioneel. De app bewaart de opgegeven aantallen, maar controleert geen aantallen in een model.
 - De oorspronkelijke IFC-versies staan bij de specificatie. Een gevonden naam in de huidige IFC 4.3-catalogus is geen bewijs van schema- of exportercompatibiliteit. Controleer de voorgestelde koppelingen voor de werkelijk gebruikte IFC-export.
 

@@ -61,6 +61,37 @@ test('XML boundary rejects DTD/entities and oversized input before requiring a p
  await assert.rejects(readIds('<ids/>',{DOMParser:null}),/XML-parser/);
 });
 
+// A bounded XML DOM boundary supplies exact xs:string text to readIds. It does not parse XML.
+function literalDom(t,{propertySet='Foo_Bar',property='Foo',entity='IFCWALL'}={}){
+ const namespace='http://standards.buildingsmart.org/IDS';
+ const element=(localName,{text='',attrs={},children=[]}={})=>({nodeType:1,localName,namespaceURI:namespace,children,
+  get textContent(){return text+children.map(n=>n.textContent).join('');},
+  attributes:Object.entries(attrs).map(([localName,value])=>({localName,value,namespaceURI:null})),
+  getAttribute:name=>attrs[name]??null,hasAttribute:name=>Object.hasOwn(attrs,name),
+  getAttributeNS:(ns,name)=>localName==='ids'&&name==='schemaLocation'?namespace+' '+namespace+'/1.0/ids.xsd':null});
+ const value=(name,text)=>element(name,{children:[element('simpleValue',{text})]});
+ const root=element('ids',{children:[element('info',{children:[element('title',{text:'Whitespace regression'})]}),element('specifications',{children:[element('specification',{attrs:{name:'Literal names',ifcVersion:'IFC4'},children:[element('applicability',{attrs:{maxOccurs:'unbounded'},children:[element('entity',{children:[value('name',entity)]})]}),element('requirements',{children:[element('property',{attrs:{dataType:'IFCLABEL'},children:[value('propertySet',propertySet),value('baseName',property)]})]})]})]})]});
+ const before=globalThis.XMLSerializer;globalThis.XMLSerializer=class{serializeToString(node){return '<'+node.localName+'>'+node.textContent+'</'+node.localName+'>';}};
+ t.after(()=>{if(before===undefined)delete globalThis.XMLSerializer;else globalThis.XMLSerializer=before;});
+ return class{parseFromString(){return {documentElement:root,getElementsByTagNameNS:()=>[]};}};
+}
+
+test('IDS literal identities retain xs:string whitespace and become unsupported instead of being trimmed',async t=>{
+ for(const [key,text] of [['propertySet',' Foo_Bar'],['propertySet','Foo_Bar '],['property',' Foo'],['property','Foo '],['property','Foo\tBar']]){
+  const Parser=literalDom(t,{[key]:text}),preview=await readIds('<ids>controlled DOM boundary</ids>',{catalog,DOMParser:Parser}),r=preview.specifications[0].requirements[0];
+  assert.equal(r[key],text,'Original '+key+' identity must remain exact');assert.equal(r.eligible,false,key+' whitespace must disable import');
+ }
+ const Parser=literalDom(t,{entity:' IFCWALL '}),preview=await readIds('<ids>controlled DOM boundary</ids>',{catalog,DOMParser:Parser});
+ assert.equal(preview.specifications[0].requirements[0].eligible,false,'Whitespace must not turn an invalid entity identity into a known entity');
+});
+
+test('IDS planning atomically rejects names with boundary whitespace, including an otherwise valid first selection',()=>{
+ for(const extra of [{propertySet:' Foo_Bar'},{propertySet:'Foo_Bar '},{property:' Foo'},{property:'Foo '},{property:'Foo\u0001Bar'}]){
+  const data=empty(),before=structuredClone(data),preview=document([requirement({id:'spec:0/requirement:1',property:'Valid'}),requirement(extra)]);
+  assert.throws(()=>applyIdsImport(data,catalog,preview,['spec:0/requirement:1','spec:0/requirement:0']),/eigenschapsnaam/);assert.deepEqual(data,before);
+ }
+});
+
 // Controlled DOM adapter exercises actual handlers; it is not a native browser/parser test.
 function ui(t,read=async()=>document()){
  const before=globalThis.document,ids=['importIds','idsDialog','idsFile','idsChoose','closeIds','idsSummary','idsRequirements','idsSelectAll','idsSelectNone','idsAdd','idsError','idsSaved','idsOpenSaved'];

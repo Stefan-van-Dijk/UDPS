@@ -5,11 +5,14 @@ const MAX_DOCUMENTS=20,MAX_SAVED_BYTES=10*1024*1024,MAX_REQUIREMENTS=2000,MAX_SP
 const byteLength=value=>new TextEncoder().encode(value).length;
 const datatypeMap={IFCBOOLEAN:'Boolean',IFCINTEGER:'Integer',IFCREAL:'Real',IFCTEXT:'Text',IFCLABEL:'Label',IFCIDENTIFIER:'Identifier',IFCLOGICAL:'Logical',IFCLENGTHMEASURE:'Length',IFCPOSITIVELENGTHMEASURE:'PositiveLength',IFCAREAMEASURE:'Area',IFCVOLUMEMEASURE:'Volume',IFCCOUNTMEASURE:'Count',IFCPLANEANGLEMEASURE:'PlaneAngle',IFCPOSITIVEPLANEANGLEMEASURE:'PositivePlaneAngle',IFCRATIOMEASURE:'Ratio',IFCPOSITIVERATIOMEASURE:'PositiveRatio',IFCNORMALISEDRATIOMEASURE:'NormalisedRatio',IFCTHERMALTRANSMITTANCEMEASURE:'ThermalTransmittance',IFCTHERMODYNAMICTEMPERATUREMEASURE:'ThermodynamicTemperature',IFCPOWERMEASURE:'Power',IFCPRESSUREMEASURE:'Pressure',IFCFREQUENCYMEASURE:'Frequency',IFCFORCEMEASURE:'Force',IFCVOLUMETRICFLOWRATEMEASURE:'VolumetricFlowRate',IFCELECTRICCURRENTMEASURE:'ElectricalCurrent',IFCELECTRICVOLTAGEMEASURE:'ElectricalVoltage',IFCILLUMINANCEMEASURE:'Illuminance',IFCLUMINOUSFLUXMEASURE:'LuminousFlux',IFCLUMINOUSINTENSITYMEASURE:'LuminousIntensity'};
 const field=value=>typeof value==='string'&&!!value.trim()&&value.length<=500&&!/[\t\r\n]/.test(value);
+// IDS simpleValue uses xs:string: whitespace is part of an IFC output identity.
+// UDPS cannot safely preserve boundary whitespace or control characters; exclude, never normalize.
+const identity=value=>field(value)&&value===value.trim()&&!/[\u0000-\u001f\u007f-\u009f]/.test(value);
 const children=node=>Array.from(node?.children||node?.childNodes||[]).filter(n=>n.nodeType===1);
 const named=(node,name)=>children(node).filter(n=>n.namespaceURI===IDS&&n.localName===name);
 const one=(node,name)=>{const list=named(node,name);return list.length===1?list[0]:null;};
 const attribute=(node,name)=>node?.getAttribute(name)||'';
-function literal(node){const values=children(node);return values.length===1&&values[0].namespaceURI===IDS&&values[0].localName==='simpleValue'&&!children(values[0]).length?values[0].textContent.trim():'';}
+function literal(node){const values=children(node);return values.length===1&&values[0].namespaceURI===IDS&&values[0].localName==='simpleValue'&&!children(values[0]).length?values[0].textContent:'';}
 function supportedAttributes(node,allowed){return Array.from(node?.attributes||[]).every(a=>a.namespaceURI==='http://www.w3.org/2000/xmlns/'||!a.namespaceURI&&allowed.includes(a.localName));}
 function sourceXml(node){return new XMLSerializer().serializeToString(node);}
 function entities(catalog){return (catalog?.ifc?.items||[]).filter(x=>x.kind==='class'&&/^Ifc[A-Za-z0-9]+$/.test(x.code)&&!/[A-Z]{2,}$/.test(x.code)).map(x=>x.code);}
@@ -58,7 +61,7 @@ export async function readIds(xml,{fileName='Ingeladen.ids',catalog,DOMParser:Pa
    if(node.namespaceURI!==IDS||kind!=='property')issues.push('Dit '+kind+'-facet is geen rechtstreeks te koppelen IFC-property.');
    if(cardinality!=='required')issues.push(cardinality==='prohibited'?'Verboden property; niet toevoegen.':cardinality==='optional'?'Optionele property; niet als verplichte koppeling toegevoegd.':'Onbekende cardinaliteit.');
    if(kind==='property'){
-    if(!field(pset)||!field(property))issues.push('Alleen letterlijke propertyset- en propertynamen worden ondersteund; geen patronen of naamrestricties.');
+    if(!identity(pset)||!identity(property))issues.push('Alleen letterlijke propertyset- en propertynamen zonder begin-/eindspaties of besturingstekens worden ondersteund; geen patronen of naamrestricties.');
     if(pset.startsWith('Qto_'))issues.push('Quantity sets hebben een afzonderlijke exportroute nodig.');
     if(!dataType)issues.push('Het IDS-datatype ontbreekt of heeft geen ondersteunde UDPS-vertaling.');
     if(children(node).some(n=>n.namespaceURI!==IDS||!['propertySet','baseName'].includes(n.localName)))issues.push('Waarde-eisen of andere propertyvoorwaarden worden bewaard, maar kunnen hier niet worden uitgevoerd.');
@@ -83,7 +86,7 @@ export function planIdsImport(data,catalog,preview,selectedIds){
  for(const id of selectedIds){
   const entry=requirements.get(id),r=entry?.requirement,s=entry?.specification;
   if(!r?.eligible||r.kind!=='property'||r.cardinality!=='required')throw Error('IDS-eis is niet beschikbaar: '+(r?.reasons?.join(' ')||id));
-  if(!known.has(r.entity)||!field(r.propertySet)||!field(r.property)||datatypeMap[r.ifcDataType]!==r.dataType)throw Error('Ongeldige IFC-entiteit, eigenschapsnaam of datatype in IDS-selectie.');
+  if(!known.has(r.entity)||!identity(r.propertySet)||!identity(r.property)||datatypeMap[r.ifcDataType]!==r.dataType)throw Error('Ongeldige IFC-entiteit, eigenschapsnaam of datatype in IDS-selectie.');
   const matches=next.rows.filter(row=>row['Y/N']==='x'&&row[r.entity]==='x'&&row.Export_tabblad===r.propertySet&&row.IFC_parameter===r.property);
   if(matches.length>1)throw Error('Bestaande dubbele IFC-koppeling: '+r.propertySet+' / '+r.property+'. Los deze eerst op.');
   if(matches[0]&&matches[0].Data_type!==r.dataType)throw Error('Conflicterend datatype voor '+r.propertySet+' / '+r.property+' / '+r.entity+'. Er is niets toegevoegd.');
