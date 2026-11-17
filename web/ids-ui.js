@@ -1,0 +1,24 @@
+import {readIds,applyIdsImport,IDS_MAX_BYTES} from './ids.js?v=1.9.0';
+const $=id=>document.getElementById(id),esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export function initIdsUI(api,services={readIds,applyIdsImport}){
+ let preview=null,selected=new Set(),ticket=0;
+ const requirements=()=>preview?.specifications.flatMap(s=>s.requirements)||[];
+ function selection(){const available=requirements().filter(r=>r.eligible).length;$('idsAdd').disabled=!selected.size;$('idsSelectAll').disabled=!available;$('idsSelectNone').disabled=!selected.size;if(preview)$('idsSummary').textContent=preview.title+' · '+preview.specifications.length+' specificaties · '+requirements().length+' eisen · '+available+' ondersteund · '+selected.size+' geselecteerd. '+(available<requirements().length?'Dit is een gedeeltelijke import.':'')+' Revit-namen koppel je na het toevoegen.';}
+ function reset(){preview=null;selected.clear();$('idsRequirements').innerHTML='';$('idsSummary').textContent='Kies een IDS 1.0-bestand om de eisen eerst te bekijken.';$('idsError').textContent='';selection();}
+ function savedSources(){const saved=api.data().idsImports||[];$('idsSaved').innerHTML='<option value="">Bewaarde IDS-bron kiezen</option>'+saved.map(d=>`<option value="${esc(d.id)}">${esc(d.fileName)}</option>`).join('');$('idsSaved').disabled=!saved.length;$('idsOpenSaved').disabled=true;}
+ function render(){
+  $('idsRequirements').innerHTML=preview.specifications.map(s=>`<section class="ids-specification"><h3>${esc(s.name)}</h3><p>${esc(s.ifcVersions.join(', '))} · toepassing: ${esc(s.minOccurs)} tot ${esc(s.maxOccurs)}</p>${s.description?`<p>${esc(s.description)}</p>`:''}${s.instructions?`<p>${esc(s.instructions)}</p>`:''}${s.reasons.map(reason=>`<p class="relation-warning">${esc(reason)}</p>`).join('')}<details><summary>Oorspronkelijke toepassing bekijken</summary><pre>${esc(s.applicabilityXml)}</pre></details>${s.requirements.map(r=>`<div class="bulk-property"><label><input type="checkbox" data-ids-requirement="${esc(r.id)}" ${selected.has(r.id)?'checked':''} ${r.eligible?'':'disabled'}><span><strong>${esc(r.propertySet&&r.property?r.propertySet+' / '+r.property:r.kind+'-eis')}</strong><small>${esc(r.entity||'Geen directe IFC-toepassing')} · ${esc(r.ifcDataType||'Datatype niet opgegeven')} · ${esc(r.cardinality)}</small></span></label>${r.reasons.map(reason=>`<p class="relation-warning">${esc(reason)}</p>`).join('')}${r.instructions?`<p>${esc(r.instructions)}</p>`:''}<details><summary>Oorspronkelijke eis bekijken</summary><pre>${esc(r.xml)}</pre></details></div>`).join('')||'<p>Geen property-eisen in deze specificatie.</p>'}</section>`).join('');selection();
+ }
+ async function load(xml,fileName){const run=++ticket,project=api.data();reset();$('idsSummary').textContent='IDS-eisen lezen…';try{const result=await services.readIds(xml,{fileName,catalog:api.catalog()});if(run!==ticket||project!==api.data())return;preview=result;render();}catch(e){if(run===ticket){$('idsSummary').textContent='Geen IDS-eisen geladen.';$('idsError').textContent='IDS niet geladen: '+e.message;}}}
+ $('importIds').onclick=()=>{ticket++;reset();savedSources();$('idsDialog').showModal();};
+ $('idsChoose').onclick=()=>$('idsFile').click();
+ $('idsFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;const run=++ticket,project=api.data();reset();try{if(file.size>IDS_MAX_BYTES)throw Error('IDS-bestand is groter dan 2 MB.');const xml=await file.text();if(run!==ticket||project!==api.data())return;await load(xml,file.name);}catch(error){if(run===ticket)$('idsError').textContent='IDS niet geladen: '+error.message;}finally{e.target.value='';}};
+ $('closeIds').onclick=()=>{ticket++;$('idsDialog').close();};$('idsDialog').addEventListener('cancel',()=>ticket++);
+ $('idsRequirements').onchange=e=>{const id=e.target.dataset.idsRequirement;if(!requirements().some(r=>r.id===id&&r.eligible))return;e.target.checked?selected.add(id):selected.delete(id);selection();};
+ $('idsSelectAll').onclick=()=>{requirements().filter(r=>r.eligible).forEach(r=>selected.add(r.id));render();};
+ $('idsSelectNone').onclick=()=>{selected.clear();render();};
+ $('idsSaved').onchange=()=>{$('idsOpenSaved').disabled=!$('idsSaved').value;};
+ $('idsOpenSaved').onclick=async()=>{const saved=api.data().idsImports?.find(d=>d.id===$('idsSaved').value);if(saved)await load(saved.xml,saved.fileName);};
+ $('idsAdd').onclick=()=>{try{if(!preview)throw Error('Laad eerst een IDS-bestand.');const result=services.applyIdsImport(api.data(),api.catalog(),preview,[...selected]);api.changed();api.notice?.(result.added+' IDS-koppelingen toegevoegd; '+result.skipped+' bestaande koppelingen behouden. Vul de Revit-namen in.');ticket++;$('idsDialog').close();}catch(e){$('idsError').textContent='Niet toegevoegd: '+e.message;}};
+ reset();return {open(){ $('importIds').onclick(); }};
+}

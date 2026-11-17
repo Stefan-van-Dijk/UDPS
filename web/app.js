@@ -1,14 +1,15 @@
-import {ensurePropertyIds,propertyKey} from './uniform.js?v=1.8.1';
-import {initUniformUI} from './uniform-ui.js?v=1.8.1';
-import {ifcReferences} from './bsdd.js?v=1.8.1';
-import {filterView} from './view.js?v=1.8.1';
-import {loadClasses,loadDetails} from './source-store.js?v=1.8.1';
-import {initMappingUI} from './mapping-ui.js?v=1.8.1';
-import {unknownEntities} from './mapping.js?v=1.8.1';
-import {entityHeading,sourceCell,initSources,getCatalog} from './sources-ui.js?v=1.8.1';
-import initial from './data.js?v=1.8.1';
-import {validate,generate,entities,types} from './core.js?v=1.8.1';
-import {readExcel} from './excel.js?v=1.8.1';
+import {ensurePropertyIds,propertyKey} from './uniform.js?v=1.9.0';
+import {initUniformUI} from './uniform-ui.js?v=1.9.0';
+import {ifcReferences} from './bsdd.js?v=1.9.0';
+import {filterView} from './view.js?v=1.9.0';
+import {loadClasses,loadDetails} from './source-store.js?v=1.9.0';
+import {initMappingUI} from './mapping-ui.js?v=1.9.0';
+import {unknownEntities} from './mapping.js?v=1.9.0';
+import {entityHeading,sourceCell,initSources,getCatalog} from './sources-ui.js?v=1.9.0';
+import initial from './data.js?v=1.9.0';
+import {validate,generate,entities,types} from './core.js?v=1.9.0';
+import {readExcel} from './excel.js?v=1.9.0';
+import {initIdsUI} from './ids-ui.js?v=1.9.0';
 const $=id=>document.getElementById(id),key='udps-project-v1';let data=validate(initial),visible=[],result;let groupSelection=null,entitySelection=null;let deleted=[];let uniformUI=null,mappingUI=null;
 try{const saved=localStorage.getItem(key);if(saved)data=validate(JSON.parse(saved));}catch{toast('Opgeslagen project niet leesbaar; brongegevens geopend.');}
 function toast(s){$('toast').textContent=s;$('toast').hidden=false;clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>$('toast').hidden=true,5000);}
@@ -45,6 +46,7 @@ $('help').onclick=()=>$('helpDialog').showModal();$('closeHelp').onclick=()=>$('
 initSources({render,data:()=>data,download,bind(row,item,version){for(const key of ['Source_uri','Source_code','Source_version']){if(!data.headers.includes(key)){data.headers.push(key);data.rows.forEach(r=>r[key]='');}}row.Source_uri=item?.uri||'';row.Source_code=item?.code||'';row.Source_version=version;save();render();}});
 
 mappingUI=initMappingUI({catalog:getCatalog,data:()=>data,notice:toast,changed(){clearFilters();save();render();showStep(2);}});
+initIdsUI({catalog:getCatalog,data:()=>data,notice:toast,changed(){clearFilters();save();render();showStep(2);}});
 
 
 uniformUI=initUniformUI({data:()=>data,catalog:getCatalog,changed(){save();render();},openClass:uri=>mappingUI.openClass(uri)});

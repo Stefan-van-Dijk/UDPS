@@ -1,5 +1,5 @@
-import {validateLibrary,librarySource,libraryDetails} from './libraries.js?v=1.8.1';
-import {defaults,dictionaries,relatedClasses,classDetails,relationshipKey,dictionaryProducts} from './bsdd.js?v=1.8.1';
+import {validateLibrary,librarySource,libraryDetails} from './libraries.js?v=1.9.0';
+import {defaults,dictionaries,relatedClasses,classDetails,relationshipKey,dictionaryProducts} from './bsdd.js?v=1.9.0';
 const comparableDetail=d=>{if(!d)return d;const {checkedAt,loadWarning,...content}=d;return content;};
 const mergeCache=(bundled,saved,field)=>{const merged={...bundled,...saved};for(const [uri,value] of Object.entries(bundled))if((value[field]||0)>(saved[uri]?.[field]||0))merged[uri]=value;return merged;};
 let state={schema:1,registry:[],enabled:defaults,relations:{},details:{},libraries:[],products:{}},loading;
@@ -10,7 +10,7 @@ export async function loadRegistry(){state.registry=[...await dictionaries(),...
 export function enableSource(uri){const s=state.registry.find(x=>x.uri===uri);if(!s)throw Error('Kies een bron uit de bSDD-lijst.');if(!state.enabled.some(x=>x.uri===uri))state.enabled.push(s);persist();}
 export function disableSource(uri){state.enabled=state.enabled.filter(s=>s.uri!==uri);persist();}
 export async function loadClasses(source,entity,{refresh=false}={}){const lib=(state.libraries||[]).find(l=>librarySource(l).uri===source);if(lib)return {source,entity,version:lib.version,items:lib.classes.filter(c=>c.ifcEntities.includes(entity)).map(c=>{const d=libraryDetails(lib,c);return {uri:d.uri,code:d.code,name:d.name};})};const key=relationshipKey(source,entity);if(refresh||!state.relations[key]||state.relations[key].relationSchema!==2){try{state.relations[key]=await relatedClasses(source,entity);persist();}catch(e){if(!state.relations[key])throw e;return {...state.relations[key],loadWarning:'Actualiseren mislukt; opgeslagen bronklassen getoond: '+e.message};}}return state.relations[key];}
-export async function loadDetails(uri,{refresh=false}={}){for(const lib of state.libraries||[])for(const c of lib.classes){const d=libraryDetails(lib,c);if(d.uri===uri)return d;}if(refresh||!state.details[uri]||state.details[uri].propertySchema!==4){try{state.details[uri]=await classDetails(uri);persist();}catch(e){if(!state.details[uri])throw e;return {...state.details[uri],loadWarning:'Actualiseren mislukt; opgeslagen eigenschappen getoond. Volledigheid niet bevestigd: '+e.message};}}return state.details[uri];}
+export async function loadDetails(uri,{refresh=false}={}){for(const lib of state.libraries||[])for(const c of lib.classes){const d=libraryDetails(lib,c);if(d.uri===uri)return d;}if(refresh||!state.details[uri]||state.details[uri].propertySchema!==5){try{state.details[uri]=await classDetails(uri);persist();}catch(e){if(!state.details[uri])throw e;return {...state.details[uri],loadWarning:'Actualiseren mislukt; opgeslagen eigenschappen getoond. Volledigheid niet bevestigd: '+e.message};}}return state.details[uri];}
 export async function proposedUpdate(){
  const before=structuredClone(state),next={relations:{},products:{},details:{}},changes=[],refreshDetails=new Set();
  const enabled=uri=>before.enabled.some(s=>s.uri===uri&&!s.local);
