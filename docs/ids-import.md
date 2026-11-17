@@ -1,55 +1,111 @@
-# IDS lezen, bewaren en parameterkoppelingen voorbereiden
+# IDS-import: parameters koppelen met behoud van alle eisen
 
-De import leest een lokaal IDS-document, toont de toepassing en eisen en kan de volledige bron in het project bewaren. Daarna kan de gebruiker geschikte `property`-eisen omzetten naar UDPS-koppelvoorstellen. Dit maakt geen Revit-parameters aan en controleert geen IFC-model. Leesbaarheid is geen bewijs van IDS/XSD-geldigheid of modelconformiteit.
+De route in 1.11.0 leest een lokaal IDS-document, bewaart de volledige bron en maakt geschikte `property`-eisen beschikbaar als UDPS-parameterdefinities. De gebruiker kan Revit-namen direct koppelen en de projectwijzigingen vóór toevoegen controleren. De app maakt geen Revit-parameters aan en controleert geen IFC-model.
 
-## Document en eisen bekijken
+## Drie onderdelen in de dialoog
 
-De lezer bewaart alle zes IDS-facetten in zowel toepassing als eisen: `entity`, `property`, `attribute`, `classification`, `material` en `partOf`. Letterlijke tekst blijft exact behouden. Restricties bewaren hun basis, operatoren, waarden en XML; dit geldt ook voor enumeraties, patronen, grenzen en lengtes. Onbekende of meervoudige inhoud blijft beschikbaar. Waarschuwingen markeren onder meer onbekende facetten, waardevormen en een onduidelijke documentstructuur. Er wordt geen eerste waarde gekozen om de rest te vervangen.
+1. **Bestand en controle** — kies een IDS, bekijk het resultaat van de lokale XSD-controle, bewaar alleen bron en keuzes of vergelijk met een zelfgekozen eerdere bronversie.
+2. **Parameters koppelen** — werk in een compacte parameterlijst met zoeken, statusfilter en pagina's. De gekozen parameter heeft een detailpaneel voor namen, datatypes, IFC-doelen, Revit-uitzonderingen en onderliggende eisen.
+3. **Wijzigingen controleren** — bekijk per concrete IFC-koppeling wat nieuw is, wordt hergebruikt, een conflict heeft of niet kan worden toegevoegd. Pas daarna wordt de gecontroleerde selectie toegepast.
 
-De dialoog toont de oorspronkelijke eis en toepassings-XML, zoeken, filters en pagina's. Een ontbrekende `entity` sluit het lezen niet uit. Een XML-prefix, ontbrekende `schemaLocation` of lokale/relatieve schemaverwijzing bepaalt niet of een eis kan worden gelezen. `schemaLocation` wordt als aanwijzing bewaard; er wordt geen schema opgehaald. Een auteursversie in `info/version` is geen IDS-formaatversie. Een expliciet historisch of toekomstig IDS-formaat blijft leesbaar met waarschuwing, maar is alleen als bron te bewaren. Ook een onduidelijke verplichte documentstructuur blokkeert het omzetten.
+Teruggaan of de dialoog sluiten past geen mappings toe. **Alleen bron en keuzes bewaren** is een afzonderlijke schrijfactie en werkt ook zonder een koppelvoorstel. XML verschijnt pas na een expliciete bronactie. Andere IFC-routes en specificaties zonder losse eisen hebben een eigen overzicht; een materiaaleis krijgt daar geen niet-oplosbare melding over ontbrekende propertynaam of datatype.
 
-## Van eis naar platte parameterdefinitie
+## Parameterdefinities en afzonderlijke eisen
 
-UDPS.txt beschrijft parameterdefinities voor concrete IFC-entiteiten. Daarom zijn lezen, beoordelen en toevoegen afzonderlijke stappen:
+De parameterwerklaag groepeert dezelfde exacte propertyset, eigenschapsnaam en uitvoerdatatype. Verschillende datatypevoorstellen blijven afzonderlijk. Nog niet opgeloste naamrestricties worden niet als gelijke concrete namen behandeld. Deze groepering vermindert herhaald koppelen; zij voegt geen IDS-betekenissen samen.
 
-| IDS-inhoud | Gedrag in UDPS |
+Het aantal parameterdefinities is daarom niet het aantal broneisen. Een overzicht met bijvoorbeeld 49 definities kan nog steeds 419 afzonderlijke eisen bevatten. Elke eis, specificatie, IFC-toepassing en toepassings-/waardevoorwaarde blijft herleidbaar. Iedere toegevoegde exportregel bewaart de bijbehorende eisverwijzingen; er worden geen voorwaarden verwijderd om een groep eenvoudiger te maken.
+
+- De standaard Revit-parameter geldt voor nieuwe koppelingen. Namen uit bestaande mappings zijn herkenbare voorstellen; zij worden niet als nieuwe keuze verzonnen.
+- Per IFC-entiteit kan een andere Revit-naam worden gekozen. Nieuwe regels van dezelfde exacte definitie binnen één IDS-bron delen een centrale `Uniform_id`, met behoud van hun afzonderlijke toepassingen en herkomst.
+- Bestaande ingevulde Revit-namen blijven behouden. Bestaande groepen worden niet automatisch samengevoegd.
+- Een bestaande lege, als pending gemarkeerde regel kan direct worden ingevuld als die regel precies één IFC-entiteit gebruikt. Historische lege namen en gedeelde regels met meerdere entiteiten blijven behouden; bewerk zulke toepassingen gericht bij de exportregels.
+- Nieuwe koppelingen zonder Revit-naam blijven `Mapping_pending` en blokkeren uitvoer zolang ze actief zijn. Een leeggelaten keuze betekent niet dat een naam is afgeleid.
+
+## Document en voorwaarden lezen
+
+De lezer behoudt alle zes IDS-facetten in zowel toepassing als eisen: `entity`, `property`, `attribute`, `classification`, `material` en `partOf`. Letterlijke tekst blijft exact. Restricties bewaren hun basis, operatoren, waarden en XML, inclusief enumeraties, patronen, grenzen en lengtes. Onbekende en meervoudige inhoud blijft broninformatie; er wordt geen eerste waarde gekozen om de rest te vervangen.
+
+Een ontbrekende `entity` sluit lezen niet uit. Een XML-prefix, ontbrekende `schemaLocation` of lokale/relatieve schemaverwijzing bepaalt niet of het document leesbaar is. `schemaLocation` is een aanwijzing; de app haalt de opgegeven URL niet op. `info/version` is een auteursversie en geen IDS-formaatversie. Expliciete historische/toekomstige formaten blijven alleen als bron beschikbaar. Een onduidelijke verplichte documentstructuur blokkeert omzetting.
+
+| IDS-inhoud | Voorstel voor UDPS |
 | --- | --- |
-| Vereiste `property`, exacte namen, bekend datatype, ondersteunde toepassingsaantallen en een eenvoudige bekende entiteit | Direct koppelvoorstel; de gebruiker kiest welke voorstellen worden toegevoegd. |
-| Zuivere eindige enumeratie van entiteitsnamen met XML Schema-`string` als basis | Alle genoemde entiteiten moeten bekend zijn en vormen samen de doelen. Anders zijn concrete handmatige keuzes nodig. Er worden geen doelen weggelaten of subklassen afgeleid. |
-| Patroon, ontbrekende entiteit of extra toepassingsvoorwaarden, zoals predefined type | Kies zo nodig concrete IFC-doelen en bevestig dat de parameterdefinitie voor de gekozen entiteiten geldt. UDPS voert de filters niet uit. |
-| Waarde-eis of waarderestrictie | Alleen toevoegen na bevestiging dat de waardevoorwaarden afzonderlijk worden gecontroleerd. UDPS vult geen waarden in en dwingt deze niet af. |
-| Naamrestrictie of ontbrekend/niet vertaald datatype | Kies een exacte propertyset, eigenschapsnaam en ondersteund UDPS-datatype. Ontbrekende informatie wordt niet geraden. |
-| Optionele property | Alleen toevoegen na expliciete keuze om deze parameterdefinitie voor te bereiden. |
+| Vereiste `property`, exacte namen, bekend datatype, ondersteunde aantallen en eenvoudige bekende entiteit | Direct koppelvoorstel. De gebruiker selecteert welke voorstellen worden toegevoegd. |
+| Zuivere eindige enumeratie van entiteitsnamen met XML Schema-`string` als basis | Alle genoemde entiteiten moeten bekend zijn en vormen samen de doelen. Geen weggelaten doelen of afgeleide subklassen. |
+| Patroon, ontbrekende entiteit of aanvullende toepassing, zoals classificatie/predefined type | Zo nodig concrete IFC-doelen kiezen en de entiteitbrede parameterdefinitie bewust bevestigen. UDPS voert de filters niet uit. |
+| Waarde-eis of waarderestrictie | Afzonderlijk bevestigen dat de waarden buiten de UDPS-definitie worden gecontroleerd. De app vult deze waarden niet in. |
+| Naamrestrictie of ontbrekend/niet vertaald datatype | Een concrete naam en ondersteund UDPS-datatype kiezen. Er wordt niets geraden. |
+| Optionele property | Expliciet kiezen om deze parameterdefinitie voor te bereiden. |
 | Verboden property of verboden toepassing | Geen positieve parameterkoppeling; de bron blijft beschikbaar. |
-| Andere toepassingsaantallen dan `minOccurs` 0 of 1 met `maxOccurs="unbounded"`, of een onbekende eiscardinaliteit | Bekijken en bewaren; omzetten naar een positieve parameterdefinitie is niet beschikbaar. |
-| `entity`, `attribute`, `classification`, `material`, `partOf` als eis, of een quantity set (`Qto_`) | Bekijken en bewaren; deze routes worden niet omgezet naar gewone UDPS-properties. |
+| Andere aantallen dan `minOccurs` 0 of 1 met `maxOccurs="unbounded"`, of onbekende eiscardinaliteit | Bekijken en bewaren; geen positieve parameterdefinitie toevoegen. |
+| `entity`, `attribute`, `classification`, `material`, `partOf` als eis, of een quantity set (`Qto_`) | Andere IFC-route; bekijken en bewaren, niet als gewone UDPS-property verzinnen. |
 
-Bij een ontbrekende `maxOccurs` gebruikt de lezer de standaardwaarde 1. Ook die specificatie blijft hier alleen als bron beschikbaar; een bevestiging van toepassingsfilters heft deze aantallengrens niet op.
+Bij een ontbrekende `maxOccurs` leest de parser de standaardwaarde 1. Ook die specificatie blijft hier alleen als bron beschikbaar; een scopebevestiging heft deze aantallengrens niet op. XML Schema-patronen worden niet uitgevoerd als JavaScript-reguliere expressies om namen of entiteiten te raden.
 
-XML Schema-patronen worden niet uitgevoerd als JavaScript-reguliere expressies. Een patroon wordt dus niet gebruikt om automatisch IFC-entiteiten of propertynamen te raden. Handmatige keuzes veranderen uitsluitend het koppelvoorstel; de oorspronkelijke IDS blijft behouden. Keuzes en bevestigingen worden bij de bron en de toegevoegde koppelingen vastgelegd.
+Bevestigingen gelden voor de getoonde groep van gelijke voorwaarden binnen de gekozen parameter, niet voor alle properties in het bestand. Verschillende voorwaarden blijven afzonderlijk te beoordelen. Onbekende inhoud wordt geen stilzwijgend goedgekeurde keuze. Beoordeelde voorwaarden en doelen blijven bij de bron en de exportverwijzingen bewaard. Niet-uitgevoerde toepassingsvoorwaarden en waarde-eisen geven blijvende exportwaarschuwingen.
 
-Propertyset- en propertynamen worden niet getrimd of anders geschreven. Begin-/eindspaties en besturingstekens sluiten de uitvoeridentiteit uit; de gebruiker moet een exacte bruikbare naam kiezen. De oorspronkelijke tekst blijft in de bron staan. De IFC-versies uit de specificatie blijven zichtbaar. Een naam in de geladen IFC-catalogus bewijst geen schema- of exportercompatibiliteit.
+Propertyset- en propertynamen worden niet automatisch getrimd of anders geschreven. Begin-/eindspaties en besturingstekens sluiten een bruikbare uitvoeridentiteit uit; een bewuste naamkeuze verandert alleen het voorstel. De oorspronkelijke tekst blijft staan. De weergegeven IFC-versies en een bekende naam in de catalogus bewijzen geen compatibiliteit met de werkelijk gebruikte IFC-exporter.
 
-Nieuwe regels krijgen `Mapping_pending` totdat een Revit-parameter is gekoppeld. Bestaande actieve koppelingen met dezelfde uitvoeridentiteit en hetzelfde datatype behouden hun Revit-naam en krijgen de bronverwijzing erbij. Een datatypeconflict, dubbele actieve uitvoeridentiteit of onbruikbare selectie wijst de gehele toevoeging af. Als niet alle eisen als bruikbaar voorstel beschikbaar zijn, benoemt de dialoog dit als gedeeltelijke import. Het aantal geselecteerde eisen staat apart vermeld.
+## Wijzigingsoverzicht, toepassen en herstel
 
-## Bron bewaren en heropenen
+Preview en toepassing gebruiken dezelfde geïndexeerde planning van concrete IFC-entiteit/propertyset/property-combinaties. Herhaalde eisen kunnen daardoor dezelfde exportkoppeling gebruiken en alle herkomstverwijzingen behouden. Het overzicht toont apart hoeveel nieuwe koppelingen ontstaan, bestaande koppelingen worden hergebruikt, conflicten bestaan en selecties niet bruikbaar zijn. Het vermeldt ook welke bestaande lege pending koppelingen worden ingevuld.
 
-**Volledige IDS-bron bewaren** werkt ook zonder een koppelvoorstel te selecteren. Zo blijven bijvoorbeeld classificatie- en materiaaleisen beschikbaar voor beoordeling. Deze actie voegt geen projectregels toe. Een bewaarde bron kan vanuit de dialoog opnieuw worden geopend.
+Een datatypeconflict, dubbele actieve uitvoeridentiteit, verschillende onverenigbare Revit-keuzes of overschreden limiet wijst de gehele toevoeging af. Het project blijft ongewijzigd. Vlak vóór toepassen wordt de planning opnieuw vergeleken met het getoonde overzicht; als het project veranderde, moet het vernieuwde overzicht opnieuw worden bekeken.
 
-`idsImports` bewaart de volledige gedecodeerde XML-tekst, bestandsnaam, SHA-256-documentidentiteit, geselecteerde eis-ID's en geldige vastgelegde keuzes. Bij bestandsinvoer worden ook de herkende tekencodering en SHA-256 van de oorspronkelijke bytes bewaard. De documentidentiteit is gebaseerd op de XML-tekst in UTF-8; de byte-identiteit onderscheidt bijvoorbeeld verschillende coderingen. De oorspronkelijke bestandsbytes worden niet als afzonderlijk bestand in de project-JSON opgenomen.
+**Laatste IDS-toevoeging ongedaan** werkt binnen de huidige appsessie, zolang hetzelfde project sinds die toevoeging ongewijzigd is. De controle voorkomt dat later werk wordt teruggezet. De actie herstelt de eerdere headers, regels en IDS-bronnen van die toevoeging; het is geen blijvende versiegeschiedenis of vervanging van een JSON-backup.
 
-`IDS_requirements` verwijst per exportregel naar document, specificatie en eis en bewaart zo nodig de beoordeelde doelen en voorwaarden. Er wordt geen bSDD-`Source_uri` of bevestigde bSDD-relatie verzonnen. De XML en metadata blijven passieve broninformatie. Bewaren en heropenen van de project-JSON behoudt deze gegevens. Een oudere app kan nieuwe keuzemetadata verwijderen; versies vóór 1.9.0 bewaren `idsImports` niet. Bewaar een projectbackup voordat je terugvalt.
+## Lokale XSD-controle en afzonderlijke IDS-audit
 
-## Coderingen en grenzen
+De app voert een echte IDS 1.0-XSD-controle uit met libxml2 2.13.8 via `xmllint-wasm` 5.3.0 in een aparte worker. Het IDS-schema en zijn benodigde ondersteunende schema's zijn vastgezet en lokaal meegeleverd. Netwerkresolutie is uitgeschakeld; schema-URL's uit het ingeladen document worden niet gebruikt. [Herkomst, versies, hashes en licenties](../web/vendor/ids-audit/provenance.json) leggen de meegeleverde bestanden vast.
 
-De bestandsroute decodeert UTF-8 en UTF-16 LE/BE, met herkenning van BOM of UTF-16-bytevolgorde. Andere expliciet gedeclareerde coderingen werken alleen wanneer de browserdecoder ze ondersteunt. Ongeldige bytes, een tegenstrijdige declaratie/BOM en UTF-32 leveren een foutmelding op.
+| Resultaat | Betekenis en bediening |
+| --- | --- |
+| XSD gecontroleerd | De XML voldoet aan het meegeleverde IDS 1.0-schema. Dit is geen volledige IDS-audit of IFC-modelcontrole. |
+| Afwijking van XSD | Echte schemafouten met bronregel waar beschikbaar. Bron lezen/bewaren blijft mogelijk; de dialoog blokkeert toevoegen. |
+| Controle niet beschikbaar of verlopen | Geen geldigheidsclaim. De zichtbare melding blijft staan; lezen/bewaren blijft beschikbaar en de beperkte mappingroute kan worden beoordeeld. |
+| Ander expliciet formaat | De IDS 1.0-XSD-controle is daarvoor niet beschikbaar; de bron blijft leesbaar zonder omzettingsclaim. |
+
+Tijdens de controle is toevoegen geblokkeerd. Een ongeldige IFC-entiteitsnaam kan technisch toch een XSD-string zijn; daarom is `XSD gecontroleerd` nooit gelijk aan volledige IDS-geldigheid.
+
+Voor ontwikkelcontrole is er daarnaast een afzonderlijke route met de officiële buildingSMART-audittool: [`scripts/ids-audit-reference.py`](../scripts/ids-audit-reference.py). Die gebruikt het vastgezette NuGet-pakket `ids-tool.CommandLine` 1.0.124 met SHA-512-controle. De route vereist een .NET 8-runtime of SDK in de ontwikkelomgeving; de appgebruiker hoeft niets te installeren. Alleen het openbare toolpakket wordt opgehaald; IDS-inhoud blijft lokaal. De browser voert deze .NET-audit niet uit.
+
+```sh
+python3 scripts/ids-audit-reference.py --self-test
+python3 scripts/ids-audit-reference.py pad/naar/bestand.ids
+```
+
+De zelftest onderscheidt een geldig voorbeeld, XSD-ongeldige invoer en XSD-geldige invoer met een onbekende IFC-entiteit. Ontbrekende runtime of een onbeschikbare audit geeft geen geslaagde controle. Dit blijft een documentaudit, geen controle van een IFC-model.
+
+## Bronversies vergelijken
+
+Een nieuwe XML-tekst heeft een eigen SHA-256-identiteit. De gebruiker kiest zelf welke bewaarde bron de vorige versie is; een bestandsnaam of positie-ID is daarvoor geen bewijs. Het overzicht onderscheidt ongewijzigde, gewijzigde, nieuwe, vervallen en niet-eenduidige eisen en kan de betrokken bestaande exportregels aanwijzen.
+
+Alleen een aantoonbaar unieke, ongewijzigde property-eis met dezelfde bekende document-, IFC-, toepassings- en waardecontext kan eerdere keuzes overnemen. Volgorde of namespace-prefix mag die vergelijking niet bepalen. Een gewijzigd datatype, andere scope, onbekende semantiek, dubbele identifier of onduidelijke voorganger vraagt herbeoordeling. Overnemen overschrijft geen huidige handmatige keuze.
+
+Bij het bewust overnemen wordt `previousDocumentId` als bronrelatie bewaard. De voorganger moet in hetzelfde project bestaan; zelfverwijzingen en cycli zijn ongeldig. De oude brontekst blijft onder de eigen identiteit bewaard. Vervallen eisen verwijderen geen exportregels: de gebruiker beoordeelt het gevolg zelf. Een vergelijking bewijst geen inhoudelijke gelijkwaardigheid buiten de gecontroleerde contexten.
+
+## Bronbewaring en browseropslag
+
+`idsImports` bewaart de volledige gedecodeerde XML-tekst, bestandsnaam, SHA-256-documentidentiteit, geselecteerde eis-ID's, geldige keuzes en zo nodig de expliciet gekozen voorganger. Bij bestandsinvoer worden ook de tekencodering en SHA-256 van de oorspronkelijke bytes bewaard. De tekstidentiteit gebruikt UTF-8; de byte-identiteit onderscheidt bijvoorbeeld coderingen. De oorspronkelijke bestandsbytes worden niet als tweede bestand in JSON opgenomen.
+
+`IDS_requirements` verwijst per exportregel naar document, specificatie en eis en bewaart zo nodig de beoordeelde doelen en voorwaarden. Er wordt geen bSDD-`Source_uri` of bevestigde bSDD-relatie verzonnen. Alle XML en metadata blijven passieve broninformatie. Bewaren en heropenen van de project-JSON behoudt deze gegevens.
+
+Projecten worden automatisch in IndexedDB bewaard. Bestaande projectgegevens uit de oude `localStorage` worden gemigreerd terwijl de oude kopie behouden blijft. Opeenvolgende opslagacties bewaren hun eigen momentopname en worden op volgorde afgehandeld. Een beperkte opslagfallback meldt dat expliciet; bij mislukken vraagt de app een JSON-backup. Een nieuwere, tijdelijk onbereikbare projectversie wordt niet stilzwijgend vervangen door een oudere lokale kopie. Deze browseropslag is geen serversynchronisatie of gedeelde projectmap.
+
+Bewaar een JSON-projectbestand voor overdracht en herstel. Een oudere app kan nieuwe keuzes of bronhistorie verwijderen; versies vóór 1.9.0 behouden zelfs `idsImports` niet. De eerdere `localStorage`-kopie is niet automatisch een actuele backup nadat er in IndexedDB verder is gewerkt.
+
+## Achtergrondverwerking, coderingen en grenzen
+
+Bestandsbytes, decodering en XML-parsing worden in een moduleworker afgehandeld. De parserbundel is vastgezet op `@xmldom/xmldom` 0.9.12 en wordt alleen in die worker geladen. [Herkomst en hashes](../web/vendor/ids-parser/provenance.json) en [`scripts/build-ids-parser.mjs`](../scripts/build-ids-parser.mjs) maken de bundel controleerbaar. Voortgang benoemt echte verwerkingsfasen, geen verzonnen percentages.
+
+Sluiten, een andere invoer kiezen of annuleren beëindigt de betrokken worker; een laat antwoord mag geen ander project vullen. Een ontbrekende of geblokkeerde worker geeft een duidelijke fout, zonder stilzwijgend alsnog op de hoofdinterface te parsen. De standaard maximale leestijd is één minuut. De XSD-controle heeft een eigen begrensde verwerkingstijd.
+
+UTF-8 en UTF-16 LE/BE worden herkend via BOM of UTF-16-bytevolgorde. Andere gedeclareerde coderingen werken alleen wanneer de decoder ze ondersteunt. Ongeldige bytes, een tegenstrijdige declaratie/BOM en UTF-32 geven een foutmelding.
 
 | Grens | Maximum |
 | --- | --- |
-| Oorspronkelijke bestandsbytes | 10 MiB |
-| Gedecodeerde XML-tekst, gemeten in UTF-8 | 10 MiB |
-| Specificaties per document | 5.000 |
-| Facetten per document, inclusief geneste entiteitsfacetten | 50.000 |
+| Oorspronkelijke bestandsbytes en gedecodeerde XML in UTF-8 | Elk 10 MiB |
+| Specificaties / facetten per document | 5.000 / 50.000, inclusief geneste entiteitsfacetten |
 | XML-elementen / nestniveaus | 250.000 / 64 |
 | Bewaarde documenten per project | 20 |
 | Bewaarde IDS-bronnen samen, als JSON-projectgegevens | 16 MiB |
@@ -58,19 +114,20 @@ De bestandsroute decodeert UTF-8 en UTF-16 LE/BE, met herkenning van BOM of UTF-
 | Volledige opgemaakte project-JSON bij IDS bewaren/toevoegen | 32 MiB |
 | Inkomend JSON-projectbestand bij heropenen | 32 MiB |
 
-Ongeldige XML, een andere root/IDS-namespace, DTD en eigen XML-entiteiten worden afgewezen. De import haalt geen XSD's of externe XML-bronnen op. Binnen deze grenzen is brede leesbaarheid het doel; er is geen garantie voor ieder bestaand of toekomstig IDS-bestand.
+Ongeldige XML, een andere root/IDS-namespace, DTD en eigen XML-entiteiten worden afgewezen. Binnen deze grenzen is brede leesbaarheid het doel; er is geen garantie voor ieder bestaand of toekomstig IDS-bestand.
 
 ## Testbewijs en officiële bronnen
 
-De regressies lezen **334 ongewijzigde officiële IDS-bestanden, samen 380.272 bytes**, uit buildingSMART-broncommit `870f9c4e6e8f414e737b4d84ca1aa9b46fc6c8f3`. Ze controleren hashes, volledige XML-tekst en alle toepassings-/eisfacetten en restricties. De set bevat 334 toepassingsfacetten en 333 eisfacetten. De oorspronkelijke namen en herkomst staan in het [manifest](../tests/fixtures/ids/official-provenance.json).
+De regressies lezen **334 ongewijzigde officiële IDS-bestanden, samen 380.272 bytes**, uit buildingSMART-broncommit `870f9c4e6e8f414e737b4d84ca1aa9b46fc6c8f3`. Ze controleren hashes, volledige XML-tekst en alle toepassings-/eisfacetten en restricties. Het [manifest](../tests/fixtures/ids/official-provenance.json) vermeldt namen, aantallen en licentie.
 
-De officiële set gebruikt alleen `entity` bij toepassing. Aanvullende zelfgeschreven tests controleren daarom alle zes toepassingsfacetten, ontbrekende entiteiten, prefixes, schemaverwijzingen, coderingen en onbekende/meervoudige inhoud. Plannings- en UI-tests controleren keuzes, bevestigingen, bronbewaring, conflicten en JSON-heropenen. De XML-tests gebruiken `@xmldom/xmldom` 0.9.12 als ontwikkelafhankelijkheid; de app gebruikt de browserparser. Een DOM-adapter bewijst geen native browseracceptatie.
+Aanvullende tests controleren alle zes toepassingsfacetten, ontbrekende entiteiten, prefixes, schemaverwijzingen, coderingen, onbekende inhoud, groepering, directe Revit-koppelingen, conflicten, bronvergelijking, workerannulering en opslagmigratie. De XSD-tests voeren de werkelijke meegeleverde WASM-engine uit met geldige en ongeldige gevallen. De worker- en IndexedDB-tests gebruiken herkenbare Node-adapters; zij bewijzen geen native browseracceptatie. Native bediening en publicatiebewijs worden afzonderlijk bij de bestaande taak vastgelegd.
 
-De labels `pass`, `fail` en `invalid` in de officiële bestandsnamen horen bij de upstream testconfiguraties. Alle bestanden kunnen als XML worden gelezen; dat maakt ze niet allemaal geldige IDS en bewijst geen geslaagde IFC-controle. Er worden geen IFC-testmodellen meegenomen. Volledige XSD-validatie, IDS-audit, IFC-modelvalidatie en feitelijke Revit-export vallen buiten dit testbewijs.
+De upstream labels `pass`, `fail` en `invalid` zijn geen parseracceptatielabels. Leesbare XML bewijst geen geldige IDS, en een geldige XSD-controle bewijst geen volledig geldige IDS of feitelijke IFC-export. Er worden geen IFC-testmodellen meegenomen. Volledige IDS-semantiekcontrole en feitelijke Revit-/IFC-modelacceptatie vallen buiten de browserimport.
 
-© buildingSMART International Ltd. De officiële bestanden vallen onder [CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0/), overeenkomstig de [bronlicentie](https://github.com/buildingSMART/IDS/blob/870f9c4e6e8f414e737b4d84ca1aa9b46fc6c8f3/LICENSE), en niet onder de MIT-licentie van de app. De bytes zijn ongewijzigd overgenomen.
+© buildingSMART International Ltd. De officiële IDS-bestanden en het ongewijzigde IDS-schema vallen onder [CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0/), overeenkomstig de [bronlicentie](https://github.com/buildingSMART/IDS/blob/870f9c4e6e8f414e737b4d84ca1aa9b46fc6c8f3/LICENSE), niet onder de MIT-licentie van de app. Overige vendordelen hebben hun eigen meegeleverde licentieteksten en herkomstmanifesten.
 
 - [Officieel IDS 1.0-XSD](https://github.com/buildingSMART/IDS/blob/870f9c4e6e8f414e737b4d84ca1aa9b46fc6c8f3/Schema/ids.xsd).
 - [Specificaties en cardinaliteit](https://github.com/buildingSMART/IDS/blob/870f9c4e6e8f414e737b4d84ca1aa9b46fc6c8f3/Documentation/UserManual/specifications.md).
 - [Propertyfacet](https://github.com/buildingSMART/IDS/blob/870f9c4e6e8f414e737b4d84ca1aa9b46fc6c8f3/Documentation/UserManual/property-facet.md).
-- [Openbare proefinvoer](../web/examples/required-property.ids), eveneens ongewijzigd uit dezelfde officiële testset.
+- [Officiële buildingSMART-audittool](https://github.com/buildingSMART/IDS-Audit-tool).
+- [Openbare proefinvoer](../web/examples/required-property.ids), ongewijzigd uit dezelfde officiële testset.

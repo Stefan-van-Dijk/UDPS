@@ -1,122 +1,198 @@
-import {readIds,applyIdsImport,mappingProposals,saveIdsSource,IDS_MAX_BYTES} from './ids.js?v=1.10.0';
-import {decodeIdsBytes} from './ids-document.js?v=1.10.0';
-import {types} from './core.js?v=1.10.0';
+import {readIds,applyIdsImport,saveIdsSource,IDS_MAX_BYTES} from './ids.js?v=1.11.0';
+import {buildIdsWorkspace,preflightIdsImport} from './ids-workflow.js?v=1.11.0';
+import {loadIdsFile,loadIdsText} from './ids-loader.js?v=1.11.0';
+import {compareIdsRevisions,idsRevisionCandidates} from './ids-revisions.js?v=1.11.0';
+import {auditIdsDocument} from './ids-audit.js?v=1.11.0';
+import {types} from './core.js?v=1.11.0';
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const labels={entity:'IFC-entiteit',property:'Eigenschap',attribute:'IFC-attribuut',classification:'Classificatie',material:'Materiaal',partOf:'Onderdeelrelatie',name:'Naam',predefinedType:'Predefined type',propertySet:'Propertyset',baseName:'Eigenschapsnaam',value:'Waarde',system:'Classificatiesysteem'};
+const stateLabels={ready:'Gereed',partial:'Deels gereed',review:'Keuze nodig',conflict:'Conflict',new:'Nieuw',reuse:'Hergebruiken',skip:'Overslaan',unchanged:'Ongewijzigd',modified:'Gewijzigd',added:'Nieuw',removed:'Vervallen',ambiguous:'Niet eenduidig'};
+const clone=value=>JSON.parse(JSON.stringify(value));
 const message=value=>typeof value==='string'?value:value?.message||JSON.stringify(value);
 function valueText(value){
  if(!value)return 'Niet opgegeven';
  if(value.kind==='literal')return JSON.stringify(value.value);
  if(value.kind==='restriction')return (value.facets||[]).map(f=>f.kind+': '+JSON.stringify(f.value)).join(' · ')||'Restrictie';
  if(value.parameters)return Object.entries(value.parameters).map(([k,v])=>(labels[k]||k)+': '+valueText(v)).join(' · ');
- return value.xml||JSON.stringify(value);
+ return 'Onbekende waardevorm; bekijk de bron.';
 }
 export function initIdsUI(api,injected={}){
- const services={readIds,applyIdsImport,mappingProposals,saveIdsSource,decodeIdsBytes,...injected};
- let preview=null,decisions={},selected=new Set(),ticket=0,page=0;
- const pageSize=40;
- const requirements=()=>preview?.specifications.flatMap(s=>s.requirements)||[];
- const proposals=()=>preview?services.mappingProposals(preview,api.catalog(),decisions):[];
- const decision=id=>(decisions[id]??={});
- function reset(){
-  preview=null;decisions={};selected.clear();page=0;
-  $('idsRequirements').innerHTML='';$('idsSummary').textContent='Kies een IDS-bestand om alle eisen te bekijken.';$('idsError').textContent='';
-  $('idsSearch').value='';$('idsFilter').value='all';
-  for(const id of ['idsScopeAck','idsValuesAck','idsOptional'])$(id).checked=false;
-  selection();
- }
+ const services={readIds,applyIdsImport,saveIdsSource,buildIdsWorkspace,preflightIdsImport,loadIdsFile,loadIdsText,compareIdsRevisions,idsRevisionCandidates,auditIdsDocument,...injected};
+ let preview=null,project=null,decisions={},workspace=null,selected=new Set(),focusId='',step=1,page=0,ticket=0,compareTicket=0,controller=null,report=null,audit=null,comparison=null,lastImport=null,detailOwner='',scopePage=0,otherPage=0,reviewPage=0,reqPage=0,comparisonPage=0,changePage=0;
+ const pageSize=35;
+ const currentGroup=()=>workspace?.groups.find(g=>g.requirementIds.includes(focusId))||workspace?.groups[0];
+ const validProject=()=>project===api.data();
  function savedSources(){
   const saved=api.data().idsImports||[];
   $('idsSaved').innerHTML='<option value="">Bewaarde IDS-bron kiezen</option>'+saved.map(d=>`<option value="${esc(d.id)}">${esc(d.fileName)}</option>`).join('');
   $('idsSaved').disabled=!saved.length;$('idsOpenSaved').disabled=true;
  }
- function selection(){
-  const list=proposals(),eligible=new Set(list.filter(r=>r.eligible).map(r=>r.id));
-  for(const id of selected)if(!eligible.has(id))selected.delete(id);
-  $('idsAdd').disabled=!selected.size;$('idsSelectAll').disabled=!eligible.size;$('idsSelectNone').disabled=!selected.size;$('idsSaveSource').disabled=!preview;
-  if(preview)$('idsSummary').textContent=preview.title+' · '+preview.specifications.length+' specificaties · '+requirements().length+' eisen · '+eligible.size+' bruikbare koppelvoorstellen · '+selected.size+' geselecteerd. '+(eligible.size<requirements().length?'Dit is een gedeeltelijke import van koppelingen. ':'')+'De volledige IDS kan afzonderlijk worden bewaard. Revit-namen koppel je na het toevoegen.';
+ function reset(){
+  preview=null;project=null;decisions={};workspace=null;selected.clear();focusId='';page=0;report=null;audit=null;comparison=null;compareTicket++;detailOwner='';scopePage=otherPage=reviewPage=reqPage=comparisonPage=changePage=0;
+  for(const id of ['idsRequirements','idsDetail','idsChanges','idsComparison','idsAudit','idsXml'])$(id).innerHTML='';
+  $('idsSummary').textContent='Kies een IDS-bestand om de benodigde parameters te bekijken.';$('idsError').textContent='';
+  $('idsSearch').value='';$('idsFilter').value='all';$('idsRevision').innerHTML='<option value="">Kies een eerdere bronversie</option>';
+  $('idsCompare').disabled=true;$('idsCompareReuse').disabled=true;$('idsShowXml').disabled=true;$('idsSaveSource').disabled=true;$('idsAuditStatus').textContent='';$('idsXmlPanel').open=false;
+  $('idsReview').disabled=true;$('idsAdd').disabled=true;$('idsUndoImport').hidden=!lastImport;
+  setStep(1);
  }
- function filtered(){
-  const q=$('idsSearch').value.toLocaleLowerCase('nl'),filter=$('idsFilter').value,lookup=new Map(proposals().map(p=>[p.id,p]));
-  return preview.specifications.flatMap(s=>s.requirements.length?s.requirements.map(r=>({r,s,p:lookup.get(r.id)||{id:r.id,kind:r.kind,eligible:false,reasons:['Geen koppelvoorstel.'],warnings:[]}})):[{s,r:{id:s.id,kind:'specification',parameters:{}},p:{id:s.id,eligible:false,reasons:['Deze specificatie heeft geen afzonderlijke eisen. Bekijk de toepassingsvoorwaarden.'],warnings:[]},specificationOnly:true}]).filter(({s,r,p})=>{
-   const category=p.eligible?'ready':r.kind==='property'&&r.cardinality!=='prohibited'?'review':'other';
-   return (filter==='all'||category===filter)&&[s.name,r.kind,p.propertySet,p.property,...(p.entities||[]),...Object.values(r.parameters||{}).map(valueText),...(s.applicability||[]).map(valueText),...(p.reasons||[]),...(p.warnings||[])].join(' ').toLocaleLowerCase('nl').includes(q);
-  });
+ function setStep(next){
+  step=next;for(const n of [1,2,3]){$('idsStep'+n).hidden=n!==step;$('idsTab'+n).classList?.toggle('primary',n===step);$('idsTab'+n).disabled=n>1&&!preview;}
+  $('idsAdd').hidden=step!==3;$('idsBack').hidden=step===1;
  }
- function edits(r,p){
-  if(r.kind!=='property'||r.cardinality==='prohibited')return '';
-  const d=decisions[r.id]||{},scope=p.conditions?.conditional||p.requiresScopeReview,values=p.values?.constrained||p.requiresValuesReview;
-  const checkbox=(field,text)=>`<label><input type="checkbox" data-ids-decision="${esc(r.id)}" data-field="${field}" ${d[field]?'checked':''}>${text}</label>`;
-  return `<details class="ids-edit"><summary>Koppelvoorstel beoordelen of aanpassen</summary><div class="ids-fields">
-   <label>Propertyset<input data-ids-decision="${esc(r.id)}" data-field="propertySet" value="${esc(d.propertySet??p.propertySet??'')}"></label>
-   <label>Eigenschapsnaam<input data-ids-decision="${esc(r.id)}" data-field="property" value="${esc(d.property??p.property??'')}"></label>
-   <label>UDPS-datatype<select data-ids-decision="${esc(r.id)}" data-field="dataType"><option value="">Nog kiezen</option>${types.map(t=>`<option value="${t}" ${(d.dataType??p.dataType)===t?'selected':''}>${t}</option>`).join('')}</select></label>
-   <label>IFC-entiteiten, gescheiden door komma's<input data-ids-decision="${esc(r.id)}" data-field="entities" value="${esc((d.entities??p.entities??[]).join(', '))}" placeholder="Bijvoorbeeld IfcWall, IfcDoor"></label></div>
-   ${scope?checkbox('acknowledgeScope','Ik gebruik een entiteitbrede parameterdefinitie; UDPS voert de toepassingsfilters niet uit.'):''}
-   ${values?checkbox('acknowledgeValues','Ik controleer de waarde-eisen apart; UDPS dwingt deze niet af.'):''}
-   ${r.cardinality==='optional'?checkbox('includeOptional','Deze optionele eigenschap ook voorbereiden.'):''}
-   <small>Deze keuzes veranderen alleen het koppelvoorstel. De oorspronkelijke IDS blijft ongewijzigd.</small></details>`;
+ function invalidate(){report=null;$('idsAdd').disabled=true;if(step===3)setStep(2);}
+ function rebuild(){
+  invalidate();workspace=services.buildIdsWorkspace(api.data(),api.catalog(),preview,decisions);
+  const eligible=new Set(workspace.proposals.filter(p=>p.eligible).map(p=>p.id));for(const id of selected)if(!eligible.has(id))selected.delete(id);
+ }
+ function summary(){
+  if(!workspace)return;
+  const c=workspace.counts;
+  $('idsSummary').textContent=preview.title+' · '+c.specifications+' specificaties · '+c.requirements+' eisen · '+c.parameters+' parameterdefinities · '+c.eligibleRequirements+' bruikbare eisen · '+selected.size+' geselecteerd.';
+  $('idsSaveSource').disabled=false;$('idsShowXml').disabled=false;
+  $('idsReview').disabled=!selected.size||audit?.status==='running'||audit?.status==='invalid';
+  $('idsSelectAll').disabled=!workspace.groups.some(g=>g.eligibleIds.length);$('idsSelectNone').disabled=!selected.size;
+ }
+ function filteredGroups(){
+  const q=$('idsSearch').value.toLocaleLowerCase('nl'),filter=$('idsFilter').value;
+  return workspace.groups.filter(g=>(filter==='all'||filter===g.status||filter==='review'&&g.status==='partial')&&[g.propertySet,g.property,g.dataType,...g.entities,...g.reasons,...g.requirements.map(r=>r.specificationName)].join(' ').toLocaleLowerCase('nl').includes(q));
+ }
+ function renderList(){
+  if(!workspace)return;
+  const found=filteredGroups();page=Math.min(page,Math.max(0,Math.ceil(found.length/pageSize)-1));
+  $('idsRequirements').innerHTML='<table class="ids-table"><thead><tr><th>Kiezen</th><th>Parameter / propertyset</th><th>Datatype</th><th>IFC</th><th>Revit-parameter</th><th>Status</th></tr></thead><tbody>'+found.slice(page*pageSize,(page+1)*pageSize).map(g=>{
+   const chosen=g.eligibleIds.length&&g.eligibleIds.every(id=>selected.has(id));return `<tr class="${g.requirementIds.includes(focusId)?'ids-focused':''}"><td><input type="checkbox" aria-label="Selecteer ${esc(g.property||'parameter')}" data-ids-group="${esc(g.id)}" ${chosen?'checked':''} ${g.eligibleIds.length?'':'disabled'}></td><td><button class="ids-parameter-link" data-ids-focus="${esc(g.requirementIds[0])}">${esc(g.property||'Naam kiezen')}</button><small>${esc(g.propertySet||'Propertyset kiezen')} · ${g.requirementIds.length} eis/eisen</small></td><td>${esc(g.dataType||'Kiezen')}</td><td title="${esc(g.entities.join(', '))}">${g.entities.length}</td><td><input data-ids-revit="${esc(g.id)}" aria-label="Revit-parameter ${esc(g.property||'parameter')}" list="idsRevitOptions" value="${esc(g.revitParameter||'')}" placeholder="${g.revitParameterMixed?'Afwijkingen per toepassing':'Nog koppelen'}">${g.revitSuggested?'<small>Bestaande naam; nieuwe toepassingen vragen je keuze.</small>':''}</td><td><span class="ids-badge ${g.status}">${stateLabels[g.status]}</span></td></tr>`;
+  }).join('')+'</tbody></table>'+(found.length?'':'<p>Geen parameterdefinities met dit filter.</p>');
+  $('idsPageInfo').textContent=found.length+' parameters · pagina '+(page+1)+' van '+Math.max(1,Math.ceil(found.length/pageSize));
+  $('idsPagePrev').disabled=page===0;$('idsPageNext').disabled=(page+1)*pageSize>=found.length;
+  $('idsRevitOptions').innerHTML=[...new Set(api.data().rows.map(r=>r.Revit_parameter).filter(Boolean))].sort().map(s=>`<option value="${esc(s)}"></option>`).join('');
+  renderOthers();renderScopes();summary();
+ }
+ function pager(kind,index,total,size,label){return total>size?`<div class="toolbar"><button data-ids-nav="${kind}" data-delta="-1" ${index?'':'disabled'}>Vorige ${label}</button><small>Pagina ${index+1} van ${Math.ceil(total/size)}</small><button data-ids-nav="${kind}" data-delta="1" ${(index+1)*size>=total?'disabled':''}>Volgende ${label}</button></div>`:'';}
+ function navigate(e){
+  const kind=e.target.dataset.idsNav;if(!kind)return false;const delta=Number(e.target.dataset.delta);
+  if(kind==='scope'){scopePage=Math.max(0,scopePage+delta);renderScopes();}else if(kind==='other'){otherPage=Math.max(0,otherPage+delta);renderOthers();}else if(kind==='review'){reviewPage=Math.max(0,reviewPage+delta);renderDetail();}else if(kind==='requirements'){reqPage=Math.max(0,reqPage+delta);renderDetail();}else if(kind==='comparison'){comparisonPage=Math.max(0,comparisonPage+delta);renderComparison();}else if(kind==='changes'){changePage=Math.max(0,changePage+delta);renderChanges();}return true;
+ }
+ function renderScopes(){
+  const scopes=workspace.scopeReviewGroups||[];$('idsScopesCount').textContent=scopes.length+' toepassingsgroepen gezamenlijk beoordelen';
+  if(!$('idsScopes').open){$('idsScopesBody').innerHTML='';return;}
+  scopePage=Math.min(scopePage,Math.max(0,Math.ceil(scopes.length/20)-1));
+  $('idsScopesBody').innerHTML=pager('scope',scopePage,scopes.length,20,'toepassingsgroepen')+scopes.slice(scopePage*20,(scopePage+1)*20).map(s=>`<fieldset><legend>${esc(s.specificationNames.join(', '))}</legend><small>${s.requirementIds.length} eisen · ${s.parameterNames.length} parameterdefinities · ${esc(s.entities.join(', '))}</small>${s.conditions.map(f=>'<p>'+esc(labels[f.kind]||f.kind)+': '+esc(valueText(f))+'</p>').join('')}<details><summary>Betrokken parameters</summary><p>${s.parameterLabels.map(esc).join(' · ')}</p></details><label class="ids-check"><input type="checkbox" data-ids-scope="${esc(s.id)}" ${s.acknowledged?'checked':''}>Deze definities gebruiken voor de gekozen IFC-entiteiten; de getoonde toepassingsfilters apart controleren.</label></fieldset>`).join('');
+ }
+ function renderOthers(){
+  $('idsOtherCount').textContent=workspace.otherRequirements.length+' andere eisen · '+workspace.emptySpecifications.length+' specificaties zonder losse eisen';
+  if(!$('idsOther').open){$('idsOtherBody').innerHTML='';return;}
+  const all=[...workspace.otherRequirements,...workspace.emptySpecifications.map(s=>({...s,emptySpecification:true}))];otherPage=Math.min(otherPage,Math.max(0,Math.ceil(all.length/35)-1));
+  $('idsOtherBody').innerHTML=pager('other',otherPage,all.length,35,'andere eisen')+all.slice(otherPage*35,(otherPage+1)*35).map(r=>r.emptySpecification?`<section><strong>${esc(r.name)}</strong><p>Specificatie zonder afzonderlijke eisen · toepassingsaantallen ${esc(r.minOccurs)} / ${esc(r.maxOccurs)}</p>${(r.applicability||[]).map(f=>'<small>'+esc(labels[f.kind]||f.kind)+': '+esc(valueText(f))+'</small>').join('')}</section>`:`<section><strong>${esc(labels[r.kind]||r.kind)} · ${esc(r.specificationName)}</strong><p>${esc(r.reasons[0])}</p>${Object.entries(r.parameters||{}).map(([k,v])=>'<small>'+esc(labels[k]||k)+': '+esc(valueText(v))+'</small>').join('')}<button data-ids-source="${esc(r.id)}">Bron van deze eis bekijken</button></section>`).join('');
+ }
+ function renderDetail(){
+  const g=currentGroup();if(!g){$('idsDetail').innerHTML='<p>Deze IDS bevat geen gewone propertydefinities. Bekijk de andere eisen of bewaar alleen de bron.</p>';return;}
+  focusId=g.requirementIds.includes(focusId)?focusId:g.requirementIds[0];
+  if(detailOwner!==focusId)reviewPage=reqPage=0;reviewPage=Math.min(reviewPage,Math.max(0,Math.ceil(g.reviewGroups.length/20)-1));reqPage=Math.min(reqPage,Math.max(0,Math.ceil(g.requirements.length/35)-1));
+  const opened=detailOwner===focusId?Array.from($('idsDetail').querySelectorAll?.('details')||[]).map(d=>d.open):[];detailOwner=focusId;
+  const field=(key,label,value)=>`<label>${label}<input data-ids-field="${key}" value="${esc(value||'')}"></label>`;
+  const review=pager('review',reviewPage,g.reviewGroups.length,20,'voorwaardengroepen')+g.reviewGroups.slice(reviewPage*20,(reviewPage+1)*20).map((r,offset)=>{const i=reviewPage*20+offset;return `<fieldset><legend>Voorwaarden ${i+1} · ${r.requirementIds.length} eisen</legend><small>${esc(r.label)}</small>${r.conditions.map(f=>'<p>'+esc(labels[f.kind]||f.kind)+': '+esc(valueText(f))+'</p>').join('')}${r.values?'<p>Waarde-eisen blijven afzonderlijk te controleren.</p>':''}${[['scope','acknowledgeScope','scopeAcknowledged','Deze definitie voor de gekozen entiteiten gebruiken; de toepassingsfilters apart controleren.'],['values','acknowledgeValues','valuesAcknowledged','Waarde-eisen apart controleren; UDPS vult of controleert deze waarden niet.'],['optional','includeOptional','optionalIncluded','Deze optionele eigenschap ook voorbereiden.']].filter(([condition])=>r[condition]).map(([,key,checked,label])=>`<label class="ids-check"><input type="checkbox" data-ids-review="${i}" data-field="${key}" ${r[checked]?'checked':''}>${label}</label>`).join('')}</fieldset>`;}).join('');
+  $('idsDetail').innerHTML=`<h3>${esc(g.property||'Parameter beoordelen')}</h3><p>${g.requirementIds.length} broneisen · ${g.entities.length} IFC-toepassingen</p><div class="ids-fields">${field('propertySet','Propertyset',g.propertySet)}${field('property','Eigenschapsnaam',g.property)}<label>Datatype<select data-ids-field="dataType"><option value="">Kiezen</option>${types.map(t=>`<option ${g.dataType===t?'selected':''}>${t}</option>`).join('')}</select></label>${field('revitParameter','Standaard Revit-parameter',g.revitParameter)}</div><p class="ids-note">Een standaard geldt voor nieuwe koppelingen. Bestaande ingevulde namen blijven behouden. Leeg betekent later koppelen.</p>${[...new Set([...g.reasons,...g.warnings,...g.conflicts])].map(x=>'<p class="relation-warning">'+esc(x)+'</p>').join('')}
+   ${review}<details><summary>IFC-doelen kiezen en uitzonderingen</summary><p>Een handmatige doelkeuze vraagt ook beoordeling van de toepassing.</p><input id="idsEntitySearch" type="search" aria-label="Zoek IFC-doel" placeholder="Zoek IFC-entiteit"><div id="idsEntityChoices"></div><h4>Revit-uitzonderingen per entiteit</h4>${g.entities.map(e=>`<label>${esc(e)}<input data-ids-entity-revit="${esc(e)}" value="${esc(g.revitByEntity[e]??'')}" placeholder="Standaard gebruiken"></label>`).join('')}</details>
+   <details><summary>Alle onderliggende IDS-eisen (${g.requirementIds.length})</summary>${pager('requirements',reqPage,g.requirements.length,35,'broneisen')}${g.requirements.slice(reqPage*35,(reqPage+1)*35).map(r=>`<section><strong>${esc(r.specificationName)}</strong><small>${esc(r.cardinality)} · ${esc(r.ifcDataType||'Datatype niet opgegeven')}</small>${Object.entries(r.parameters||{}).map(([k,v])=>'<p>'+esc(labels[k]||k)+': '+esc(valueText(v))+'</p>').join('')}<button data-ids-source="${esc(r.id)}">Bron van deze eis bekijken</button></section>`).join('')}</details>`;
+  Array.from($('idsDetail').querySelectorAll?.('details')||[]).forEach((d,i)=>{d.open=opened[i]||false;});renderEntityChoices();
+ }
+ function renderEntityChoices(){
+  const host=$('idsEntityChoices');if(!host)return;const g=currentGroup(),q=($('idsEntitySearch')?.value||'').toLowerCase();
+  host.innerHTML=(api.catalog()?.ifc?.items||[]).filter(x=>x.kind==='class'&&/^Ifc[A-Za-z0-9]+$/.test(x.code)&&x.code.toLowerCase().includes(q)).map(x=>`<label class="ids-check"><input type="checkbox" data-ids-entity="${esc(x.code)}" ${g.entities.includes(x.code)?'checked':''}>${esc(x.code)}</label>`).join('');
  }
  function render(){
-  if(!preview)return;
-  const found=filtered();page=Math.min(page,Math.max(0,Math.ceil(found.length/pageSize)-1));
-  const warnings=[...(preview.format?.warnings||[]),...(preview.warnings||[])];
-  $('idsRequirements').innerHTML=(warnings.length?'<div class="ids-document-warnings">'+[...new Set(warnings.map(message))].map(w=>'<p>'+esc(w)+'</p>').join('')+'</div>':'')+
-   found.slice(page*pageSize,(page+1)*pageSize).map(({s,r,p,specificationOnly})=>`<section class="ids-requirement"><h3>${esc(s.name)}</h3><small>${esc(s.ifcVersions.join(', '))} · ${specificationOnly?'Specificatie zonder afzonderlijke eisen':esc(labels[r.kind]||r.kind)+' · '+esc(r.cardinality||'required')} · toepassingsaantallen ${esc(s.minOccurs??'1')} / ${esc(s.maxOccurs??'1')}</small>
-   ${specificationOnly?'':`<label class="ids-select"><input type="checkbox" data-ids-requirement="${esc(r.id)}" ${selected.has(r.id)?'checked':''} ${p.eligible?'':'disabled'}><span><strong>${esc(p.propertySet&&p.property?p.propertySet+' / '+p.property:labels[r.kind]||r.kind+'-eis')}</strong><small>${esc((p.entities||[]).join(', ')||'Geen directe IFC-toepassing')} · ${esc(p.ifcDataType||p.dataType||'Datatype nog beoordelen')}</small></span></label>`}
-   ${(p.reasons||[]).map(reason=>'<p class="relation-warning">'+esc(message(reason))+'</p>').join('')}${(p.warnings||[]).map(w=>'<p class="ids-note">'+esc(message(w))+'</p>').join('')}
-   ${Object.keys(r.parameters||{}).length?'<dl class="ids-parameters">'+Object.entries(r.parameters).map(([k,v])=>'<dt>'+esc(labels[k]||k)+'</dt><dd>'+esc(valueText(v))+'</dd>').join('')+'</dl>':''}
-   ${edits(r,p)}<details><summary>Toepassingsvoorwaarden bekijken</summary>${(s.applicability||[]).map(f=>'<p><strong>'+esc(labels[f.kind]||f.kind)+'</strong> · '+esc(valueText(f))+'</p>').join('')}<pre>${esc(s.applicabilityXml||'')}</pre></details>
-   ${specificationOnly?'':`<details><summary>Oorspronkelijke eis bekijken</summary><pre>${esc(r.xml||'')}</pre></details>`}</section>`).join('')+(found.length?'':'<p>Geen eisen met dit filter. De volledige bron blijft beschikbaar.</p>')+
-   `<details class="ids-full-source"><summary>Volledige oorspronkelijke IDS bekijken</summary><pre>${esc(preview.xml)}</pre></details>`;
-  $('idsPageInfo').textContent=found.length+' getoond door filter · pagina '+(page+1)+' van '+Math.max(1,Math.ceil(found.length/pageSize));
-  $('idsPagePrev').disabled=page===0;$('idsPageNext').disabled=(page+1)*pageSize>=found.length;selection();
+  const active=document.activeElement,retain=$('idsDialog').contains?.(active)?{dataset:{...active.dataset},start:active.selectionStart,end:active.selectionEnd}:null;
+  renderList();renderDetail();
+  if(retain&&Object.keys(retain.dataset).length){const target=Array.from($('idsDialog').querySelectorAll?.('input,select')||[]).find(n=>Object.entries(retain.dataset).every(([key,value])=>n.dataset[key]===value));target?.focus?.({preventScroll:true});if(typeof retain.start==='number'&&target?.setSelectionRange)try{target.setSelectionRange(retain.start,retain.end);}catch{}}
  }
- async function load(xml,fileName,saved={}){
-  const run=++ticket,project=api.data();reset();$('idsSummary').textContent='IDS-eisen lezen…';
-  try{
-   const result=await services.readIds(xml,{fileName,catalog:api.catalog(),sourceEncoding:saved.sourceEncoding,sourceByteDigest:saved.sourceByteDigest});
-   if(run!==ticket||project!==api.data())return;
-   preview=result;const previous=project.idsImports?.find(d=>d.id===result.id);decisions=JSON.parse(JSON.stringify(saved.decisions??previous?.decisions??{}));render();
-  }catch(e){if(run===ticket){$('idsSummary').textContent='Geen IDS-eisen geladen.';$('idsError').textContent='IDS niet geladen: '+e.message;}}
+ function patch(ids,key,value){for(const id of ids){const d=decisions[id]??={};if(value===undefined)delete d[key];else d[key]=value;}rebuild();render();}
+ function renderAudit(){
+  const names={running:'XSD-controle wordt uitgevoerd…',valid:'XSD gecontroleerd',invalid:'Bestand voldoet niet aan het IDS-XSD',unavailable:'XSD-controle niet beschikbaar',unsupported:'Formaat niet door deze XSD-controle ondersteund'};
+  $('idsAuditStatus').textContent=names[audit?.status]||'Nog niet gecontroleerd';
+  $('idsAudit').innerHTML='<strong>'+esc(names[audit?.status]||'Nog niet gecontroleerd')+'</strong><p>Een XSD-controle is geen volledige IDS-audit of IFC-modelcontrole.</p>'+(audit?.issues||[]).map(i=>'<p>'+esc(message(i))+'</p>').join('');summary();
  }
- $('importIds').onclick=()=>{ticket++;reset();savedSources();$('idsDialog').showModal();};
+ async function accept(result,saved,run,loadedProject){
+  if(run!==ticket||loadedProject!==api.data())return;preview=result;project=loadedProject;
+  const previous=project.idsImports?.find(d=>d.id===result.id);decisions=clone(saved?.decisions??previous?.decisions??{});if(saved?.previousDocumentId||previous?.previousDocumentId)preview.previousDocumentId=saved?.previousDocumentId||previous.previousDocumentId;rebuild();render();setStep(2);savedSources();
+  const candidates=services.idsRevisionCandidates(project.idsImports||[],preview);
+  $('idsRevision').innerHTML='<option value="">Kies een eerdere bronversie</option>'+candidates.map(d=>`<option value="${esc(d.id)}">${esc(d.fileName||d.title||d.id)}</option>`).join('');
+  audit={status:'running',issues:[]};renderAudit();
+  try{const result=await services.auditIdsDocument(preview,{signal:controller?.signal});if(run!==ticket||!validProject())return;audit=result;renderAudit();}
+  catch(e){if(run!==ticket||e.name==='AbortError')return;audit={status:'unavailable',issues:[{message:e.message}]};renderAudit();}
+ }
+ async function loadText(xml,fileName,saved={}){
+  const run=++ticket,loadedProject=api.data();controller?.abort();controller=new AbortController();reset();$('idsSummary').textContent='IDS-eisen lezen…';
+  try{const result=await (injected.readIds?services.readIds(xml,{fileName,...saved}):services.loadIdsText(xml,{fileName,...saved,signal:controller.signal}));await accept(result,saved,run,loadedProject);}
+  catch(e){if(run===ticket&&e.name!=='AbortError'){$('idsError').textContent='IDS niet geladen: '+e.message;$('idsSummary').textContent='Geen IDS-eisen geladen.';}}
+ }
+ $('importIds').onclick=()=>{ticket++;controller?.abort();reset();savedSources();$('idsDialog').showModal();};
  $('idsChoose').onclick=()=>$('idsFile').click();
  $('idsFile').onchange=async e=>{
-  const file=e.target.files?.[0];if(!file)return;
-  const run=++ticket,project=api.data();reset();
+  const file=e.target.files?.[0];if(!file)return;const run=++ticket,loadedProject=api.data();controller?.abort();controller=new AbortController();reset();
   try{
-   if(file.size>IDS_MAX_BYTES)throw Error('IDS-bestand is groter dan '+IDS_MAX_BYTES/1024/1024+' MiB.');
-   const decoded=file.arrayBuffer?await services.decodeIdsBytes(await file.arrayBuffer()):{xml:await file.text()};
-   if(run!==ticket||project!==api.data())return;
-   await load(decoded.xml,file.name,{sourceEncoding:decoded.encoding,sourceByteDigest:decoded.byteDigest});
-  }catch(error){if(run===ticket)$('idsError').textContent='IDS niet geladen: '+error.message;}
+   if(file.size>IDS_MAX_BYTES)throw Error('IDS-bestand is groter dan 10 MiB.');
+   const result=injected.readIds?await services.readIds(await file.text(),{fileName:file.name}):await services.loadIdsFile(file,{signal:controller.signal,onProgress:p=>{if(run===ticket)$('idsSummary').textContent=p.message;}});
+   await accept(result,{},run,loadedProject);
+  }catch(error){if(run===ticket&&error.name!=='AbortError'){$('idsError').textContent='IDS niet geladen: '+error.message;$('idsSummary').textContent='Geen IDS-eisen geladen.';}}
   finally{e.target.value='';}
  };
- $('closeIds').onclick=()=>{ticket++;$('idsDialog').close();};$('idsDialog').addEventListener('cancel',()=>ticket++);
- $('idsRequirements').onchange=e=>{
-  const t=e.target;
-  if(t.dataset.idsDecision){const d=decision(t.dataset.idsDecision),field=t.dataset.field;if(t.type!=='checkbox'&&!t.value)delete d[field];else d[field]=t.type==='checkbox'?t.checked:field==='entities'?t.value.split(',').map(x=>x.trim()).filter(Boolean):t.value;render();return;}
-  const id=t.dataset.idsRequirement;if(!proposals().some(r=>r.id===id&&r.eligible))return;t.checked?selected.add(id):selected.delete(id);selection();
+ $('closeIds').onclick=()=>{ticket++;controller?.abort();$('idsDialog').close();};$('idsDialog').addEventListener('cancel',()=>{ticket++;controller?.abort();});
+ $('idsRequirements').onclick=e=>{const id=e.target.dataset.idsFocus;if(id){focusId=id;render();}};
+ $('idsRequirements').onchange=e=>{const t=e.target,g=workspace.groups.find(g=>g.id===(t.dataset.idsGroup||t.dataset.idsRevit));if(!g)return;if(t.dataset.idsRevit!==undefined){patch(g.requirementIds,'revitParameter',t.value);return;}for(const id of g.eligibleIds)t.checked?selected.add(id):selected.delete(id);invalidate();renderList();};
+ $('idsDetail').oninput=e=>{if(e.target.id==='idsEntitySearch')renderEntityChoices();};
+ $('idsDetail').onchange=e=>{
+  const t=e.target,g=currentGroup();if(!g)return;
+  if(t.dataset.idsField){patch(g.requirementIds,t.dataset.idsField,t.value||undefined);return;}
+  if(t.dataset.idsReview!==undefined){const r=g.reviewGroups[Number(t.dataset.idsReview)];patch(r.requirementIds,t.dataset.field,!!t.checked);return;}
+  if(t.dataset.idsEntity){const es=new Set(g.entities);t.checked?es.add(t.dataset.idsEntity):es.delete(t.dataset.idsEntity);for(const id of g.requirementIds)(decisions[id]??={}).acknowledgeScope=false;patch(g.requirementIds,'entities',[...es]);return;}
+  if(t.dataset.idsEntityRevit){for(const id of g.requirementIds){const d=decisions[id]??={},v={...d.revitByEntity};if(t.value) v[t.dataset.idsEntityRevit]=t.value;else delete v[t.dataset.idsEntityRevit];d.revitByEntity=v;}rebuild();render();}
  };
- for(const [id,field] of [['idsScopeAck','acknowledgeScope'],['idsValuesAck','acknowledgeValues'],['idsOptional','includeOptional']])$(id).onchange=()=>{
-  for(const r of requirements())if(r.kind==='property')decision(r.id)[field]=$(id).checked;
-  render();
- };
- $('idsSelectAll').onclick=()=>{for(const {p} of filtered())if(p.eligible)selected.add(p.id);render();};
- $('idsSelectNone').onclick=()=>{selected.clear();render();};
- for(const id of ['idsSearch','idsFilter'])$(id)[id==='idsSearch'?'oninput':'onchange']=()=>{page=0;render();};
- $('idsPagePrev').onclick=()=>{page=Math.max(0,page-1);render();};$('idsPageNext').onclick=()=>{page++;render();};
+ function showSource(e){const id=e.target.dataset.idsSource;if(!id)return;const r=workspace.proposals.find(r=>r.id===id);$('idsXml').textContent=r?.xml||'';$('idsXmlPanel').open=true;}
+ $('idsDetail').onclick=e=>{if(!navigate(e))showSource(e);};$('idsOtherBody').onclick=e=>{if(!navigate(e))showSource(e);};$('idsScopesBody').onclick=navigate;$('idsComparison').onclick=navigate;$('idsChanges').onclick=navigate;
+ $('idsOther').addEventListener('toggle',()=>{if(workspace)renderOthers();});
+ $('idsScopes').addEventListener('toggle',()=>{if(workspace)renderScopes();});
+ $('idsScopesBody').onchange=e=>{const s=workspace?.scopeReviewGroups?.find(s=>s.id===e.target.dataset.idsScope);if(s)patch(s.requirementIds,'acknowledgeScope',!!e.target.checked);};
+ $('idsShowXml').onclick=()=>{$('idsXml').textContent=preview?.xml||'';$('idsXmlPanel').open=true;};
+ $('idsSelectAll').onclick=()=>{for(const g of filteredGroups())for(const id of g.eligibleIds)selected.add(id);invalidate();renderList();};
+ $('idsSelectNone').onclick=()=>{selected.clear();invalidate();renderList();};
+ for(const id of ['idsSearch','idsFilter'])$(id)[id==='idsSearch'?'oninput':'onchange']=()=>{page=0;renderList();};
+ $('idsPagePrev').onclick=()=>{page=Math.max(0,page-1);renderList();};$('idsPageNext').onclick=()=>{page++;renderList();};
  $('idsSaved').onchange=()=>{$('idsOpenSaved').disabled=!$('idsSaved').value;};
- $('idsOpenSaved').onclick=async()=>{const saved=api.data().idsImports?.find(d=>d.id===$('idsSaved').value);if(saved)await load(saved.xml,saved.fileName,saved);};
- $('idsSaveSource').onclick=()=>{
-  try{if(!preview)throw Error('Laad eerst een IDS-bestand.');services.saveIdsSource(api.data(),preview,decisions);api.changed();savedSources();$('idsError').textContent='Volledige IDS-bron bewaard. Er zijn geen koppelingen toegevoegd.';}
-  catch(e){$('idsError').textContent='Niet bewaard: '+e.message;}
+ $('idsOpenSaved').onclick=async()=>{const d=api.data().idsImports?.find(d=>d.id===$('idsSaved').value);if(d)await loadText(d.xml,d.fileName,d);};
+ $('idsSaveSource').onclick=()=>{try{if(!preview||!validProject())throw Error('Laad de IDS opnieuw voor het huidige project.');services.saveIdsSource(api.data(),preview,decisions);api.changed();savedSources();$('idsError').textContent='Volledige IDS-bron en keuzes bewaard. Er zijn geen koppelingen toegevoegd.';}catch(e){$('idsError').textContent='Niet bewaard: '+e.message;}};
+ $('idsRevision').onchange=()=>{compareTicket++;comparison=null;$('idsComparison').innerHTML='';$('idsCompareReuse').disabled=true;$('idsCompare').disabled=!$('idsRevision').value;};
+ $('idsCompare').onclick=async()=>{
+  const d=project?.idsImports?.find(d=>d.id===$('idsRevision').value);if(!d||!preview)return;const run=ticket,current=preview,comparisonRun=++compareTicket;
+  $('idsCompare').disabled=true;
+  try{const old=await (injected.readIds?services.readIds(d.xml,{fileName:d.fileName}):services.loadIdsText(d.xml,{fileName:d.fileName,signal:controller.signal}));if(run!==ticket||comparisonRun!==compareTicket||d.id!==$('idsRevision').value||current!==preview||!validProject())return;
+   comparison=services.compareIdsRevisions(old,preview,d.decisions||{},{rows:project.rows});
+   comparisonPage=0;renderComparison();$('idsCompareReuse').disabled=!Object.keys(comparison.decisions).length;
+  }catch(e){if(comparisonRun===compareTicket&&e.name!=='AbortError')$('idsError').textContent='Vergelijken mislukt: '+e.message;}finally{if(run===ticket&&comparisonRun===compareTicket)$('idsCompare').disabled=false;}
  };
+ function renderComparison(){const c=comparison.counts;comparisonPage=Math.min(comparisonPage,Math.max(0,Math.ceil(comparison.changes.length/50)-1));$('idsComparison').innerHTML=`<p>${c.unchanged} ongewijzigd · ${c.modified} gewijzigd · ${c.added} nieuw · ${c.removed} vervallen · ${c.ambiguous} niet eenduidig. Bestaande exportregels worden niet verwijderd.</p>`+(comparison.warnings||[]).map(x=>'<p class="relation-warning">'+esc(x)+'</p>').join('')+pager('comparison',comparisonPage,comparison.changes.length,50,'verschillen')+comparison.changes.slice(comparisonPage*50,(comparisonPage+1)*50).map(x=>`<p><strong>${stateLabels[x.status]||x.status}</strong> · ${esc(x.label||x.kind||'Eis')} · ${esc(x.reason||'')}${x.impactedRows?.length?' · bestaande regels '+x.impactedRows.map(i=>i+1).join(', '):''}</p>`).join('');
+ }
+ $('idsCompareReuse').onclick=()=>{if(!comparison||!validProject()||comparison.previousDocumentId!==$('idsRevision').value)return;preview.previousDocumentId=comparison.previousDocumentId;for(const [id,d] of Object.entries(comparison.decisions))if(!Object.hasOwn(decisions,id))decisions[id]=clone(d);rebuild();render();$('idsError').textContent='Alleen aantoonbaar ongewijzigde keuzes overgenomen. Controleer de nieuwe of gewijzigde eisen.';$('idsCompareReuse').disabled=true;};
+ function review(){
+  if(!preview||!validProject()||audit?.status==='running'||audit?.status==='invalid')return;
+  report=services.preflightIdsImport(api.data(),api.catalog(),preview,[...selected],decisions);
+  changePage=0;renderChanges();$('idsAdd').disabled=!report.canApply;setStep(3);
+ }
+ function renderChanges(){const c=report.counts;changePage=Math.min(changePage,Math.max(0,Math.ceil(report.changes.length/50)-1));$('idsChanges').innerHTML=`<p><strong>${c.new} nieuw · ${c.reuse} hergebruiken · ${c.conflict} conflicten · ${c.skip} overslaan</strong>${c.link?' · '+c.link+' bestaande lege Revit-koppelingen invullen':''}</p>`+(report.errors||[]).map(x=>'<p class="relation-warning">'+esc(x)+'</p>').join('')+pager('changes',changePage,report.changes.length,50,'wijzigingen')+'<div class="tablewrap"><table><thead><tr><th>Actie</th><th>IFC</th><th>Propertyset / eigenschap</th><th>Datatype</th><th>Revit-parameter</th><th>Toelichting</th></tr></thead><tbody>'+report.changes.slice(changePage*50,(changePage+1)*50).map(x=>`<tr><td>${stateLabels[x.status]}</td><td>${esc(x.entity)}</td><td>${esc(x.propertySet)} / ${esc(x.property)}</td><td>${esc(x.dataType)}</td><td>${esc(x.revitParameter||'Nog koppelen')}</td><td>${[...x.reasons,...(x.warnings||[])].map(esc).join(' ')}</td></tr>`).join('')+'</tbody></table></div>';
+ }
+ $('idsReview').onclick=review;
  $('idsAdd').onclick=()=>{
-  try{if(!preview)throw Error('Laad eerst een IDS-bestand.');const result=services.applyIdsImport(api.data(),api.catalog(),preview,[...selected],decisions);api.changed();api.notice?.(result.added+' IDS-koppelingen toegevoegd; '+result.skipped+' bestaande koppelingen behouden. Vul de Revit-namen in en controleer de IDS-aandachtspunten.');ticket++;$('idsDialog').close();}
-  catch(e){$('idsError').textContent='Niet toegevoegd: '+e.message;}
+  try{
+   if(step!==3||!report?.canApply||!validProject()||audit?.status==='invalid')throw Error('Controleer eerst het actuele wijzigingsoverzicht.');
+   const latest=services.preflightIdsImport(api.data(),api.catalog(),preview,[...selected],decisions);if(JSON.stringify(latest)!==JSON.stringify(report)){review();throw Error('Het project is gewijzigd. Bekijk het vernieuwde overzicht voordat je toevoegt.');}
+   const before=clone(api.data()),result=services.applyIdsImport(api.data(),api.catalog(),preview,[...selected],decisions);api.changed();lastImport={project:api.data(),before,after:JSON.stringify(api.data())};
+   api.notice?.(result.added+' nieuwe IDS-koppelingen; '+(result.counts?.reuse||0)+' bestaande koppelingen hergebruikt. Ongedaan maken kan via IDS inladen.');ticket++;controller?.abort();$('idsDialog').close();
+  }catch(e){$('idsError').textContent='Niet toegevoegd: '+e.message;}
  };
- reset();return {open(){$('importIds').onclick();}};
+ $('idsUndoImport').onclick=()=>{
+  try{if(!lastImport||lastImport.project!==api.data()||lastImport.after!==JSON.stringify(api.data()))throw Error('Het project is intussen gewijzigd; de import kan niet meer veilig ongedaan worden gemaakt.');const d=api.data();d.headers=clone(lastImport.before.headers);d.rows=clone(lastImport.before.rows);if(lastImport.before.idsImports)d.idsImports=clone(lastImport.before.idsImports);else delete d.idsImports;lastImport=null;api.changed();reset();savedSources();$('idsError').textContent='Laatste IDS-toevoeging ongedaan gemaakt.';}catch(e){$('idsError').textContent=e.message;}
+ };
+ for(const n of [1,2,3])$('idsTab'+n).onclick=()=>{if(n===3)review();else setStep(n);};
+ $('idsBack').onclick=()=>setStep(Math.max(1,step-1));reset();return {open(){$('importIds').onclick();}};
 }

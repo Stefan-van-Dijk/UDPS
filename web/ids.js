@@ -1,6 +1,6 @@
 // IDS sources remain evidence. UDPS mappings describe parameters, not IDS compliance.
-import {IDS_MAX_BYTES} from './ids-document.js?v=1.10.0';
-export {readIds,decodeIdsBytes,IDS_MAX_BYTES} from './ids-document.js?v=1.10.0';
+import {IDS_MAX_BYTES} from './ids-document.js?v=1.11.0';
+export {readIds,decodeIdsBytes,IDS_MAX_BYTES} from './ids-document.js?v=1.11.0';
 export const IDS_PROJECT_MAX_BYTES=32*1024*1024;
 const MAX_DOCUMENTS=20,MAX_SAVED_BYTES=16*1024*1024,MAX_REFERENCES=50000;
 const byteLength=value=>new TextEncoder().encode(value).length;
@@ -19,7 +19,7 @@ function checkedDecisions(value={},draft=false){
  if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).length>MAX_REFERENCES)throw Error('Ongeldige IDS-keuzes.');
  const result={};
  for(const [id,input] of Object.entries(value)){
-  if(!requirementId(id)||!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).some(k=>!['entities','propertySet','property','dataType','acknowledgeScope','acknowledgeValues','includeOptional'].includes(k)))throw Error('Ongeldige IDS-keuze.');
+  if(!requirementId(id)||!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).some(k=>!['entities','propertySet','property','dataType','acknowledgeScope','acknowledgeValues','includeOptional','revitParameter','revitByEntity'].includes(k)))throw Error('Ongeldige IDS-keuze.');
   const decision={};
   if(own(input,'entities')){
    if(!Array.isArray(input.entities)||input.entities.length>2000||input.entities.some(e=>typeof e!=='string'||e.length>500||!draft&&(!identity(e)||!/^Ifc[A-Za-z0-9]+$/.test(e))))throw Error('Ongeldige IFC-entiteiten in IDS-keuze.');
@@ -27,6 +27,12 @@ function checkedDecisions(value={},draft=false){
   }
   for(const k of ['propertySet','property'])if(own(input,k)){if(typeof input[k]!=='string'||input[k].length>500||!draft&&!identity(input[k]))throw Error('Ongeldige eigenschapsnaam in IDS-keuze.');decision[k]=input[k];}
   if(own(input,'dataType')){if(typeof input.dataType!=='string'||input.dataType.length>500||!draft&&!coreTypes.has(input.dataType))throw Error('Ongeldig datatype in IDS-keuze.');decision.dataType=input.dataType;}
+  if(own(input,'revitParameter')){if(typeof input.revitParameter!=='string'||input.revitParameter.length>500||!draft&&input.revitParameter!==''&&!identity(input.revitParameter))throw Error('Ongeldige Revit-parameter in IDS-keuze.');decision.revitParameter=input.revitParameter;}
+  if(own(input,'revitByEntity')){
+   if(!input.revitByEntity||typeof input.revitByEntity!=='object'||Array.isArray(input.revitByEntity)||Object.keys(input.revitByEntity).length>2000)throw Error('Ongeldige Revit-uitzonderingen in IDS-keuze.');
+   decision.revitByEntity={};
+   for(const [entity,name] of Object.entries(input.revitByEntity)){if(!/^Ifc[A-Za-z0-9]+$/.test(entity)||entity.length>500||typeof name!=='string'||name.length>500||!draft&&name!==''&&!identity(name))throw Error('Ongeldige Revit-uitzondering in IDS-keuze.');decision.revitByEntity[entity]=name;}
+  }
   for(const k of ['acknowledgeScope','acknowledgeValues','includeOptional'])if(own(input,k)){if(typeof input[k]!=='boolean')throw Error('Ongeldige bevestiging in IDS-keuze.');decision[k]=input[k];}
   if(Object.keys(decision).length)result[id]=decision;
  }
@@ -46,8 +52,15 @@ export function validateIdsImports(value){
   if(d.documentSchema!==undefined){if(![1,2].includes(d.documentSchema))throw Error('Ongeldige opgeslagen IDS-documentversie.');record.documentSchema=d.documentSchema;}
   if(d.sourceEncoding!==undefined){if(!field(d.sourceEncoding)||d.sourceEncoding.length>80)throw Error('Ongeldige IDS-tekstcodering.');record.sourceEncoding=d.sourceEncoding;}
   if(d.sourceByteDigest!==undefined){if(!digest(d.sourceByteDigest))throw Error('Ongeldige IDS-bestandsidentiteit.');record.sourceByteDigest=d.sourceByteDigest;}
+  if(d.previousDocumentId!==undefined){if(!digest(d.previousDocumentId)||d.previousDocumentId===d.id)throw Error('Ongeldige vorige IDS-bron.');record.previousDocumentId=d.previousDocumentId;}
   return record;
  });
+ const lineage=new Map(result.map(d=>[d.id,d.previousDocumentId]));
+ for(const record of result){
+  if(record.previousDocumentId&&!seen.has(record.previousDocumentId))throw Error('De vorige IDS-bron ontbreekt in het project.');
+  const visited=new Set();let current=record.id;
+  while(current){if(visited.has(current))throw Error('De IDS-bronhistorie bevat een kringverwijzing.');visited.add(current);current=lineage.get(current);}
+ }
  if(byteLength(JSON.stringify(result))>MAX_SAVED_BYTES)throw Error('Opgeslagen IDS-bronnen zijn samen groter dan 16 MB projectgegevens.');
  return result;
 }
@@ -75,7 +88,7 @@ function unknownValueMetadata(value){
 }
 function sourceRecord(preview){
  const record={schema:1,id:preview.id,fileName:preview.fileName,xml:preview.xml,selectedRequirementIds:[]};
- for(const k of ['documentSchema','sourceEncoding','sourceByteDigest'])if(preview[k]!==undefined)record[k]=preview[k];
+ for(const k of ['documentSchema','sourceEncoding','sourceByteDigest','previousDocumentId'])if(preview[k]!==undefined)record[k]=preview[k];
  return record;
 }
 function mergedDecisions(preview,decisions,draft=false){return checkedDecisions({...preview.decisions,...decisions},draft);}
@@ -126,7 +139,7 @@ export function mappingProposals(preview,catalog,decisions={}){
    const conditions={specificationId:s.id,minOccurs:min,maxOccurs:max,applicabilityIds:app.map(f=>f.id).filter(Boolean),conditional:scopeReview};
    const values={requirementId:r.id,parameter:'value',constrained:valueReview};
    const requiresReview=scopeReview||valueReview||optional||Object.keys(decision).length>0||!identity(sourceSet)||!identity(sourceProperty)||!datatypeMap[ifcDataType];
-   proposals.push({...r,id:r.id,specificationId:s.id,specificationName:s.name,kind:r.kind,cardinality,propertySet,property,ifcDataType,dataType,entities:targets,entity:targets[0]||'',direct:r.kind==='property'&&!requiresReview&&!issues.length,eligible:!issues.length,reasons:unique(issues),warnings:unique(warnings),requiresReview,decision,conditions,values,appliedTargets:{propertySet,property,dataType,entities:targets}});
+   proposals.push({...r,id:r.id,specificationId:s.id,specificationName:s.name,kind:r.kind,cardinality,propertySet,property,ifcDataType,dataType,entities:targets,entity:targets[0]||'',direct:r.kind==='property'&&!requiresReview&&!issues.length,eligible:r.kind==='property'&&!issues.length,reasons:r.kind==='property'?unique(issues):['Dit '+r.kind+'-facet gebruikt een andere IFC-route dan een UDPS-property; de volledige eis blijft bewaard.'],warnings:r.kind==='property'?unique(warnings):[],requiresReview,decision,conditions,values,appliedTargets:{propertySet,property,dataType,entities:targets}});
   }
  }
  return proposals;
@@ -136,7 +149,10 @@ function checkProjectBudget(data){if(byteLength(JSON.stringify(data,null,2))>IDS
 function addHeaders(data,fields){for(const field of fields)if(!data.headers.includes(field)){data.headers.push(field);data.rows.forEach(r=>r[field]='');}}
 function references(value){if(!value)return [];try{const result=JSON.parse(value);if(Array.isArray(result)&&result.length<=MAX_REFERENCES&&result.every(x=>x&&digest(x.documentId)&&requirementId(x.requirementId)&&/^spec:\d+$/.test(x.specificationId)))return result;}catch{}throw Error('Bestaande IDS-herkomst is niet leesbaar; er wordt niets overschreven.');}
 function retainSource(data,preview,decisions,selected=[]){
- const docs=validateIdsImports(data.idsImports)||[],record=sourceRecord(preview);validateIdsImports([record]);
+ const docs=validateIdsImports(data.idsImports)||[],record=sourceRecord(preview);
+ // Validate record shape separately; its explicit predecessor belongs to the complete collection.
+ validateIdsImports([{...record,previousDocumentId:undefined}]);
+ if(record.previousDocumentId!==undefined&&(!digest(record.previousDocumentId)||record.previousDocumentId===record.id||!docs.some(d=>d.id===record.previousDocumentId)))throw Error('Kies een bestaande andere IDS-bron als vorige versie.');
  const previous=docs.find(d=>d.id===preview.id);
  if(previous&&previous.xml!==preview.xml)throw Error('Dezelfde IDS-bronidentiteit heeft verschillende inhoud.');
  const saved=previous||record;saved.selectedRequirementIds=unique([...saved.selectedRequirementIds,...selected]);
@@ -144,7 +160,7 @@ function retainSource(data,preview,decisions,selected=[]){
  // while an omitted requirement keeps its saved choice. Validate only afterwards.
  const choices=checkedDecisions({...saved.decisions,...preview.decisions,...decisions});
  if(Object.keys(choices).length)saved.decisions=choices;else delete saved.decisions;
- for(const k of ['documentSchema','sourceEncoding','sourceByteDigest'])if(record[k]!==undefined)saved[k]=record[k];
+ for(const k of ['documentSchema','sourceEncoding','sourceByteDigest','previousDocumentId'])if(record[k]!==undefined)saved[k]=record[k];
  if(!previous)docs.push(saved);
  data.idsImports=validateIdsImports(docs);return !previous;
 }
@@ -154,36 +170,105 @@ export function saveIdsSource(data,preview,decisions={}){
  checkProjectBudget({...data,idsImports:next.idsImports});
  data.idsImports=next.idsImports;return {saved,id:preview.id};
 }
-export function planIdsImport(data,catalog,preview,selectedIds,decisions={}){
- if(!Array.isArray(selectedIds)||!selectedIds.length||selectedIds.length>MAX_REFERENCES||new Set(selectedIds).size!==selectedIds.length)throw Error('Selecteer één of meer ondersteunde IDS-eigenschappen.');
- const next=structuredClone(data),stored=(validateIdsImports(next.idsImports)||[]).find(d=>d.id===preview.id),effective={...stored?.decisions,...preview.decisions,...decisions};
+// Export slots are indexed once for both preview and atomic application.
+const slotKey=(entity,propertySet,property)=>JSON.stringify([entity,propertySet,property]);
+export const idsDefinitionKey=(propertySet,property,dataType)=>JSON.stringify([propertySet,property,dataType]);
+function projectIndex(data){
+ const index=new Map(),entityNames=data.headers.filter(h=>/^Ifc[A-Za-z0-9]+$/.test(h));
+ for(const [rowIndex,row] of data.rows.entries())if(row['Y/N']==='x')for(const entity of entityNames)if(row[entity]==='x'){
+  const key=slotKey(entity,row.Export_tabblad,row.IFC_parameter);if(!index.has(key))index.set(key,[]);index.get(key).push(rowIndex);
+ }
+ return {index,entityNames};
+}
+function selectedRevit(decision,entity){if(own(decision.revitByEntity||{},entity))return decision.revitByEntity[entity];if(own(decision,'revitParameter'))return decision.revitParameter;}
+function analyzeImport(data,catalog,preview,selectedIds,decisions){
+ const errors=[],changes=[],changeIndex=new Map();
+ if(!Array.isArray(selectedIds)||!selectedIds.length||selectedIds.length>MAX_REFERENCES||new Set(selectedIds).size!==selectedIds.length)return {changes,errors:['Selecteer één of meer ondersteunde IDS-eigenschappen.'],proposals:new Map(),effective:{},associations:0};
+ const stored=(validateIdsImports(data.idsImports)||[]).find(d=>d.id===preview.id),effective={...stored?.decisions,...preview.decisions,...decisions};
+ checkedDecisions(effective);
  const proposals=new Map(mappingProposals(preview,catalog,effective).map(p=>[p.id,p]));
- // Validate retention before changing any output, then validate its final size again below.
- retainSource(next,preview,effective,selectedIds);
- let added=0,skipped=0;
+ const {index,entityNames}=projectIndex(data);let associations=0;
  for(const id of selectedIds){
-  const r=proposals.get(id);
-  if(!r?.eligible||r.kind!=='property')throw Error('IDS-eis is niet beschikbaar: '+(r?.reasons?.join(' ')||id));
-  for(const entity of r.entities){
-   const matches=next.rows.filter(row=>row['Y/N']==='x'&&row[entity]==='x'&&row.Export_tabblad===r.propertySet&&row.IFC_parameter===r.property);
-   if(matches.length>1)throw Error('Bestaande dubbele IFC-koppeling: '+r.propertySet+' / '+r.property+'. Los deze eerst op.');
-   if(matches[0]&&matches[0].Data_type!==r.dataType)throw Error('Conflicterend datatype voor '+r.propertySet+' / '+r.property+' / '+entity+'. Er is niets toegevoegd.');
-   addHeaders(next,['Mapping_pending','Mapping_origin','Uniform_id','IDS_requirements',entity]);
-   let row=matches[0];
-   if(row)skipped++;
-   else{if(next.rows.length>=10000)throw Error('Het project zou meer dan 10.000 regels bevatten.');row=Object.fromEntries(next.headers.map(h=>[h,'']));Object.assign(row,{'Y/N':'x',Revit_parameter:'',IFC_parameter:r.property,Export_tabblad:r.propertySet,Data_type:r.dataType,Mapping_pending:'x',Mapping_origin:'ids',Uniform_id:'ids:'+preview.id+':'+id+':'+entity,[entity]:'x'});next.rows.push(row);added++;}
-   const refs=references(row.IDS_requirements),ref={documentId:preview.id,requirementId:id,specificationId:r.specificationId};
-   if(r.requiresReview||r.entities.length>1){ref.decisions=r.decision;ref.conditions=r.conditions;ref.values=r.values;ref.appliedTargets=r.appliedTargets;}
-   // A re-import updates the reviewed snapshot for this source requirement, without duplicating it.
-   const index=refs.findIndex(x=>x.documentId===ref.documentId&&x.requirementId===id&&x.specificationId===ref.specificationId);
-   if(index>=0)refs[index]=ref;else refs.push(ref);
-   if(refs.length>MAX_REFERENCES)throw Error('Te veel IDS-verwijzingen op één parameterregel.');
-   row.IDS_requirements=JSON.stringify(refs);
+  const requirement=proposals.get(id);
+  if(!requirement?.eligible||requirement.kind!=='property'){
+   const reason='IDS-eis is niet beschikbaar: '+(requirement?.reasons?.join(' ')||id);errors.push(reason);
+   changes.push({key:'skip:'+id,status:'skip',requirementIds:[id],entity:'',propertySet:requirement?.propertySet||'',property:requirement?.property||'',dataType:requirement?.dataType||'',revitParameter:'',existingRowIndices:[],reasons:[reason],warnings:[]});continue;
+  }
+  for(const entity of requirement.entities){
+   associations++;const key=slotKey(entity,requirement.propertySet,requirement.property),requested=selectedRevit(requirement.decision,entity);
+   let change=changeIndex.get(key);
+   if(change){
+    change.requirementIds.push(id);
+    if(change.dataType!==requirement.dataType)change.reasons.push('Conflicterend datatype voor '+requirement.propertySet+' / '+requirement.property+' / '+entity+'.');
+    if(requested!==undefined){
+     if(change.requestedRevitParameter!==undefined&&change.requestedRevitParameter!==requested&&!change.existingRevitParameter)change.reasons.push('Verschillende Revit-keuzes voor dezelfde IFC-koppeling: '+requirement.propertySet+' / '+requirement.property+' / '+entity+'.');
+     else change.requestedRevitParameter=requested;
+    }
+    continue;
+   }
+   const matches=index.get(key)||[],row=matches.length===1?data.rows[matches[0]]:null;
+   change={key,status:matches.length?'reuse':'new',entity,propertySet:requirement.propertySet,property:requirement.property,dataType:requirement.dataType,revitParameter:row?.Revit_parameter||'',existingRevitParameter:row?.Revit_parameter||'',requestedRevitParameter:requested,requirementIds:[id],existingRowIndices:[...matches],reasons:[],warnings:[],updateRevit:false};
+   if(matches.length>1)change.reasons.push('Bestaande dubbele IFC-koppeling: '+requirement.propertySet+' / '+requirement.property+' / '+entity+'. Los deze eerst op.');
+   if(row&&row.Data_type!==requirement.dataType)change.reasons.push('Conflicterend datatype voor '+requirement.propertySet+' / '+requirement.property+' / '+entity+'.');
+   change.singleEntityPending=!!row&&row.Mapping_pending==='x'&&!row.Revit_parameter&&entityNames.filter(e=>row[e]==='x').length===1;
+   changes.push(change);changeIndex.set(key,change);
   }
  }
- // Count provenance references project-wide, including existing mappings.
+ for(const change of changes){
+  if(change.status==='skip')continue;
+  change.requirementIds=unique(change.requirementIds);change.reasons=unique(change.reasons);
+  if(change.reasons.length){change.status='conflict';errors.push(...change.reasons);continue;}
+  if(change.status==='new')change.revitParameter=change.requestedRevitParameter??'';
+  else if(change.singleEntityPending&&change.requestedRevitParameter!==undefined){change.revitParameter=change.requestedRevitParameter;change.updateRevit=change.revitParameter!==change.existingRevitParameter;}
+  else if(change.requestedRevitParameter!==undefined&&change.requestedRevitParameter!==change.existingRevitParameter)change.warnings.push(change.existingRevitParameter?'Bestaande Revit-parameter blijft behouden.':'Bestaande lege of gedeelde koppeling blijft behouden; bewerk die toepassing bij de exportregels.');
+ }
+ return {changes,errors:unique(errors),proposals,effective,associations};
+}
+/** Read-only, exact per-slot mutation preview. A conflict is a result, not a partial write. */
+export function preflightIdsImport(data,catalog,preview,selectedIds,decisions={}){
+ let result;
+ try{result=analyzeImport(data,catalog,preview,selectedIds,decisions);if(!result.errors.length)materializeImport(data,preview,selectedIds,result);}catch(error){result={changes:result?.changes||[],errors:[...result?.errors||[],error.message]};}
+ const counts={new:0,reuse:0,conflict:0,skip:0,link:0};for(const change of result.changes){counts[change.status]++;if(change.updateRevit)counts.link++;}
+ return {changes:result.changes,counts,canApply:!result.errors.length&&!!result.changes.length,errors:result.errors};
+}
+function materializeImport(data,preview,selectedIds,analysis){
+ const next=structuredClone(data);
+ retainSource(next,preview,analysis.effective,selectedIds);
+ const fields=['Mapping_pending','Mapping_origin','Uniform_id','IDS_requirements','Uniform_name','Uniform_revit','Uniform_property','Uniform_propertyset','Uniform_datatype'];
+ const defaults=new Map();
+ for(const change of analysis.changes){const key=idsDefinitionKey(change.propertySet,change.property,change.dataType);if(!defaults.has(key))defaults.set(key,new Set());for(const id of change.requirementIds){const decision=analysis.proposals.get(id).decision;if(own(decision,'revitParameter'))defaults.get(key).add(decision.revitParameter);}}
+ addHeaders(next,[...fields,...new Set(analysis.changes.map(c=>c.entity))]);
+ for(const change of analysis.changes){
+  let row=change.existingRowIndices.length?next.rows[change.existingRowIndices[0]]:null;
+  if(row){if(change.updateRevit){row.Revit_parameter=change.revitParameter;row.Mapping_pending=change.revitParameter?'':'x';}}
+  else{
+   if(next.rows.length>=10000)throw Error('Het project zou meer dan 10.000 regels bevatten.');
+   row=Object.fromEntries(next.headers.map(h=>[h,'']));
+   Object.assign(row,{'Y/N':'x',Revit_parameter:change.revitParameter,IFC_parameter:change.property,Export_tabblad:change.propertySet,Data_type:change.dataType,Mapping_pending:change.revitParameter?'':'x',Mapping_origin:'ids',Uniform_id:'idsdef:'+preview.id+':'+encodeURIComponent(idsDefinitionKey(change.propertySet,change.property,change.dataType)),[change.entity]:'x'});
+   const selectedDefaults=defaults.get(idsDefinitionKey(change.propertySet,change.property,change.dataType));
+   if(selectedDefaults.size<=1)Object.assign(row,{Uniform_name:change.property,Uniform_revit:[...selectedDefaults][0]??'',Uniform_property:change.property,Uniform_propertyset:change.propertySet,Uniform_datatype:change.dataType});
+   next.rows.push(row);
+  }
+  const refs=references(row.IDS_requirements),referenceIndex=new Map();
+  const referenceKey=ref=>JSON.stringify([ref.documentId,ref.requirementId,ref.specificationId]);
+  refs.forEach((ref,index)=>{const key=referenceKey(ref);if(!referenceIndex.has(key))referenceIndex.set(key,index);});
+  for(const id of change.requirementIds){
+   const r=analysis.proposals.get(id),ref={documentId:preview.id,requirementId:id,specificationId:r.specificationId};
+   if(r.requiresReview||r.entities.length>1){ref.decisions=r.decision;ref.conditions=r.conditions;ref.values=r.values;ref.appliedTargets=r.appliedTargets;}
+   const key=referenceKey(ref),index=referenceIndex.get(key);
+   if(index!==undefined)refs[index]=ref;else{referenceIndex.set(key,refs.length);refs.push(ref);}
+  }
+  if(refs.length>MAX_REFERENCES)throw Error('Te veel IDS-verwijzingen op één parameterregel.');
+  row.IDS_requirements=JSON.stringify(refs);
+ }
  let refCount=0;for(const row of next.rows){refCount+=references(row.IDS_requirements).length;if(refCount>MAX_REFERENCES)throw Error('Het project zou meer dan 50.000 IDS-verwijzingen bevatten.');}
  checkProjectBudget(next);
- return {project:next,added,skipped,selected:selectedIds.length};
+ const counts={new:0,reuse:0,conflict:0,skip:0,link:0};for(const change of analysis.changes){counts[change.status]++;if(change.updateRevit)counts.link++;}
+ return {project:next,added:counts.new,skipped:analysis.associations-counts.new,selected:selectedIds.length,changes:analysis.changes,counts};
 }
-export function applyIdsImport(data,catalog,preview,selectedIds,decisions={}){const result=planIdsImport(data,catalog,preview,selectedIds,decisions);data.headers=result.project.headers;data.rows=result.project.rows;data.idsImports=result.project.idsImports;return {added:result.added,skipped:result.skipped,selected:result.selected};}
+export function planIdsImport(data,catalog,preview,selectedIds,decisions={}){
+ const analysis=analyzeImport(data,catalog,preview,selectedIds,decisions);
+ if(analysis.errors.length)throw Error(analysis.errors.join(' '));
+ return materializeImport(data,preview,selectedIds,analysis);
+}
+export function applyIdsImport(data,catalog,preview,selectedIds,decisions={}){const result=planIdsImport(data,catalog,preview,selectedIds,decisions);data.headers=result.project.headers;data.rows=result.project.rows;data.idsImports=result.project.idsImports;return {added:result.added,skipped:result.skipped,selected:result.selected,changes:result.changes,counts:result.counts};}

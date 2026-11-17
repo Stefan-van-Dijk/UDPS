@@ -1,21 +1,23 @@
-import {ensurePropertyIds,propertyKey} from './uniform.js?v=1.10.0';
-import {initUniformUI} from './uniform-ui.js?v=1.10.0';
-import {ifcReferences} from './bsdd.js?v=1.10.0';
-import {filterView} from './view.js?v=1.10.0';
-import {loadClasses,loadDetails} from './source-store.js?v=1.10.0';
-import {initMappingUI} from './mapping-ui.js?v=1.10.0';
-import {unknownEntities} from './mapping.js?v=1.10.0';
-import {entityHeading,sourceCell,initSources,getCatalog} from './sources-ui.js?v=1.10.0';
-import initial from './data.js?v=1.10.0';
-import {validate,generate,entities,types} from './core.js?v=1.10.0';
-import {readExcel} from './excel.js?v=1.10.0';
-import {initIdsUI} from './ids-ui.js?v=1.10.0';
-import {IDS_PROJECT_MAX_BYTES} from './ids.js?v=1.10.0';
-const $=id=>document.getElementById(id),key='udps-project-v1';let data=validate(initial),visible=[],result;let groupSelection=null,entitySelection=null;let deleted=[];let uniformUI=null,mappingUI=null;
-try{const saved=localStorage.getItem(key);if(saved)data=validate(JSON.parse(saved));}catch{toast('Opgeslagen project niet leesbaar; brongegevens geopend.');}
+import {ensurePropertyIds,propertyKey} from './uniform.js?v=1.11.0';
+import {initUniformUI} from './uniform-ui.js?v=1.11.0';
+import {ifcReferences} from './bsdd.js?v=1.11.0';
+import {filterView} from './view.js?v=1.11.0';
+import {loadClasses,loadDetails} from './source-store.js?v=1.11.0';
+import {initMappingUI} from './mapping-ui.js?v=1.11.0';
+import {unknownEntities} from './mapping.js?v=1.11.0';
+import {entityHeading,sourceCell,initSources,getCatalog} from './sources-ui.js?v=1.11.0';
+import initial from './data.js?v=1.11.0';
+import {validate,generate,entities,types} from './core.js?v=1.11.0';
+import {readExcel} from './excel.js?v=1.11.0';
+import {initIdsUI} from './ids-ui.js?v=1.11.0';
+import {IDS_PROJECT_MAX_BYTES} from './ids.js?v=1.11.0';
+import {createProjectStore} from './project-storage.js?v=1.11.0';
+const $=id=>document.getElementById(id),projectStore=createProjectStore();let data=validate(initial),visible=[],result;let groupSelection=null,entitySelection=null;let deleted=[];let uniformUI=null,mappingUI=null,saveTicket=0,recoveryRequired=false;
+$('saved').textContent='Project laden…';
+try{const saved=await projectStore.load();if(saved.project)data=validate(saved.project);recoveryRequired=!!saved.recoveryRequired;$('saved').textContent=saved.warning||(saved.project?'Project geopend uit deze browser':'Voorbeeldproject geopend');}catch{recoveryRequired=true;$('saved').textContent='Opgeslagen project niet leesbaar. Importeer je JSON-backup om te herstellen.';}
 function toast(s){$('toast').textContent=s;$('toast').hidden=false;clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>$('toast').hidden=true,5000);}
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function save(){try{localStorage.setItem(key,JSON.stringify(data));$('saved').textContent='Wijzigingen bewaard in deze browser';}catch{$('saved').textContent='Automatisch bewaren mislukt — bewaar je project als bestand';}update();}
+function save(){if(recoveryRequired){update();return;}const run=++saveTicket;$('saved').textContent='Wijzigingen bewaren…';projectStore.save(data).then(result=>{if(run===saveTicket)$('saved').textContent=result.warning||(result.backend==='none'?'Automatisch bewaren mislukt — bewaar je project als bestand':'Wijzigingen bewaard in deze browser');}).catch(()=>{if(run===saveTicket)$('saved').textContent='Automatisch bewaren mislukt — bewaar je project als bestand';});update();}
 function update(){result=generate({...data,exportOrder:data.exportOrder||'propertyset'});const unknown=unknownEntities(data,getCatalog());if(unknown.length)result.errors.push('Niet in de geladen bSDD-bron: '+unknown.join(', ')+'. Controleer de bronlijst of schakel deze koppelingen uit.');$('source').textContent=data.source;$('selected').textContent=data.rows.filter(r=>r['Y/N']==='x').length;$('groups').textContent=result.groups.length;$('entities').textContent=result.entities.length;$('mappings').textContent=result.mappings;$('output').textContent=result.text;$('previewInfo').textContent=result.blocks+' blokken · '+result.mappings+' koppelingen';$('copy').disabled=$('download').disabled=!!result.errors.length||!result.mappings;$('errors').textContent=result.errors.length?result.errors.length+' fout(en) verhinderen export. '+result.errors.slice(0,2).join(' ')+(result.errors.length>2?' Bekijk de gearceerde regels voor alle details.':''):'';$('warnings').hidden=!result.warnings.length;$('warningTitle').textContent=result.warnings.length+' aandachtspunten · export blijft beschikbaar';$('warningList').innerHTML=result.warnings.map(x=>'<li>'+esc(x)+'</li>').join('');}
 function filters(){for(const [id,items,title,selection] of [['groupFilter',[...new Set(data.rows.map(r=>r.Export_tabblad))],'Propertysets',groupSelection],['entityFilter',entities(data),'IFC-entiteiten',entitySelection]]){$(id).innerHTML=`<summary>${title} · ${selection===null?'alle':items.filter(x=>selection.has(x)).length}</summary><div class="filter-options"><div class="filter-actions"><button type="button" data-filter-action="all">Alle</button><button type="button" data-filter-action="none">Geen</button></div>`+items.map(v=>`<label><input type="checkbox" value="${esc(v)}" ${selection===null||selection.has(v)?'checked':''}>${esc(v)}</label>`).join('')+'</div>';}}
 function heading(es){$('thead').innerHTML='<tr><th>Actief</th><th>Revit-parameter</th><th>IFC-property</th><th>Propertyset</th><th>Datatype</th><th>Bron</th>'+es.map(e=>'<th class="ent">'+entityHeading(e)+'</th>').join('')+'<th></th></tr>';}
@@ -41,7 +43,7 @@ $('exportOrder').value=data.exportOrder||'propertyset';$('exportOrder').onchange
 $('newProject').onclick=()=>{if((data.rows.length||data.idsImports?.length)&&!confirm('Beginnen met een leeg project? Bewaar je huidige project eerst via Menu → Project bewaren. Je bronnen en bibliotheken blijven behouden.'))return;data=validate({source:'Nieuw UDPS-project',headers:['Y/N','Revit_parameter','IFC_parameter','Export_tabblad','Data_type'],rows:[],exportOrder:'propertyset'});clearFilters();save();render();showStep(1);document.querySelector('.app-menu').open=false;};
 $('reset').onclick=()=>{if(confirm('Huidige gegevens vervangen door de brongegevens? Bewaar eventueel eerst je project.')){data=validate(initial);clearFilters();save();render();showStep(2);}};
 function clearFilters(){deleted=[];$('undoDelete').hidden=true;$('search').value='';groupSelection=null;entitySelection=null;}
-$('import').onclick=()=>$('file').click();$('file').onchange=async ev=>{const f=ev.target.files[0];if(!f)return;try{const json=/\.json$/i.test(f.name),limit=json?IDS_PROJECT_MAX_BYTES:20*1024*1024;if(f.size>limit)throw Error('Bestand groter dan '+limit/1024/1024+' MiB.');const next=validate(json?JSON.parse(await f.text()):await readExcel(await f.arrayBuffer(),f.name));if(!confirm('Huidig project vervangen door '+f.name+'?'))return;data=next;clearFilters();save();render();showStep(data.rows.length?2:1);toast(data.rows.length+' parameters geïmporteerd');}catch(e){toast('Import mislukt: '+e.message);}finally{ev.target.value='';}};
+$('import').onclick=()=>$('file').click();$('file').onchange=async ev=>{const f=ev.target.files[0];if(!f)return;try{const json=/\.json$/i.test(f.name),limit=json?IDS_PROJECT_MAX_BYTES:20*1024*1024;if(f.size>limit)throw Error('Bestand groter dan '+limit/1024/1024+' MiB.');const next=validate(json?JSON.parse(await f.text()):await readExcel(await f.arrayBuffer(),f.name));if(!confirm('Huidig project vervangen door '+f.name+'?'))return;recoveryRequired=false;$('storageRecoveryDialog').close();data=next;clearFilters();save();render();showStep(data.rows.length?2:1);toast(data.rows.length+' parameters geïmporteerd');}catch(e){toast('Import mislukt: '+e.message);}finally{ev.target.value='';}};
 $('help').onclick=()=>$('helpDialog').showModal();$('closeHelp').onclick=()=>$('helpDialog').close();render();
 
 initSources({render,data:()=>data,download,bind(row,item,version){for(const key of ['Source_uri','Source_code','Source_version']){if(!data.headers.includes(key)){data.headers.push(key);data.rows.forEach(r=>r[key]='');}}row.Source_uri=item?.uri||'';row.Source_code=item?.code||'';row.Source_version=version;save();render();}});
@@ -53,3 +55,8 @@ initIdsUI({catalog:getCatalog,data:()=>data,notice:toast,changed(){clearFilters(
 uniformUI=initUniformUI({data:()=>data,catalog:getCatalog,changed(){save();render();},openClass:uri=>mappingUI.openClass(uri)});
 function setEditorView(central){$('uniformPanel').hidden=!central;$('rawRows').hidden=central;for(const id of ['search','groupFilter','entityFilter'])$(id).hidden=central;$('uniformView').classList.toggle('primary',central);$('rowsView').classList.toggle('primary',!central);uniformUI.render();}
 $('uniformView').onclick=()=>setEditorView(true);$('rowsView').onclick=()=>setEditorView(false);setEditorView(true);
+
+$('storageRestore').onclick=()=>$('file').click();
+$('storageFresh').onclick=()=>{recoveryRequired=false;$('storageRecoveryDialog').close();data=validate({source:'Nieuw UDPS-project',headers:['Y/N','Revit_parameter','IFC_parameter','Export_tabblad','Data_type'],rows:[],exportOrder:'propertyset'});clearFilters();save();render();showStep(1);};
+$('storageRecoveryDialog').addEventListener('cancel',e=>{if(recoveryRequired)e.preventDefault();});
+if(recoveryRequired){$('storageRecoveryMessage').textContent=$('saved').textContent;$('storageRecoveryDialog').showModal();}
