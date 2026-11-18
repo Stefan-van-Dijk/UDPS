@@ -2,9 +2,15 @@
 
 De IDS-route leest een lokaal IDS-document, bewaart de volledige bron en maakt geschikte `property`-eisen beschikbaar als UDPS-parameterdefinities. De gebruiker kan Revit-namen direct koppelen en de projectwijzigingen vóór toevoegen controleren. De app maakt geen Revit-parameters aan en controleert geen IFC-model.
 
+## Starten met een IDS
+
+Met **Nieuw project uit IDS** bij de projectnaam open je het IDS-overzicht voor een leeg project. Kies alleen het IDS-bestand om alle eisen en de beschikbare parametervoorstellen te bekijken. Met **Project uit IDS bewaren** open je het nieuwe project met de IDS-bron en je keuzegegevens. Na controle kun je ook **Nieuw project openen met selectie** kiezen om direct exportregels toe te voegen.
+
+Bij een gevuld huidig project vraagt UDPS om bevestiging van de projectwissel. Met **Huidig project downloaden** kun je vooraf vanuit de IDS-dialoog een JSON-backup maken. Een project met alleen bewaarde IDS-bronnen opent bij **Koppelingen**. Daar kun je de bron heropenen en later de echte Revit-namen toevoegen. De TXT-export wordt beschikbaar zodra de actieve exportregels geldige koppelingen hebben.
+
 ## Drie onderdelen in de dialoog
 
-1. **Bestand en controle** — kies een IDS, bekijk het resultaat van de lokale XSD-controle, bewaar alleen bron en keuzes of vergelijk met een zelfgekozen eerdere bronversie.
+1. **Bestand en controle** — bekijk het resultaat van de lokale XSD-controle, open een bewaarde bron of vergelijk met een zelfgekozen eerdere bronversie. Boven het overzicht kun je een IDS kiezen en bron en keuzes bewaren.
 2. **Parameters koppelen** — werk in een compacte parameterlijst met zoeken, statusfilter en pagina's. De gekozen parameter heeft een detailpaneel voor namen, datatypes, IFC-doelen, Revit-uitzonderingen en onderliggende eisen.
 3. **Wijzigingen controleren** — bekijk per concrete IFC-koppeling wat nieuw is, wordt hergebruikt, een conflict heeft of niet kan worden toegevoegd. Pas daarna wordt de gecontroleerde selectie toegepast.
 

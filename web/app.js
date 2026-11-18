@@ -1,18 +1,19 @@
-import {ensurePropertyIds,propertyKey} from './uniform.js?v=1.11.5';
-import {initUniformUI} from './uniform-ui.js?v=1.11.5';
-import {ifcReferences} from './bsdd.js?v=1.11.5';
-import {filterView} from './view.js?v=1.11.5';
-import {loadClasses,loadDetails} from './source-store.js?v=1.11.5';
-import {initMappingUI} from './mapping-ui.js?v=1.11.5';
-import {unknownEntities} from './mapping.js?v=1.11.5';
-import {entityHeading,sourceCell,initSources,getCatalog} from './sources-ui.js?v=1.11.5';
-import initial from './data.js?v=1.11.5';
-import {validate,generate,entities,types} from './core.js?v=1.11.5';
-import {readExcel} from './excel.js?v=1.11.5';
-import {initIdsUI} from './ids-ui.js?v=1.11.5';
-import {IDS_PROJECT_MAX_BYTES} from './ids.js?v=1.11.5';
-import {createProjectStore} from './project-storage.js?v=1.11.5';
+import {ensurePropertyIds,propertyKey} from './uniform.js?v=1.12.0';
+import {initUniformUI} from './uniform-ui.js?v=1.12.0';
+import {ifcReferences} from './bsdd.js?v=1.12.0';
+import {filterView} from './view.js?v=1.12.0';
+import {loadClasses,loadDetails} from './source-store.js?v=1.12.0';
+import {initMappingUI} from './mapping-ui.js?v=1.12.0';
+import {unknownEntities} from './mapping.js?v=1.12.0';
+import {entityHeading,sourceCell,initSources,getCatalog} from './sources-ui.js?v=1.12.0';
+import initial from './data.js?v=1.12.0';
+import {validate,generate,entities,types} from './core.js?v=1.12.0';
+import {readExcel} from './excel.js?v=1.12.0';
+import {initIdsUI} from './ids-ui.js?v=1.12.0';
+import {IDS_PROJECT_MAX_BYTES} from './ids.js?v=1.12.0';
+import {createProjectStore} from './project-storage.js?v=1.12.0';
 const $=id=>document.getElementById(id),projectStore=createProjectStore();let data=validate(initial),visible=[],result;let groupSelection=null,entitySelection=null;let deleted=[];let uniformUI=null,mappingUI=null,saveTicket=0,recoveryRequired=false;
+const hasProjectContent=()=>data.rows.length||data.idsImports?.length;
 $('saved').textContent='Project laden…';
 try{const saved=await projectStore.load();if(saved.project)data=validate(saved.project);recoveryRequired=!!saved.recoveryRequired;$('saved').textContent=saved.warning||(saved.project?'Project geopend uit deze browser':'Voorbeeldproject geopend');}catch{recoveryRequired=true;$('saved').textContent='Opgeslagen project niet leesbaar. Importeer je JSON-backup om te herstellen.';}
 function toast(s){$('toast').textContent=s;$('toast').hidden=false;clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>$('toast').hidden=true,5000);}
@@ -44,23 +45,31 @@ for(const id of ['groupFilter','entityFilter']){const host=$(id);host.onchange=(
 document.addEventListener('click',e=>{for(const menu of document.querySelectorAll('.multi-filter,.app-menu'))if(!menu.contains(e.target))menu.open=false;});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.multi-filter,.app-menu').forEach(x=>x.open=false);});
 function showStep(step){$('sourcesManager').hidden=step!==1;$('editor').hidden=step!==2;$('preview').hidden=step!==3;for(const [id,n] of [['sourcesTab',1],['editTab',2],['previewTab',3]])$(id).classList.toggle('active',step===n);}
-$('sourcesTab').onclick=()=>showStep(1);$('editTab').onclick=()=>showStep(2);$('previewTab').onclick=()=>showStep(3);showStep(data.rows.length?2:1);
+$('sourcesTab').onclick=()=>showStep(1);$('editTab').onclick=()=>showStep(2);$('previewTab').onclick=()=>showStep(3);showStep(hasProjectContent()?2:1);
 function download(content,name,type){const url=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);}
+function backupProject(){download(JSON.stringify(data,null,2),'UDPS-project.json','application/json');}
+function emptyProject(){return validate({source:'Nieuw UDPS-project',headers:['Y/N','Revit_parameter','IFC_parameter','Export_tabblad','Data_type'],rows:[],exportOrder:'propertyset'});}
+function activateIdsProject(next,origin){
+ if(recoveryRequired||data!==origin)throw Error('Het huidige project is veranderd. Open de IDS opnieuw.');
+ if(hasProjectContent()&&!confirm('Het huidige project vervangen door het nieuwe IDS-project? Je kunt het huidige project eerst downloaden vanuit het IDS-scherm.'))return false;
+ data=next;
+ return true;
+}
 $('download').onclick=()=>{update();if(result.errors.length||!result.mappings)return;const name='UDPS';download('\ufeff'+result.text,name+'.txt','text/plain;charset=utf-8');toast('UDPS-bestand gedownload');};
-$('backup').onclick=()=>download(JSON.stringify(data,null,2),'UDPS-project.json','application/json');$('copy').onclick=async()=>{update();if(result.errors.length||!result.mappings)return;try{await navigator.clipboard.writeText(result.text);toast('Tekst gekopieerd');}catch{toast('Kopiëren niet toegestaan. Gebruik Download UDPS.');}};
+$('backup').onclick=backupProject;$('copy').onclick=async()=>{update();if(result.errors.length||!result.mappings)return;try{await navigator.clipboard.writeText(result.text);toast('Tekst gekopieerd');}catch{toast('Kopiëren niet toegestaan. Gebruik Download UDPS.');}};
 $('selectAll').onclick=()=>{visible.forEach(({r})=>r['Y/N']='x');save();rows();};$('selectNone').onclick=()=>{visible.forEach(({r})=>r['Y/N']='');save();rows();};
 $('add').onclick=()=>{const r=Object.fromEntries(data.headers.map(h=>[h,'']));Object.assign(r,{'Y/N':'x',IFC_parameter:'NieuweProperty',Export_tabblad:(groupSelection?.size===1?[...groupSelection][0]:'Pset_ILS_Gevel'),Data_type:'Text'});data.rows.push(r);$('search').value='';entitySelection=null;save();render();uniformUI.open(propertyKey(r,data.rows.length-1));};
 $('exportOrder').value=data.exportOrder||'propertyset';$('exportOrder').onchange=()=>{data.exportOrder=$('exportOrder').value;save();};
-$('newProject').onclick=()=>{if((data.rows.length||data.idsImports?.length)&&!confirm('Beginnen met een leeg project? Bewaar je huidige project eerst via Menu → Project bewaren. Je bronnen en bibliotheken blijven behouden.'))return;data=validate({source:'Nieuw UDPS-project',headers:['Y/N','Revit_parameter','IFC_parameter','Export_tabblad','Data_type'],rows:[],exportOrder:'propertyset'});clearFilters();save();render();showStep(1);document.querySelector('.app-menu').open=false;};
+$('newProject').onclick=()=>{if(hasProjectContent()&&!confirm('Beginnen met een leeg project? Bewaar je huidige project eerst via Menu → Project bewaren. Je bronnen en bibliotheken blijven behouden.'))return;data=emptyProject();clearFilters();save();render();showStep(1);document.querySelector('.app-menu').open=false;};
 $('reset').onclick=()=>{if(confirm('Huidige gegevens vervangen door de brongegevens? Bewaar eventueel eerst je project.')){data=validate(initial);clearFilters();save();render();showStep(2);}};
 function clearFilters(){deleted=[];$('undoDelete').hidden=true;$('search').value='';groupSelection=null;entitySelection=null;}
-$('import').onclick=()=>$('file').click();$('file').onchange=async ev=>{const f=ev.target.files[0];if(!f)return;try{const json=/\.json$/i.test(f.name),limit=json?IDS_PROJECT_MAX_BYTES:20*1024*1024;if(f.size>limit)throw Error('Bestand groter dan '+limit/1024/1024+' MiB.');const next=validate(json?JSON.parse(await f.text()):await readExcel(await f.arrayBuffer(),f.name));if(!confirm('Huidig project vervangen door '+f.name+'?'))return;recoveryRequired=false;$('storageRecoveryDialog').close();data=next;clearFilters();save();render();showStep(data.rows.length?2:1);toast(data.rows.length+' parameters geïmporteerd');}catch(e){toast('Import mislukt: '+e.message);}finally{ev.target.value='';}};
+$('import').onclick=()=>$('file').click();$('file').onchange=async ev=>{const f=ev.target.files[0];if(!f)return;try{const json=/\.json$/i.test(f.name),limit=json?IDS_PROJECT_MAX_BYTES:20*1024*1024;if(f.size>limit)throw Error('Bestand groter dan '+limit/1024/1024+' MiB.');const next=validate(json?JSON.parse(await f.text()):await readExcel(await f.arrayBuffer(),f.name));if(!confirm('Huidig project vervangen door '+f.name+'?'))return;recoveryRequired=false;$('storageRecoveryDialog').close();data=next;clearFilters();save();render();showStep(hasProjectContent()?2:1);toast(data.rows.length+' parameters geïmporteerd');}catch(e){toast('Import mislukt: '+e.message);}finally{ev.target.value='';}};
 $('help').onclick=()=>$('helpDialog').showModal();$('closeHelp').onclick=()=>$('helpDialog').close();render();
 
 initSources({render,data:()=>data,download,bind(row,item,version){for(const key of ['Source_uri','Source_code','Source_version']){if(!data.headers.includes(key)){data.headers.push(key);data.rows.forEach(r=>r[key]='');}}row.Source_uri=item?.uri||'';row.Source_code=item?.code||'';row.Source_version=version;save();render();}});
 
 mappingUI=initMappingUI({catalog:getCatalog,data:()=>data,notice:toast,changed(){clearFilters();save();render();showStep(2);}});
-initIdsUI({catalog:getCatalog,data:()=>data,notice:toast,changed(){clearFilters();const persistence=save();render();showStep(2);return persistence;}});
+initIdsUI({catalog:getCatalog,data:()=>data,emptyProject,activateProject:activateIdsProject,backup:backupProject,notice:toast,changed(){clearFilters();const persistence=save();render();showStep(2);return persistence;}});
 
 
 uniformUI=initUniformUI({data:()=>data,catalog:getCatalog,changed(){save();render();},openClass:uri=>mappingUI.openClass(uri)});
@@ -68,6 +77,6 @@ function setEditorView(central){$('uniformPanel').hidden=!central;$('rawRows').h
 $('uniformView').onclick=()=>setEditorView(true);$('rowsView').onclick=()=>setEditorView(false);setEditorView(true);
 
 $('storageRestore').onclick=()=>$('file').click();
-$('storageFresh').onclick=()=>{recoveryRequired=false;$('storageRecoveryDialog').close();data=validate({source:'Nieuw UDPS-project',headers:['Y/N','Revit_parameter','IFC_parameter','Export_tabblad','Data_type'],rows:[],exportOrder:'propertyset'});clearFilters();save();render();showStep(1);};
+$('storageFresh').onclick=()=>{recoveryRequired=false;$('storageRecoveryDialog').close();data=emptyProject();clearFilters();save();render();showStep(1);};
 $('storageRecoveryDialog').addEventListener('cancel',e=>{if(recoveryRequired)e.preventDefault();});
 if(recoveryRequired){$('storageRecoveryMessage').textContent=$('saved').textContent;$('storageRecoveryDialog').showModal();}

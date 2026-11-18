@@ -1,6 +1,6 @@
 // A parameter worklist is a presentation layer over complete IDS evidence.
-import {mappingProposals,idsDefinitionKey,preflightIdsImport} from './ids.js?v=1.11.5';
-export {preflightIdsImport} from './ids.js?v=1.11.5';
+import {mappingProposals,idsDefinitionKey,preflightIdsImport} from './ids.js?v=1.12.0';
+export {preflightIdsImport} from './ids.js?v=1.12.0';
 const unique=items=>[...new Set(items)];
 const own=(value,key)=>Object.prototype.hasOwnProperty.call(value,key);
 const valueIdentity=value=>typeof value==='string'&&!!value;
