@@ -1,9 +1,9 @@
-import {readIds,applyIdsImport,saveIdsSource,IDS_MAX_BYTES} from './ids.js?v=1.11.5';
-import {buildIdsWorkspace,preflightIdsImport} from './ids-workflow.js?v=1.11.5';
-import {loadIdsFile,loadIdsText} from './ids-loader.js?v=1.11.5';
-import {compareIdsRevisions,idsRevisionCandidates} from './ids-revisions.js?v=1.11.5';
-import {auditIdsDocument} from './ids-audit.js?v=1.11.5';
-import {types} from './core.js?v=1.11.5';
+import {readIds,applyIdsImport,saveIdsSource,IDS_MAX_BYTES} from './ids.js?v=1.12.0';
+import {buildIdsWorkspace,preflightIdsImport} from './ids-workflow.js?v=1.12.0';
+import {loadIdsFile,loadIdsText} from './ids-loader.js?v=1.12.0';
+import {compareIdsRevisions,idsRevisionCandidates} from './ids-revisions.js?v=1.12.0';
+import {auditIdsDocument} from './ids-audit.js?v=1.12.0';
+import {types} from './core.js?v=1.12.0';
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const labels={entity:'IFC-entiteit',property:'Eigenschap',attribute:'IFC-attribuut',classification:'Classificatie',material:'Materiaal',partOf:'Onderdeelrelatie',name:'Naam',predefinedType:'Predefined type',propertySet:'Propertyset',baseName:'Eigenschapsnaam',value:'Waarde',system:'Classificatiesysteem'};
@@ -66,11 +66,33 @@ export function initIdsUI(api,injected={}){
  const pageSize=35;
  let sourceSaveTicket=0,sourceSaveFeedback='';
  let pointerPressed=false,pendingRevitRender=null;
+ let draft=null;
  const dialog=$('idsDialog');
  const currentGroup=()=>workspace?.groups.find(g=>g.requirementIds.includes(focusId))||workspace?.groups[0];
- const validProject=()=>project===api.data();
+ const workingProject=()=>draft?.project??api.data();
+ const currentProject=target=>target===workingProject()&&(!draft||draft.origin===api.data());
+ const validProject=()=>!!project&&currentProject(project);
+ function projectMode(){
+  $('idsDialogTitle').textContent=draft?'Nieuw project uit IDS':'IDS inladen en koppelen';
+  $('idsNewProjectHint').hidden=!draft;
+  $('idsBackupProject').hidden=!draft||!(draft.origin.rows.length||draft.origin.idsImports?.length);
+  $('idsSavedSources').hidden=!!draft;$('idsVersionCompare').hidden=!!draft;
+  $('idsSaveSource').textContent=draft?'Project uit IDS bewaren':'Alleen bron en keuzes bewaren';
+  $('idsAdd').textContent=draft?'Nieuw project openen met selectie':'Gecontroleerde selectie toevoegen';
+  $('idsUndoImport').hidden=!!draft||lastImport?.project!==api.data();
+ }
+ function updateProject(write){
+  if(!draft)return write(project);
+  const next=clone(project);
+  next.source=preview.fileName||preview.title||next.source;
+  const result=write(next);
+  if(!api.activateProject(next,draft.origin))return null;
+  project=next;draft=null;lastImport=null;
+  projectMode();
+  return result;
+ }
  function savedSources(){
-  const saved=api.data().idsImports||[];
+  const saved=workingProject().idsImports||[];
   $('idsSaved').innerHTML='<option value="">Bewaarde IDS-bron kiezen</option>'+saved.map(d=>`<option value="${esc(d.id)}">${esc(d.fileName)}</option>`).join('');
   $('idsSaved').disabled=!saved.length;$('idsOpenSaved').disabled=true;
  }
@@ -82,7 +104,8 @@ export function initIdsUI(api,injected={}){
   $('idsSearch').value='';$('idsFilter').value='all';$('idsRevision').innerHTML='<option value="">Kies een eerdere bronversie</option>';
   $('idsComparisonOptions').hidden=true;$('idsComparisonFilter').value='review';
   $('idsCompare').disabled=true;$('idsCompareReuse').disabled=true;$('idsShowXml').disabled=true;$('idsSaveSource').disabled=true;$('idsAuditStatus').textContent='';$('idsXmlPanel').open=false;
-  $('idsReview').disabled=true;$('idsAdd').disabled=true;$('idsUndoImport').hidden=!lastImport;
+  $('idsReview').disabled=true;$('idsAdd').disabled=true;
+  projectMode();
   setStep(1);
  }
  function setStep(next){
@@ -92,7 +115,7 @@ export function initIdsUI(api,injected={}){
  }
  function invalidate(){report=null;$('idsAdd').disabled=true;if(step===3)setStep(2);}
  function rebuild(){
-  invalidate();workspace=services.buildIdsWorkspace(api.data(),api.catalog(),preview,decisions);
+  invalidate();workspace=services.buildIdsWorkspace(project,api.catalog(),preview,decisions);
   const eligible=new Set(workspace.proposals.filter(p=>p.eligible).map(p=>p.id));for(const id of selected)if(!eligible.has(id))selected.delete(id);
  }
  function summary(){
@@ -115,7 +138,7 @@ export function initIdsUI(api,injected={}){
   }).join('')+'</tbody></table>'+(found.length?'':'<p>Geen parameterdefinities met dit filter.</p>');
   $('idsPageInfo').textContent=found.length+' parameters · pagina '+(page+1)+' van '+Math.max(1,Math.ceil(found.length/pageSize));
   $('idsPagePrev').disabled=page===0;$('idsPageNext').disabled=(page+1)*pageSize>=found.length;
-  $('idsRevitOptions').innerHTML=[...new Set(api.data().rows.map(r=>r.Revit_parameter).filter(Boolean))].sort().map(s=>`<option value="${esc(s)}"></option>`).join('');
+  $('idsRevitOptions').innerHTML=[...new Set(project.rows.map(r=>r.Revit_parameter).filter(Boolean))].sort().map(s=>`<option value="${esc(s)}"></option>`).join('');
   renderOthers();renderScopes();summary();
  }
  function pager(kind,index,total,size,label){return total>size?`<div class="toolbar"><button data-ids-nav="${kind}" data-delta="-1" ${index?'':'disabled'}>Vorige ${label}</button><small>Pagina ${index+1} van ${Math.ceil(total/size)}</small><button data-ids-nav="${kind}" data-delta="1" ${(index+1)*size>=total?'disabled':''}>Volgende ${label}</button></div>`:'';}
@@ -208,31 +231,39 @@ export function initIdsUI(api,injected={}){
   $('idsAudit').innerHTML='<strong>'+esc(names[audit?.status]||'Nog niet gecontroleerd')+'</strong><p>Een XSD-controle is geen volledige IDS-audit of IFC-modelcontrole.</p>'+(audit?.issues||[]).map(i=>'<p>'+esc(message(i))+'</p>').join('');summary();
  }
  async function accept(result,saved,run,loadedProject){
-  if(run!==ticket||loadedProject!==api.data())return;preview=result;project=loadedProject;
+  if(run!==ticket||!currentProject(loadedProject))return;preview=result;project=loadedProject;
   const previous=project.idsImports?.find(d=>d.id===result.id);decisions=clone(saved?.decisions??previous?.decisions??{});if(saved?.previousDocumentId||previous?.previousDocumentId)preview.previousDocumentId=saved?.previousDocumentId||previous.previousDocumentId;rebuild();render();setStep(2);savedSources();
   const candidates=services.idsRevisionCandidates(project.idsImports||[],preview);
   $('idsRevision').innerHTML='<option value="">Kies een eerdere bronversie</option>'+candidates.map(d=>`<option value="${esc(d.id)}">${esc(d.fileName||d.title||d.id)}</option>`).join('');
   audit={status:'running',issues:[]};renderAudit();
   try{const result=await services.auditIdsDocument(preview,{signal:controller?.signal});if(run!==ticket||!validProject())return;audit=result;renderAudit();}
-  catch(e){if(run!==ticket||e.name==='AbortError')return;audit={status:'unavailable',issues:[{message:e.message}]};renderAudit();}
+  catch(e){if(run!==ticket||!validProject()||e.name==='AbortError')return;audit={status:'unavailable',issues:[{message:e.message}]};renderAudit();}
  }
  async function loadText(xml,fileName,saved={}){
-  const run=++ticket,loadedProject=api.data();controller?.abort();controller=new AbortController();reset();$('idsSummary').textContent='IDS-eisen lezen…';
+  const run=++ticket,loadedProject=workingProject();controller?.abort();controller=new AbortController();reset();$('idsSummary').textContent='IDS-eisen lezen…';
   try{const result=await (injected.readIds?services.readIds(xml,{fileName,...saved}):services.loadIdsText(xml,{fileName,...saved,signal:controller.signal}));await accept(result,saved,run,loadedProject);}
-  catch(e){if(run===ticket&&e.name!=='AbortError'){$('idsError').textContent='IDS niet geladen: '+e.message;$('idsSummary').textContent='Geen IDS-eisen geladen.';}}
+  catch(e){if(run===ticket&&currentProject(loadedProject)&&e.name!=='AbortError'){$('idsError').textContent='IDS niet geladen: '+e.message;$('idsSummary').textContent='Geen IDS-eisen geladen.';}}
  }
- $('importIds').onclick=()=>{ticket++;controller?.abort();reset();savedSources();$('idsDialog').showModal();};
+ function open(asNewProject){
+  ticket++;controller?.abort();
+  draft=asNewProject?{origin:api.data(),project:api.emptyProject()}:null;
+  reset();savedSources();dialog.showModal();
+ }
+ function discard(){ticket++;controller?.abort();draft=null;}
+ $('importIds').onclick=()=>open(false);
+ $('newIdsProject').onclick=()=>open(true);
+ $('idsBackupProject').onclick=()=>api.backup();
  $('idsChoose').onclick=()=>$('idsFile').click();
  $('idsFile').onchange=async e=>{
-  const file=e.target.files?.[0];if(!file)return;const run=++ticket,loadedProject=api.data();controller?.abort();controller=new AbortController();reset();
+  const file=e.target.files?.[0];if(!file)return;const run=++ticket,loadedProject=workingProject();controller?.abort();controller=new AbortController();reset();
   try{
    if(file.size>IDS_MAX_BYTES)throw Error('IDS-bestand is groter dan 10 MiB.');
    const result=injected.readIds?await services.readIds(await file.text(),{fileName:file.name}):await services.loadIdsFile(file,{signal:controller.signal,onProgress:p=>{if(run===ticket)$('idsSummary').textContent=p.message;}});
    await accept(result,{},run,loadedProject);
-  }catch(error){if(run===ticket&&error.name!=='AbortError'){$('idsError').textContent='IDS niet geladen: '+error.message;$('idsSummary').textContent='Geen IDS-eisen geladen.';}}
+  }catch(error){if(run===ticket&&currentProject(loadedProject)&&error.name!=='AbortError'){$('idsError').textContent='IDS niet geladen: '+error.message;$('idsSummary').textContent='Geen IDS-eisen geladen.';}}
   finally{e.target.value='';}
  };
- $('closeIds').onclick=()=>{ticket++;controller?.abort();$('idsDialog').close();};$('idsDialog').addEventListener('cancel',()=>{ticket++;controller?.abort();});
+ $('closeIds').onclick=()=>{discard();dialog.close();};dialog.addEventListener('cancel',discard);
  $('idsRequirements').onclick=e=>{const id=e.target.dataset.idsFocus;if(id){focusId=id;render();}};
  $('idsRequirements').oninput=e=>{const g=workspace?.groups.find(g=>g.id===e.target.dataset.idsRevit);if(g)draftRevit(g,e.target.value);};
  $('idsRequirements').onchange=e=>{const t=e.target,g=workspace.groups.find(g=>g.id===(t.dataset.idsGroup||t.dataset.idsRevit));if(!g)return;if(t.dataset.idsRevit!==undefined){finishRevitEdit(g,t.value);return;}for(const id of g.eligibleIds)t.checked?selected.add(id):selected.delete(id);invalidate();renderList();};
@@ -264,12 +295,13 @@ export function initIdsUI(api,injected={}){
  for(const id of ['idsSearch','idsFilter'])$(id)[id==='idsSearch'?'oninput':'onchange']=()=>{page=0;renderList();};
  $('idsPagePrev').onclick=()=>{page=Math.max(0,page-1);renderList();};$('idsPageNext').onclick=()=>{page++;renderList();};
  $('idsSaved').onchange=()=>{$('idsOpenSaved').disabled=!$('idsSaved').value;};
- $('idsOpenSaved').onclick=async()=>{const d=api.data().idsImports?.find(d=>d.id===$('idsSaved').value);if(d)await loadText(d.xml,d.fileName,d);};
+ $('idsOpenSaved').onclick=async()=>{const d=workingProject().idsImports?.find(d=>d.id===$('idsSaved').value);if(d)await loadText(d.xml,d.fileName,d);};
  $('idsSaveSource').onclick=async()=>{
   const run=ticket,request=++sourceSaveTicket;
   try{
    if(!preview||!validProject())throw Error('Laad de IDS opnieuw voor het huidige project.');
-   services.saveIdsSource(api.data(),preview,decisions);
+   if(!updateProject(target=>services.saveIdsSource(target,preview,decisions)))return;
+   if(step===3)invalidate();
    setSourceSaveFeedback('IDS-bron en keuzes bewaren…');
    const persistence=api.changed();
    savedSources();
@@ -321,7 +353,7 @@ export function initIdsUI(api,injected={}){
  $('idsCompareReuse').onclick=()=>{if(!comparison||!validProject()||comparison.previousDocumentId!==$('idsRevision').value)return;sourceChoicesChanged();preview.previousDocumentId=comparison.previousDocumentId;for(const [id,d] of Object.entries(comparison.decisions))if(!Object.hasOwn(decisions,id))decisions[id]=clone(d);rebuild();render();$('idsError').textContent='Eenduidige keuzes verwerkt. Bekijk de overige eisen bij Te beoordelen.';$('idsCompareReuse').disabled=true;};
  function review(){
   if(!preview||!validProject()||audit?.status==='running'||audit?.status==='invalid')return;
-  report=services.preflightIdsImport(api.data(),api.catalog(),preview,[...selected],decisions);
+  report=services.preflightIdsImport(project,api.catalog(),preview,[...selected],decisions);
   changePage=0;renderChanges();$('idsAdd').disabled=!report.canApply;setStep(3);
  }
  function renderChanges(){const c=report.counts;changePage=Math.min(changePage,Math.max(0,Math.ceil(report.changes.length/50)-1));$('idsChanges').innerHTML=`<p><strong>${c.new} nieuw · ${c.reuse} hergebruiken · ${c.conflict} conflicten · ${c.skip} overslaan</strong>${c.link?' · '+c.link+' bestaande lege Revit-koppelingen invullen':''}</p>`+(report.errors||[]).map(x=>'<p class="relation-warning">'+esc(x)+'</p>').join('')+pager('changes',changePage,report.changes.length,50,'wijzigingen')+'<div class="tablewrap"><table><thead><tr><th>Actie</th><th>IFC</th><th>Propertyset / eigenschap</th><th>Datatype</th><th>Revit-parameter</th><th>Toelichting</th></tr></thead><tbody>'+report.changes.slice(changePage*50,(changePage+1)*50).map(x=>`<tr><td>${stateLabels[x.status]}</td><td>${esc(x.entity)}</td><td>${esc(x.propertySet)} / ${esc(x.property)}</td><td>${esc(x.dataType)}</td><td>${esc(x.revitParameter||'Nog koppelen')}</td><td>${[...x.reasons,...(x.warnings||[])].map(esc).join(' ')}</td></tr>`).join('')+'</tbody></table></div>';
@@ -330,13 +362,15 @@ export function initIdsUI(api,injected={}){
  $('idsAdd').onclick=()=>{
   try{
    if(step!==3||!report?.canApply||!validProject()||audit?.status==='invalid')throw Error('Controleer eerst het actuele wijzigingsoverzicht.');
-   const latest=services.preflightIdsImport(api.data(),api.catalog(),preview,[...selected],decisions);if(JSON.stringify(latest)!==JSON.stringify(report)){review();throw Error('Het project is gewijzigd. Bekijk het vernieuwde overzicht voordat je toevoegt.');}
-   const before=clone(api.data()),result=services.applyIdsImport(api.data(),api.catalog(),preview,[...selected],decisions);api.changed();lastImport={project:api.data(),before,after:JSON.stringify(api.data())};
-   api.notice?.(result.added+' nieuwe IDS-koppelingen; '+(result.counts?.reuse||0)+' bestaande koppelingen hergebruikt. Ongedaan maken kan via IDS inladen.');ticket++;controller?.abort();$('idsDialog').close();
+   const latest=services.preflightIdsImport(project,api.catalog(),preview,[...selected],decisions);if(JSON.stringify(latest)!==JSON.stringify(report)){review();throw Error('Het project is gewijzigd. Bekijk het vernieuwde overzicht voordat je toevoegt.');}
+   const before=clone(project),result=updateProject(target=>services.applyIdsImport(target,api.catalog(),preview,[...selected],decisions));
+   if(!result)return;
+   api.changed();lastImport={project,before,after:JSON.stringify(project)};
+   api.notice?.(result.added+' nieuwe IDS-koppelingen; '+(result.counts?.reuse||0)+' bestaande koppelingen hergebruikt. Ongedaan maken kan via IDS inladen.');discard();dialog.close();
   }catch(e){$('idsError').textContent='Niet toegevoegd: '+e.message;}
  };
  $('idsUndoImport').onclick=()=>{
-  try{if(!lastImport||lastImport.project!==api.data()||lastImport.after!==JSON.stringify(api.data()))throw Error('Het project is intussen gewijzigd; de import kan niet meer veilig ongedaan worden gemaakt.');const d=api.data();d.headers=clone(lastImport.before.headers);d.rows=clone(lastImport.before.rows);if(lastImport.before.idsImports)d.idsImports=clone(lastImport.before.idsImports);else delete d.idsImports;lastImport=null;api.changed();reset();savedSources();$('idsError').textContent='Laatste IDS-toevoeging ongedaan gemaakt.';}catch(e){$('idsError').textContent=e.message;}
+  try{if(draft||!lastImport||lastImport.project!==api.data()||lastImport.after!==JSON.stringify(api.data()))throw Error('Het project is intussen gewijzigd; de import kan niet meer veilig ongedaan worden gemaakt.');const d=api.data();d.headers=clone(lastImport.before.headers);d.rows=clone(lastImport.before.rows);if(lastImport.before.idsImports)d.idsImports=clone(lastImport.before.idsImports);else delete d.idsImports;lastImport=null;api.changed();reset();savedSources();$('idsError').textContent='Laatste IDS-toevoeging ongedaan gemaakt.';}catch(e){$('idsError').textContent=e.message;}
  };
  for(const n of [1,2,3])$('idsTab'+n).onclick=()=>{if(n===3)review();else setStep(n);};
  $('idsBack').onclick=()=>setStep(Math.max(1,step-1));reset();return {open(){$('importIds').onclick();}};

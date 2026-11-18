@@ -45,3 +45,12 @@ dialog{width:min(600px,94vw);max-height:90vh;overflow:auto;border:1px solid var(
 #idsComparison li button {
   margin-top: 4px;
 }
+
+.project-meta {
+  flex-wrap: wrap;
+}
+
+.project-meta strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}

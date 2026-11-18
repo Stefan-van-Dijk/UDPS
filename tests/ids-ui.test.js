@@ -19,15 +19,17 @@ const conditional=`<classification>${literal('system','Classification')}${litera
 
 // Controlled DOM adapter; handlers use the real parser, grouping, planner and revision comparator.
 // This proves data/interaction boundaries, not native layout, file-picker or accessibility behavior.
-function ui(t,services={},persist=()=>Promise.resolve('indexeddb')){
+function ui(t,services={},persist=()=>Promise.resolve('indexeddb'),confirmNewProject=()=>true){
  const previous=globalThis.document;
  const ids=[...readFileSync(new URL('../web/index.html',import.meta.url),'utf8').matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
  ids.push('idsEntityChoices','idsEntitySearch');
  const elements=Object.fromEntries(ids.map(id=>[id,{id,value:'',textContent:'',innerHTML:'',disabled:false,checked:false,hidden:false,open:false,classList:{toggle(){}},events:{},addEventListener(name,handler){this.events[name]=handler;},showModal(){this.open=true;},close(){this.open=false;},click(){},focus(){}}]));
  globalThis.document={getElementById(id){assert(elements[id],`Missing DOM adapter for ${id}`);return elements[id];}};
  t.after(()=>{globalThis.document=previous;});
- let data=empty(),changes=0;const notices=[],calls={saved:[],applied:[]};
- initIdsUI({data:()=>data,catalog:()=>catalog,changed(){changes++;return persist();},notice:m=>notices.push(m)},{readIds:parse,auditIdsDocument:async()=>({status:'valid',issues:[],complete:false}),saveIdsSource(...args){calls.saved.push(structuredClone(args.slice(1)));return saveIdsSource(...args);},applyIdsImport(...args){calls.applied.push(structuredClone(args.slice(2)));return applyIdsImport(...args);},...services});
+ let data=empty(),changes=0;const notices=[],calls={saved:[],applied:[],backups:[]};
+ initIdsUI({data:()=>data,catalog:()=>catalog,emptyProject:empty,
+  activateProject(next,origin){if(data!==origin||!confirmNewProject())return false;data=next;return true;},
+  backup(){calls.backups.push(structuredClone(data));},changed(){changes++;return persist();},notice:m=>notices.push(m)},{readIds:parse,auditIdsDocument:async()=>({status:'valid',issues:[],complete:false}),saveIdsSource(...args){calls.saved.push(structuredClone(args.slice(1)));return saveIdsSource(...args);},applyIdsImport(...args){calls.applied.push(structuredClone(args.slice(2)));return applyIdsImport(...args);},...services});
  const load=async(text,name='ui-fixture.ids')=>{await elements.idsFile.onchange({target:{files:[{name,size:Buffer.byteLength(text),text:async()=>text}],value:name}});};
  return {e:elements,load,calls,notices,get data(){return data;},set data(next){data=next;},get changes(){return changes;}};
 }
@@ -36,6 +38,57 @@ const acknowledge=(s,index,field,checked=true)=>s.e.idsDetail.onchange({target:{
 const focus=(s,id)=>s.e.idsRequirements.onclick({target:{dataset:{idsFocus:id}}});
 const openOthers=s=>{s.e.idsOther.open=true;s.e.idsOther.events.toggle();};
 const complete=s=>{s.e.idsSelectAll.onclick();s.e.idsReview.onclick();assert.equal(s.e.idsAdd.disabled,false,s.e.idsChanges.innerHTML);s.e.idsAdd.onclick();};
+const official=(facet,file)=>readFileSync(new URL(`fixtures/ids/official/${facet}/${file}.ids`,import.meta.url),'utf8');
+
+test('A new IDS project can be saved independently of matching rows and retained sources in the active project',async t=>{
+ let approved=false;
+ const s=ui(t,{},undefined,()=>approved);
+ const source=official('property','pass-a_required_facet_checks_all_parameters_as_normal');
+ s.data=validate({source:'Huidige werkmap',headers:[...empty().headers,'IfcWall'],rows:[{
+  'Y/N':'x',Revit_parameter:'ExistingName',IFC_parameter:'Foo',Export_tabblad:'Foo_Bar',Data_type:'Label',IfcWall:'x'}]});
+ s.e.importIds.onclick();await s.load(xml(),'Existing.ids');await s.e.idsSaveSource.onclick();s.e.closeIds.onclick();
+ const active=s.data,before=structuredClone(active),writes=s.changes;
+
+ s.e.newIdsProject.onclick();await s.load(source,'Property.ids');
+ assert.equal(s.e.idsSaved.disabled,true);
+ assert.doesNotMatch(s.e.idsRevision.innerHTML,/Existing/);
+ assert.doesNotMatch(s.e.idsRevitOptions.innerHTML+s.e.idsRequirements.innerHTML,/ExistingName/);
+ s.e.idsBackupProject.onclick();assert.deepEqual(s.calls.backups,[before]);
+ s.e.idsSelectAll.onclick();s.e.idsReview.onclick();assert.match(s.e.idsChanges.innerHTML,/1 nieuw · 0 hergebruiken/);
+ s.e.idsAdd.onclick();assert.equal(s.data,active);assert.deepEqual(s.data,before);assert.equal(s.changes,writes);
+ assert.equal(s.e.idsDialog.open,true);
+ s.e.closeIds.onclick();assert.deepEqual(s.data,before);
+
+ s.e.newIdsProject.onclick();await s.load(source,'Property.ids');approved=true;
+ await s.e.idsSaveSource.onclick();
+ assert.notEqual(s.data,active);assert.equal(s.changes,writes+1);assert.equal(s.data.rows.length,0);
+ assert.equal(s.data.source,'Property.ids');assert.equal(s.data.idsImports[0].xml,source);
+ assert.deepEqual(active,before);
+ edit(s,'revitParameter','ReviewedName');complete(s);
+ assert.match(generate(s.data).text,/Foo\tLabel\tReviewedName/);
+});
+
+test('An IDS with only classification requirements can start a project without mappings',async t=>{
+ const s=ui(t);
+ const source=official('classification','pass-a_required_facet_checks_all_parameters_as_normal');
+ s.e.newIdsProject.onclick();await s.load(source,'Classification.ids');
+ assert.match(s.e.idsSummary.textContent,/1 eisen · 0 parameterdefinities/);
+ assert.equal(s.e.idsSelectAll.disabled,true);
+ openOthers(s);assert.match(s.e.idsOtherBody.innerHTML,/Classificatie/);
+ await s.e.idsSaveSource.onclick();
+ assert.equal(s.data.idsImports[0].xml,source);assert.equal(s.data.rows.length,0);
+});
+
+test('Adding an IDS draft with unfilled Revit names preserves the export gate and scopes Undo to that project',async t=>{
+ const s=ui(t),source=official('property','pass-a_required_facet_checks_all_parameters_as_normal');
+ s.e.importIds.onclick();await s.load(xml());edit(s,'revitParameter','Existing');complete(s);
+ s.e.newIdsProject.onclick();assert.equal(s.e.idsUndoImport.hidden,true);
+ await s.load(source,'Property.ids');complete(s);
+ assert.equal(s.data.rows.length,1);assert.equal(s.data.rows[0].Mapping_pending,'x');
+ assert.match(generate(s.data).errors.join('\n'),/Revit-parameter nog koppelen/);
+ s.e.importIds.onclick();assert.equal(s.e.idsUndoImport.hidden,false);s.e.idsUndoImport.onclick();
+ assert.equal(s.data.rows.length,0);assert.equal(s.data.source,'Property.ids');
+});
 
 test('A shared definition is displayed once and maps all exact IFC targets with preserved source references',async t=>{
  const source=documentXml(specification({name:'Wall',identifier:'wall'})+specification({name:'Door',identifier:'door',entity:'IFCDOOR'}));

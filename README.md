@@ -1,8 +1,12 @@
 # UDPS generator
 
-Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.11.2.
+Webapp van Jasper Kempen en Stefan van Dijk voor Revit-parameterkoppelingen en User Defined Property Sets voor IFC-export. Webversie 1.12.0.
 
 Actuele IDS-bediening staat hieronder en in [IDS-import](docs/ids-import.md). De eerdere versiehoofdstukken beschrijven de ontwikkeling en het toen uitgevoerde controlebewijs; ze zijn geen actuele takenlijst.
+
+## 1.12.0 — Een project starten uit IDS
+
+**Nieuw project uit IDS** opent een leeg conceptproject op basis van het gekozen IDS-bestand. Bekijk de eisen en bewaar de bron of voeg een gecontroleerde selectie toe. Je kunt vanuit het scherm het huidige project downloaden voordat je de projectwissel bevestigt. Revit-parameters kunnen bij het starten of later worden gekoppeld.
 
 ## 1.11.5 — IDS-parameters koppelen en wijzigingen controleren
 
