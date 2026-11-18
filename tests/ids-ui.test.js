@@ -262,7 +262,66 @@ test('Source comparison surfaces malformed provenance and identifies actual affe
  const row=(property,refs)=>({'Y/N':'x',Revit_parameter:'Keep',IFC_parameter:property,Export_tabblad:'Example_Set',Data_type:'Label',IfcWall:'x',IDS_requirements:refs});
  s.data.rows.push(row('Broken','not-json'),row('Unrelated',''),row('First',JSON.stringify([{documentId:previous.id,specificationId:'spec:0',requirementId:'spec:0/requirement:0'}])));
  await s.load(currentXml,'Current.ids');s.e.idsRevision.value=previous.id;s.e.idsRevision.onchange();await s.e.idsCompare.onclick();
+ assert.match(s.e.idsComparison.innerHTML,/Geen eisen om opnieuw te beoordelen/);
+ s.e.idsComparisonFilter.value='all';s.e.idsComparisonFilter.onchange();
  assert.match(s.e.idsComparison.innerHTML,/Regel 1: IDS-herkomst is niet leesbaar/);assert.match(s.e.idsComparison.innerHTML,/bestaande regels 3/);assert.doesNotMatch(s.e.idsComparison.innerHTML,/1 bestaande regels/);assert.equal(s.data.rows.length,3);assert.equal(s.data.rows[0].IDS_requirements,'not-json');
+});
+
+test('Revision review groups equal requirements, names their sources and opens the parameter without applying choices',async t=>{
+ const requirements=property('Repeated')+property('Repeated')+property('Unchanged')+property('Changed');
+ const previousXml=xml({name:'Oud &amp; referentie',appExtra:conditional,requirements});
+ const currentXml=xml({name:'Nieuw &lt;werk&gt;',appExtra:conditional,requirements:requirements.replace(property('Changed'),property('Changed','','IFCINTEGER'))});
+ const s=ui(t);s.e.importIds.onclick();await s.load(previousXml);
+ focus(s,'spec:0/requirement:0');edit(s,'revitParameter','Prior choice');await s.e.idsSaveSource.onclick();
+ const previous=s.data.idsImports[0];
+ const row=index=>({IDS_requirements:JSON.stringify([{documentId:previous.id,requirementId:`spec:0/requirement:${index}`}])});
+ s.data.rows.push(row(0),{Revit_parameter:'Unrelated'},row(1));
+ const rows=structuredClone(s.data.rows);
+
+ await s.load(currentXml,'Current.ids');s.e.idsRevision.value=previous.id;s.e.idsRevision.onchange();await s.e.idsCompare.onclick();
+ assert.equal(s.e.idsComparisonOptions.hidden,false);
+ assert.equal(s.e.idsComparisonFilter.value,'review');
+ const overview=s.e.idsComparison.innerHTML;
+ assert.match(overview,/1 ongewijzigd · 1 gewijzigd · 0 nieuw · 0 vervallen · 2 niet eenduidig/);
+ assert.equal([...overview.matchAll(/Example_Set \/ Repeated/g)].length,1);
+ assert.match(overview,/Vorige versie \(2 eisen\).*Oud &amp; referentie/);
+ assert.match(overview,/Huidige versie \(2 eisen\).*Nieuw &lt;werk&gt;/);
+ assert.match(overview,/bestaande regels 1, 3/);
+ assert.match(overview,/data-ids-compare-focus="spec:0\/requirement:0"/);
+ assert.doesNotMatch(overview,/Example_Set \/ Unchanged/);
+ assert.equal(s.e.idsCompareReuse.disabled,true);
+
+ s.e.idsComparisonFilter.value='all';s.e.idsComparisonFilter.onchange();
+ assert.match(s.e.idsComparison.innerHTML,/Example_Set \/ Unchanged/);
+ s.e.idsSearch.value='Unchanged';s.e.idsFilter.value='ready';s.e.idsTab1.onclick();
+ s.e.idsComparison.onclick({target:{dataset:{idsCompareFocus:'spec:0/requirement:0'}}});
+ assert.equal(s.e.idsStep2.hidden,false);
+ assert.match(s.e.idsDetail.innerHTML,/<h3>Repeated<\/h3>/);
+ assert.match(s.e.idsDetail.innerHTML,/2 broneisen/);
+ assert.equal(s.e.idsSearch.value,'');assert.equal(s.e.idsFilter.value,'all');
+ assert.deepEqual(s.data.rows,rows);
+ await s.e.idsSaveSource.onclick();
+ assert.deepEqual(s.data.idsImports.find(d=>d.id!==previous.id).decisions??{},{});
+ assert.equal(s.data.idsImports.find(d=>d.id===previous.id).decisions['spec:0/requirement:0'].revitParameter,'Prior choice');
+});
+
+test('Alle eisen exposes every member of an ambiguous group with distinct definitions or conditions',async t=>{
+ const first=specification({name:'First scope',appExtra:conditional,requirements:property('Shared')+property('Alpha')});
+ const second=specification({name:'Other scope',appExtra:conditional.replace('42','99'),requirements:property('Shared')+property('Beta')+property('Delta')});
+ const previousXml=documentXml(first+second),currentXml=previousXml.replace('UI fixture','Current source');
+ const s=ui(t);s.e.importIds.onclick();await s.load(previousXml);await s.e.idsSaveSource.onclick();
+ await s.load(currentXml);s.e.idsRevision.value=s.data.idsImports[0].id;s.e.idsRevision.onchange();await s.e.idsCompare.onclick();
+ assert.match(s.e.idsComparison.innerHTML,/5 niet eenduidig/);
+ assert.doesNotMatch(s.e.idsComparison.innerHTML,/data-ids-compare-focus/);
+
+ s.e.idsComparisonFilter.value='all';s.e.idsComparisonFilter.onchange();
+ for(const property of ['Shared','Alpha','Beta','Delta'])assert.match(s.e.idsComparison.innerHTML,new RegExp(`Example_Set / ${property}`));
+ assert.equal([...s.e.idsComparison.innerHTML.matchAll(/data-ids-compare-focus/g)].length,5);
+ let focusedCondition;
+ s.e.idsDetail.querySelector=selector=>({focus:()=>{focusedCondition=selector;}});
+ s.e.idsComparison.onclick({target:{dataset:{idsCompareFocus:'spec:1/requirement:0'}}});
+ assert.equal(focusedCondition,'[data-ids-review-group="1"]');
+ assert.match(s.e.idsDetail.innerHTML,/<h3>Shared<\/h3>/);
 });
 
 test('The delegated application-group click permits the native checkbox default action',async t=>{

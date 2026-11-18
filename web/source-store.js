@@ -1,5 +1,5 @@
-import {validateLibrary,librarySource,libraryDetails} from './libraries.js?v=1.11.4';
-import {defaults,dictionaries,relatedClasses,classDetails,relationshipKey,dictionaryProducts} from './bsdd.js?v=1.11.4';
+import {validateLibrary,librarySource,libraryDetails} from './libraries.js?v=1.11.5';
+import {defaults,dictionaries,relatedClasses,classDetails,relationshipKey,dictionaryProducts} from './bsdd.js?v=1.11.5';
 const comparableDetail=d=>{if(!d)return d;const {checkedAt,loadWarning,...content}=d;return content;};
 const mergeCache=(bundled,saved,field)=>{const merged={...bundled,...saved};for(const [uri,value] of Object.entries(bundled))if((value[field]||0)>(saved[uri]?.[field]||0))merged[uri]=value;return merged;};
 let state={schema:1,registry:[],enabled:defaults,relations:{},details:{},libraries:[],products:{}},loading;

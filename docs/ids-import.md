@@ -82,6 +82,8 @@ De zelftest onderscheidt een geldig voorbeeld, XSD-ongeldige invoer en XSD-geldi
 
 Een nieuwe XML-tekst heeft een eigen SHA-256-identiteit. De gebruiker kiest zelf welke bewaarde bron de vorige versie is; een bestandsnaam of positie-ID is daarvoor geen bewijs. Het overzicht onderscheidt ongewijzigde, gewijzigde, nieuwe, vervallen en niet-eenduidige eisen en kan de betrokken bestaande exportregels aanwijzen.
 
+**Te beoordelen** opent met gewijzigde, nieuwe, vervallen en niet-eenduidige eisen, plus ongewijzigde properties met onbekende betekenis. Bij een niet-eenduidige groep zie je de betrokken specificaties, aantallen per versie en eventuele bestaande exportregels. Iedere eis telt mee in de bovenste aantallen. Kies **Alle eisen** om de eisen afzonderlijk te bekijken. **Bekijk parameter** opent de bijbehorende parameter en, indien aanwezig, zijn voorwaardengroep.
+
 Verschillende expliciete specificatie-ID's gelden als verschillende specificaties. De eerdere eisen worden als vervallen getoond en de huidige eisen als nieuw. Bij een ontbrekende ID kan de vergelijking nog steunen op een unieke inhoudelijke overeenkomst.
 
 Alleen een aantoonbaar unieke, ongewijzigde property-eis met dezelfde bekende document-, IFC-, toepassings- en waardecontext kan eerdere keuzes overnemen. Volgorde of namespace-prefix mag die vergelijking niet bepalen. Een gewijzigd datatype, andere scope, onbekende semantiek, dubbele identifier of onduidelijke voorganger vraagt herbeoordeling. Overnemen overschrijft geen huidige handmatige keuze.

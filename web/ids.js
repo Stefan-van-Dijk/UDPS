@@ -1,6 +1,6 @@
 // IDS sources remain evidence. UDPS mappings describe parameters, not IDS compliance.
-import {IDS_MAX_BYTES} from './ids-document.js?v=1.11.4';
-export {readIds,decodeIdsBytes,IDS_MAX_BYTES} from './ids-document.js?v=1.11.4';
+import {IDS_MAX_BYTES} from './ids-document.js?v=1.11.5';
+export {readIds,decodeIdsBytes,IDS_MAX_BYTES} from './ids-document.js?v=1.11.5';
 export const IDS_PROJECT_MAX_BYTES=32*1024*1024;
 const MAX_DOCUMENTS=20,MAX_SAVED_BYTES=16*1024*1024,MAX_REFERENCES=50000;
 const byteLength=value=>new TextEncoder().encode(value).length;
