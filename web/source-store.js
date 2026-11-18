@@ -1,12 +1,42 @@
-import {validateLibrary,librarySource,libraryDetails} from './libraries.js?v=1.12.0';
-import {defaults,dictionaries,relatedClasses,classDetails,relationshipKey,dictionaryProducts} from './bsdd.js?v=1.12.0';
+import {validateLibrary,librarySource,libraryDetails} from './libraries.js?v=1.12.1';
+import {defaults,dictionaries,relatedClasses,classDetails,relationshipKey,dictionaryProducts} from './bsdd.js?v=1.12.1';
 const comparableDetail=d=>{if(!d)return d;const {checkedAt,loadWarning,...content}=d;return content;};
 const mergeCache=(bundled,saved,field)=>{const merged={...bundled,...saved};for(const [uri,value] of Object.entries(bundled))if((value[field]||0)>(saved[uri]?.[field]||0))merged[uri]=value;return merged;};
 let state={schema:1,registry:[],enabled:defaults,relations:{},details:{},libraries:[],products:{}},loading;
 export const sourceState=()=>state;
-export async function initStore(){if(loading)return loading;loading=(async()=>{try{const r=await fetch('./relations.json');if(r.ok)state={...state,...await r.json(),enabled:defaults};}catch{}try{const saved=JSON.parse(localStorage.getItem('udps-relations-v1'));if(saved?.schema===1&&Array.isArray(saved.enabled)&&saved.relations&&saved.details)state={...state,...saved,products:mergeCache(state.products||{},saved.products||{},'productsSchema'),relations:mergeCache(state.relations,saved.relations,'relationSchema'),details:mergeCache(state.details,saved.details,'propertySchema'),registry:[...(state.registry.length?state.registry:saved.registry||[]).filter(s=>!s.local),...(saved.libraries||[]).map(librarySource)]};}catch{}})();return loading;}
+export async function initStore(){
+ if(loading)return loading;
+ loading=(async()=>{
+  try{
+   const response=await fetch('./relations.json');
+   if(response.ok)state={...state,...await response.json(),enabled:defaults};
+  }catch{}
+  try{
+   const saved=JSON.parse(localStorage.getItem('udps-relations-v1'));
+   if(saved?.schema!==1||!Array.isArray(saved.enabled)||!saved.relations||!saved.details)return;
+   const savedRegistry=Array.isArray(saved.registry)?saved.registry:null;
+   const registryFromLive=saved.registryFromLive===true&&savedRegistry!==null;
+   const registry=registryFromLive||!state.registry.length?savedRegistry??[]:state.registry;
+   state={
+    ...state,...saved,
+    products:mergeCache(state.products||{},saved.products||{},'productsSchema'),
+    relations:mergeCache(state.relations,saved.relations,'relationSchema'),
+    details:mergeCache(state.details,saved.details,'propertySchema'),
+    registryFromLive,
+    registry:[...registry.filter(source=>!source.local),...(saved.libraries||[]).map(librarySource)]
+   };
+  }catch{}
+ })();
+ return loading;
+}
 export function persist(){try{localStorage.setItem('udps-relations-v1',JSON.stringify(state));return true;}catch{return false;}}
-export async function loadRegistry(){state.registry=[...await dictionaries(),...(state.libraries||[]).map(librarySource)];persist();return state.registry;}
+export async function loadRegistry(){
+ const registry=await dictionaries();
+ state.registry=[...registry,...(state.libraries||[]).map(librarySource)];
+ state.registryFromLive=true;
+ persist();
+ return state.registry;
+}
 export function enableSource(uri){const s=state.registry.find(x=>x.uri===uri);if(!s)throw Error('Kies een bron uit de bSDD-lijst.');if(!state.enabled.some(x=>x.uri===uri))state.enabled.push(s);persist();}
 export function disableSource(uri){state.enabled=state.enabled.filter(s=>s.uri!==uri);persist();}
 export async function loadClasses(source,entity,{refresh=false}={}){const lib=(state.libraries||[]).find(l=>librarySource(l).uri===source);if(lib)return {source,entity,version:lib.version,items:lib.classes.filter(c=>c.ifcEntities.includes(entity)).map(c=>{const d=libraryDetails(lib,c);return {uri:d.uri,code:d.code,name:d.name};})};const key=relationshipKey(source,entity);if(refresh||!state.relations[key]||state.relations[key].relationSchema!==2){try{state.relations[key]=await relatedClasses(source,entity);persist();}catch(e){if(!state.relations[key])throw e;return {...state.relations[key],loadWarning:'Actualiseren mislukt; opgeslagen bronklassen getoond: '+e.message};}}return state.relations[key];}
