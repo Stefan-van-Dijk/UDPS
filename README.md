@@ -134,7 +134,7 @@ Eigenschappen worden via gerelateerde bronklassen opgehaald. Alleen enkelvoudige
 
 **Updates** controleert de IFC-catalogus en de al geladen relaties van ingeschakelde bSDD-bronnen. Na controle kan de gebruiker de update toepassen. Projectkoppelingen worden niet overschreven. Eigen bibliotheken worden uitsluitend bijgewerkt via een nieuwe versie van hun bestand.
 
-`web/relations.json` bevat een gedeeltelijke momentopname met de woordenboekenlijst en enkele geverifieerde ILS-relaties. Niet aanwezige relaties worden live geladen en gecachet. Netwerkfouten, CORS en HTTP 429 worden gemeld; de app verzint geen vervangende relaties. Live gebruik vereist toegang tot `api.bsdd.buildingsmart.org`.
+`web/relations.json` bevat een gedeeltelijke momentopname met de woordenboekenlijst en enkele geverifieerde ILS-relaties. **Lijst vernieuwen** haalt de actuele woordenboeken op. De laatst geslaagde lijstvernieuwing blijft beschikbaar na herladen en bij een mislukte aanvraag. De app haalt ontbrekende relaties live op en bewaart ze in de browser. Live gebruik vereist dat buildingSMART het domein van de app via CORS toelaat tot `api.bsdd.buildingsmart.org`.
 
 ## Opslag, licenties en verificatie
 
