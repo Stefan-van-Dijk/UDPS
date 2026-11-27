@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "headers": [
+    "Revit_parameter",
+    "IFC_parameter",
+    "Y/N",
+    "Export_tabblad",
+    "Data_type",
+    "Mapping_pending",
+    "Mapping_origin",
+    "Uniform_id",
+    "IDS_requirements",
+    "Uniform_name",
+    "Uniform_revit",
+    "Uniform_property",
+    "Uniform_propertyset",
+    "Uniform_datatype",
+    "IfcWall",
+    "Studio_application_ids"
+  ],
+  "rows": [
+    {
+      "Revit_parameter": "Test_Foo",
+      "IFC_parameter": "Foo",
+      "Y/N": "x",
+      "Export_tabblad": "Foo_Bar",
+      "Data_type": "Label",
+      "Mapping_pending": "",
+      "Mapping_origin": "ids",
+      "Uniform_id": "idsdef:sha256:2270bc1afc09527bc80c92459f9a6f78914bf0e163d8dca8e3b0eb64845dd906:%5B%22Foo_Bar%22%2C%22Foo%22%2C%22Label%22%5D",
+      "IDS_requirements": "[{\"documentId\":\"sha256:2270bc1afc09527bc80c92459f9a6f78914bf0e163d8dca8e3b0eb64845dd906\",\"requirementId\":\"spec:0/requirement:0\",\"specificationId\":\"spec:0\"}]",
+      "Uniform_name": "Foo",
+      "Uniform_revit": "Test_Foo",
+      "Uniform_property": "Foo",
+      "Uniform_propertyset": "Foo_Bar",
+      "Uniform_datatype": "Label",
+      "IfcWall": "x",
+      "Studio_application_ids": "{\"IfcWall\":\"udps-0-IfcWall\"}"
+    }
+  ],
+  "mode": "I/T",
+  "skipEmpty": true,
+  "source": "IDS browserproef",
+  "idsImports": [
+    {
+      "schema": 1,
+      "id": "sha256:2270bc1afc09527bc80c92459f9a6f78914bf0e163d8dca8e3b0eb64845dd906",
+      "fileName": "utf16.ids",
+      "xml": "<?xml version=\"1.0\" encoding=\"utf-16\"?>\n<ids xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/1.0/ids.xsd\" xmlns=\"http://standards.buildingsmart.org/IDS\">\n  <info>\n    <title>A required facet checks all parameters as normal</title>\n    <description>Generated via code automation in the Ids Repository on github.</description>\n  </info>\n  <specifications>\n    <specification name=\"A required facet checks all parameters as normal\" ifcVersion=\"IFC2X3 IFC4\">\n      <applicability maxOccurs=\"unbounded\">\n        <entity>\n          <name>\n            <simpleValue>IFCWALL</simpleValue>\n          </name>\n        </entity>\n      </applicability>\n      <requirements>\n        <property dataType=\"IFCLABEL\">\n          <propertySet>\n            <simpleValue>Foo_Bar</simpleValue>\n          </propertySet>\n          <baseName>\n            <simpleValue>Foo</simpleValue>\n          </baseName>\n        </property>\n      </requirements>\n    </specification>\n  </specifications>\n</ids>",
+      "selectedRequirementIds": [
+        "spec:0/requirement:0"
+      ],
+      "documentSchema": 2,
+      "sourceEncoding": "utf-16le",
+      "sourceByteDigest": "sha256:cff2719abaa919883afad8d7a83742262522af8ea5f01d787c83cb94b29c5363"
+    },
+    {
+      "schema": 1,
+      "id": "sha256:37aa43b121d04f3c785d414e5ab5edae0a08dc935b351cdc76c4e01fbcc908f5",
+      "fileName": "versie2.ids",
+      "xml": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<ids xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/1.0/ids.xsd\" xmlns=\"http://standards.buildingsmart.org/IDS\">\n  <info>\n    <title>A required facet checks all parameters as normal</title>\n    <description>Generated via code automation in the Ids Repository on github.</description>\n  </info>\n  <specifications>\n    <specification name=\"A required facet checks all parameters as normal\" ifcVersion=\"IFC2X3 IFC4\">\n      <applicability maxOccurs=\"unbounded\">\n        <entity>\n          <name>\n            <simpleValue>IFCWALL</simpleValue>\n          </name>\n        </entity>\n      </applicability>\n      <requirements>\n        <property dataType=\"IFCLABEL\">\n          <propertySet>\n            <simpleValue>Foo_Bar</simpleValue>\n          </propertySet>\n          <baseName>\n            <simpleValue>Foo_New</simpleValue>\n          </baseName>\n        </property>\n      </requirements>\n    </specification>\n  </specifications>\n</ids>",
+      "selectedRequirementIds": [],
+      "documentSchema": 2,
+      "sourceEncoding": "utf-8",
+      "sourceByteDigest": "sha256:37aa43b121d04f3c785d414e5ab5edae0a08dc935b351cdc76c4e01fbcc908f5",
+      "previousDocumentId": "sha256:2270bc1afc09527bc80c92459f9a6f78914bf0e163d8dca8e3b0eb64845dd906"
+    }
+  ],
+  "studioContext": {
+    "schema": 1,
+    "bookId": "book-d00d5da4-7337-443f-ad90-15c766967cf5",
+    "basisVersion": null,
+    "baseProject": null
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "format": "udps-library",
+  "schema": 1,
+  "id": "udps-studio-voorbeeld",
+  "name": "Voorbeeldbibliotheek",
+  "version": "1.0",
+  "description": "Voorbeeldgegevens voor het verkennen van UDPS studio.",
+  "classes": [
+    {
+      "code": "Door",
+      "name": "Deur",
+      "ifcEntities": [
+        "IfcDoor"
+      ],
+      "properties": [
+        {
+          "code": "SelfClosing",
+          "name": "Zelfsluitend",
+          "propertySet": "Pset_DoorCommon",
+          "dataType": "Boolean"
+        }
+      ]
+    },
+    {
+      "code": "Wall",
+      "name": "Wand",
+      "ifcEntities": [
+        "IfcWall"
+      ],
+      "properties": [
+        {
+          "code": "LoadBearing",
+          "name": "Dragend",
+          "propertySet": "Pset_WallCommon",
+          "dataType": "Boolean"
+        }
+      ]
+    },
+    {
+      "code": "Window",
+      "name": "Raam",
+      "ifcEntities": [
+        "IfcWindow"
+      ],
+      "properties": [
+        {
+          "code": "IsExternal",
+          "name": "Buitenraam",
+          "propertySet": "Pset_WindowCommon",
+          "dataType": "Boolean"
+        }
+      ]
+    }
+  ]
+}

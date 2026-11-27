@@ -1,0 +1,8 @@
+{
+  "schema": 1,
+  "source": "UDPS werkstroom klikmodel",
+  "sourceCommit": "d998e5511903e2a428cf115aaef239a88f2af53a",
+  "productBaseCommit": "9a05876a33ab8d37543a393a8843f7c623c4ffc8",
+  "mode": "test",
+  "storageNamespace": "udps-studio-test-v1"
+}

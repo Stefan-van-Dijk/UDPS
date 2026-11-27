@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "sourceRepository": "https://github.com/Stefan-van-Dijk/UDPS",
+  "sourceCommit": "c016b9119f6e51d4b964762198558b0e3bac8922",
+  "sourceAppVersion": "1.12.1",
+  "codeLicense": "MIT; see LICENSE-MIT.txt",
+  "files": [
+    {
+      "source": "web/ids-document.js",
+      "target": "ids-document.mjs",
+      "sourceSha256": "362d7246d1d29b2b6dad012186a7ae5bbe9e0467ea9d19964afb7a8f525a1b03",
+      "changes": "Unchanged copy.",
+      "targetSha256": "362d7246d1d29b2b6dad012186a7ae5bbe9e0467ea9d19964afb7a8f525a1b03"
+    },
+    {
+      "source": "web/ids.js",
+      "target": "ids.mjs",
+      "sourceSha256": "a82cf9e9257f231233af9ab0d991adc97a08da962219f24b58fcb1e6ecc8ee9a",
+      "changes": "Only import/re-export URL changed to local .mjs.",
+      "targetSha256": "9e3994deeccfec99dcdec14da55249f3da5f45b1c2bb99dc5dd3dfb524c0a5c6"
+    },
+    {
+      "source": "LICENSE",
+      "target": "LICENSE-MIT.txt",
+      "sourceSha256": "efd2c4eb36c969ba75da34dea696c7871b049e93939dec52adbc2c8c443dd699",
+      "changes": "Unchanged copy.",
+      "targetSha256": "efd2c4eb36c969ba75da34dea696c7871b049e93939dec52adbc2c8c443dd699"
+    }
+  ],
+  "catalog": {
+    "source": "web/catalog.json",
+    "sourceSha256": "0009c432201baecde0c7fc9642046ebf40fbdceb1cb2b449da5936f43df3137b",
+    "target": "ifc-classes.mjs",
+    "classCount": 247,
+    "extraction": "Unique, sorted canonical class identifiers accepted by the source ids.js entities() filter. Descriptions, property data and alternate uppercase codes are not copied.",
+    "attribution": "buildingSMART International Ltd.; IFC 4.3 dictionary cache",
+    "metadata": {
+      "uri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+      "version": "4.3",
+      "status": "Preview",
+      "lastUpdatedUtc": "2024-01-12T14:09:50Z",
+      "license": "CC BY-ND 4.0",
+      "checkedAt": "2026-11-12T09:39:29.551093+00:00",
+      "sourceCommit": "c016b9119f6e51d4b964762198558b0e3bac8922",
+      "coverage": "Canonical class codes present in this checked-in cache; no completeness, hierarchy or exporter-compatibility claim."
+    },
+    "license": "CC BY-ND 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-nd/4.0/",
+    "sourceUri": "https://identifier.buildingsmart.org/uri/buildingsmart/ifc/4.3",
+    "licenseNotice": "LICENSE-CC-BY-ND-4.0.txt",
+    "licenseNoticeSource": "web/vendor/ids-audit/LICENSE-IDS.txt (the same published buildingSMART license notice)",
+    "targetSha256": "2f7fa445662282a9369acbbfe7096d2f36d2670cd8c52b7098bb2f15c89cf6fa"
+  },
+  "integration": {
+    "newFile": "../ids-project.mjs",
+    "parser": "Existing IDS document reader with the browser native DOMParser; no vendor parser, worker or XSD engine is bundled.",
+    "limits": "Inherited from ids-document.mjs and ids.mjs; complete formatted raw project capped at 32 MiB.",
+    "claims": "Reading and bounded parameter planning only. No complete IDS, XSD, IFC-model or Revit-export validation is claimed."
+  }
+}

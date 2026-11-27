@@ -1,0 +1,6 @@
+﻿# User Defined PropertySet Definition File
+# Generator: Jasper Kempen & Stefan van Dijk
+# UDPS Studio
+#
+PropertySet:	Foo_Bar	I/T	IfcWall
+	Foo	Label	Test_Foo
