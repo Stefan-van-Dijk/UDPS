@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f6f2">
+  <script>window.UDPS_STUDIO_MODE="test";window.UDPS_STUDIO_STORAGE_NAMESPACE="udps-studio-test-v1";</script>
+  <meta name="description" content="UDPS Studio — werkbladen en IFC-export.">
+  <title>UDPS Studio · Testversie</title>
+  <link rel="icon" href="data:,">
+  <link rel="preload" href="assets/fonts/IBMPlexSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css?v=29">
+  <link rel="stylesheet" href="control-alignment.css?v=29">
+  <link rel="stylesheet" href="workbench.css?v=31">
+  <link rel="stylesheet" href="studio.css?v=31">
+  <link rel="stylesheet" href="studio-workspace.css?v=35">
+  <script src="large-example.js?v=2" defer></script>
+  <script src="project-files.js?v=35" defer></script>
+  <script src="mapping-rows.js?v=30" defer></script>
+  <script src="rule-fields.js?v=31" defer></script>
+  <script src="ifc-entity-catalog.js?v=31" defer></script>
+  <script src="ids-interface.js?v=35" defer></script>
+  <script src="library-interface.js?v=31" defer></script>
+  <script src="studio-workspace.js?v=35" defer></script>
+  <script src="studio-storage.js?v=35" defer></script>
+  <script src="studio-shell.js?v=36" defer></script>
+  <script src="studio-sources.js?v=36" defer></script>
+  <script src="app.js?v=35" defer></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="masthead-inner">
+      <button class="brand" type="button" data-action="start" aria-label="UDPS, naar start">
+        <span>UDPS <strong>studio</strong></span>
+      </button>
+      <div class="masthead-end">
+        <span class="prototype-mark">Testversie</span>
+        <button class="text-button" type="button" id="home-link" data-action="start" hidden>Start</button>
+      </div>
+    </div>
+  </header>
+  <main class="shell" id="app"></main>
+  <dialog id="dialog" aria-labelledby="dialog-title"></dialog>
+  <div class="notice" id="notice" role="status" hidden></div>
+  <noscript>Open UDPS Studio in een browser met JavaScript.</noscript>
+</body>
+</html>

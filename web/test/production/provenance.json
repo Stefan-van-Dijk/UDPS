@@ -1,0 +1,166 @@
+{
+  "repository": "https://github.com/Stefan-van-Dijk/UDPS.git",
+  "revision": "9a05876a33ab8d37543a393a8843f7c623c4ffc8",
+  "files": [
+    {
+      "file": "excel.js",
+      "source": "web/excel.js",
+      "sha256": "6da6d2e34eb40497ac37979abaee12446c79afec9e116863115862e6150de5cb"
+    },
+    {
+      "file": "libraries.js",
+      "source": "web/libraries.js",
+      "sha256": "8cafaca3df7885012f1ea280ae4bdb531a78e5a3045b4daa7ce9dfca84387c52"
+    },
+    {
+      "file": "core.js",
+      "source": "web/core.js",
+      "sha256": "29dadd26287c3bc3075da4fe08eb88f11b57bf1f2f7f1042f7bdd9ff7879bc76"
+    },
+    {
+      "file": "ids.js",
+      "source": "web/ids.js",
+      "sha256": "a82cf9e9257f231233af9ab0d991adc97a08da962219f24b58fcb1e6ecc8ee9a"
+    },
+    {
+      "file": "ids-document.js",
+      "source": "web/ids-document.js",
+      "sha256": "362d7246d1d29b2b6dad012186a7ae5bbe9e0467ea9d19964afb7a8f525a1b03"
+    },
+    {
+      "file": "uniform.js",
+      "source": "web/uniform.js",
+      "sha256": "a790939aca158e57b29b18c2aa51f3782632a33a7df6bb476ed882bd73891ed6"
+    },
+    {
+      "file": "mapping.js",
+      "source": "web/mapping.js",
+      "sha256": "0f4f8c9b38dcd1a0d76376ad8cf59e9640925408c8b105f4186758f162313823"
+    },
+    {
+      "file": "bsdd.js",
+      "source": "web/bsdd.js",
+      "sha256": "5453dcf05a302a7e49064229be9355af10cb3e83d16a90a02e35baa4d2a7d76f"
+    },
+    {
+      "file": "sources.js",
+      "source": "web/sources.js",
+      "sha256": "d09635bb822efa6750e152e142d5937097c0704c8465a24db59f79a6e7946f02"
+    },
+    {
+      "file": "products.js",
+      "source": "web/products.js",
+      "sha256": "5dc471b79973f76df8288c4b243af7029a45fff08309d4202f6643c2520ec6e5"
+    },
+    {
+      "file": "property-loader.js",
+      "source": "web/property-loader.js",
+      "sha256": "f7203bb037a5df93752e921037b5a5a822f6722cf321ee6af669a733c19662c3"
+    },
+    {
+      "file": "view.js",
+      "source": "web/view.js",
+      "sha256": "94bc78ed391ac224daebc28a507a62ed2395df2a2e57ab78a8594a24e781d32e"
+    },
+    {
+      "file": "catalog.json",
+      "source": "web/catalog.json",
+      "sha256": "0009c432201baecde0c7fc9642046ebf40fbdceb1cb2b449da5936f43df3137b"
+    },
+    {
+      "file": "relations.json",
+      "source": "web/relations.json",
+      "sha256": "b6a98f8170625396d2cc3ffc2fdbf9ddf7f5bdd441ff84399fb36f28d4387a13"
+    },
+    {
+      "file": "ids-loader.js",
+      "source": "web/ids-loader.js",
+      "sha256": "98a8afb4199d3b034e711f40ba5737b2c1e7b031b22d628ded56b54813e53eaa"
+    },
+    {
+      "file": "ids-worker.js",
+      "source": "web/ids-worker.js",
+      "sha256": "7b4eba9a53dc77cc734e920a577a748cc631895188bbf1be33ef6631dcbbd266"
+    },
+    {
+      "file": "ids-audit.js",
+      "source": "web/ids-audit.js",
+      "sha256": "ef977c9a4c551180252d3acfe43e21b09a6ed4a5167c06d2867b99598ce52cd2"
+    },
+    {
+      "file": "ids-revisions.js",
+      "source": "web/ids-revisions.js",
+      "sha256": "8dd3a3ae7fefceda34e68dbccac2ab8d34c28e90d68c43d4490f3b9246a89228"
+    },
+    {
+      "file": "vendor/ids-parser/provenance.json",
+      "source": "web/vendor/ids-parser/provenance.json",
+      "sha256": "8dc3175f8f774faf8fe689cefe14c168a79b5a7ca4ee897114a49dc13ba9ae9a"
+    },
+    {
+      "file": "vendor/ids-parser/xmldom.js",
+      "source": "web/vendor/ids-parser/xmldom.js",
+      "sha256": "77c252d6343abff3063b66798c2fc89933dc7d8d0237db5f37712930e0692bcb"
+    },
+    {
+      "file": "vendor/ids-parser/LICENSE",
+      "source": "web/vendor/ids-parser/LICENSE",
+      "sha256": "4da724fc305d81606b245b324d4d2586916b9d248b23d82183df753ace0fdf71"
+    },
+    {
+      "file": "vendor/ids-audit/provenance.json",
+      "source": "web/vendor/ids-audit/provenance.json",
+      "sha256": "d8fbd65a6cf8fc35212c3b355ad08f5e9aa6861509521a6ec1ef2193391c15c8"
+    },
+    {
+      "file": "vendor/ids-audit/LICENSE-audit-support.txt",
+      "source": "web/vendor/ids-audit/LICENSE-audit-support.txt",
+      "sha256": "9066ba021f387b0da16c7c5b463644b365e2858c09e21edf406aaee87a6270fa"
+    },
+    {
+      "file": "vendor/ids-audit/xmllint-node.cjs",
+      "source": "web/vendor/ids-audit/xmllint-node.cjs",
+      "sha256": "135ef53a1f3be23e850ab262e39c15732c4b19df5538e6e15891aa64c7bc0f30"
+    },
+    {
+      "file": "vendor/ids-audit/xmllint-browser.mjs",
+      "source": "web/vendor/ids-audit/xmllint-browser.mjs",
+      "sha256": "5f5a2c17be12d398c640f3b494e7ded8cd8c9b0175d2c65e6f197a28b77fd01e"
+    },
+    {
+      "file": "vendor/ids-audit/README.md",
+      "source": "web/vendor/ids-audit/README.md",
+      "sha256": "60a29afc3966c1d035e96bff72dc04a8f1cbd9334688ac0cc4bbd874fc3512c4"
+    },
+    {
+      "file": "vendor/ids-audit/COPYING-xmllint.txt",
+      "source": "web/vendor/ids-audit/COPYING-xmllint.txt",
+      "sha256": "74f6fb26dabad238799d4c3bf65c26bbb1c82b7cbaefe6e9443cd7d091947cc9"
+    },
+    {
+      "file": "vendor/ids-audit/xmllint.wasm",
+      "source": "web/vendor/ids-audit/xmllint.wasm",
+      "sha256": "4e3cc21a67e8dd40ccb59822e4193fd1923b4cda08b40fe8ff8973de5eed9515"
+    },
+    {
+      "file": "vendor/ids-audit/LICENSE-IDS.txt",
+      "source": "web/vendor/ids-audit/LICENSE-IDS.txt",
+      "sha256": "e0af6597dc57ac8e0bc46ace941da3ee5a746b0ad43b89a2e83514e7fce28190"
+    },
+    {
+      "file": "vendor/ids-audit/schemas/xml.xsd",
+      "source": "web/vendor/ids-audit/schemas/xml.xsd",
+      "sha256": "a95eb5c39d8c370bce24f285f816c79576f3254c9bb038382a031d1f3e6ac071"
+    },
+    {
+      "file": "vendor/ids-audit/schemas/ids.xsd",
+      "source": "web/vendor/ids-audit/schemas/ids.xsd",
+      "sha256": "01d24814a8583d06433c736724f6178a5ff4d2f7c48e00758db581b70126e601"
+    },
+    {
+      "file": "vendor/ids-audit/schemas/XMLSchema.xsd",
+      "source": "web/vendor/ids-audit/schemas/XMLSchema.xsd",
+      "sha256": "06095bd2a5f7cb881824da508d696ef0656cbd1080d2c8701bd015a27e67ca3b"
+    }
+  ]
+}

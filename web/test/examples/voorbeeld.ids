@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <info><title>Voorbeeld-IDS</title><description>Voorbeeldgegevens voor UDPS studio.</description></info>
+  <specifications><specification name="Deuren" ifcVersion="IFC4 IFC4X3_ADD2" identifier="doors">
+    <applicability minOccurs="1" maxOccurs="unbounded"><entity><name><simpleValue>IFCDOOR</simpleValue></name></entity></applicability>
+    <requirements>
+      <property dataType="IFCLABEL" cardinality="required"><propertySet><simpleValue>Pset_DoorCommon</simpleValue></propertySet><baseName><simpleValue>FireRating</simpleValue></baseName></property>
+      <property dataType="IFCBOOLEAN" cardinality="required"><propertySet><simpleValue>Pset_DoorCommon</simpleValue></propertySet><baseName><simpleValue>IsExternal</simpleValue></baseName></property>
+      <classification cardinality="required"><system><simpleValue>NL/SfB</simpleValue></system></classification>
+    </requirements>
+  </specification></specifications>
+</ids>

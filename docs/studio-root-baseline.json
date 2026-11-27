@@ -1,0 +1,199 @@
+{
+  "schema": 1,
+  "commit": "9a05876a33ab8d37543a393a8843f7c623c4ffc8",
+  "algorithm": "sha256",
+  "rootScripts": {
+    "check": "node --check web/app.js && node --check web/core.js && node --check web/excel.js && node --check web/sources.js && node --check web/sources-ui.js && node --check web/mapping.js && node --check web/mapping-ui.js && node --check web/bsdd.js && node --check web/source-store.js && node --check web/view.js && node --check web/libraries.js && node --check web/property-loader.js && node --check web/products.js && node --check web/uniform.js && node --check web/uniform-ui.js && node --check web/linked-data.js && node --check web/ids.js && node --check web/ids-ui.js && node --check web/ids-document.js && node --check web/ids-workflow.js && node --check web/ids-revisions.js && node --check web/ids-loader.js && node --check web/ids-worker.js && node --check web/ids-audit.js && node --check web/project-storage.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "files": [
+    {
+      "file": "web/app.js",
+      "sha256": "403b08d31d1ca0023fef4ff8372fb1bbc46de55bd352116cf1517ab07fd5fb74"
+    },
+    {
+      "file": "web/assets/rollecate.svg",
+      "sha256": "b173cc8de10e0a4312e581bb57babff292bec8d1ed0be78e05c6764fcc962030"
+    },
+    {
+      "file": "web/bsdd.js",
+      "sha256": "5453dcf05a302a7e49064229be9355af10cb3e83d16a90a02e35baa4d2a7d76f"
+    },
+    {
+      "file": "web/catalog.json",
+      "sha256": "0009c432201baecde0c7fc9642046ebf40fbdceb1cb2b449da5936f43df3137b"
+    },
+    {
+      "file": "web/core.js",
+      "sha256": "29dadd26287c3bc3075da4fe08eb88f11b57bf1f2f7f1042f7bdd9ff7879bc76"
+    },
+    {
+      "file": "web/data.js",
+      "sha256": "483316d7ad309a26f4ffa3e1fa01aebab9636a4e92583791617b4ac03eec329d"
+    },
+    {
+      "file": "web/examples/required-property.ids",
+      "sha256": "53123f1bc74c3e98806cb5d1672fb2cbe9a30e1f4e04fefdb07d89ed53f6df50"
+    },
+    {
+      "file": "web/excel.js",
+      "sha256": "6da6d2e34eb40497ac37979abaee12446c79afec9e116863115862e6150de5cb"
+    },
+    {
+      "file": "web/ids-audit.js",
+      "sha256": "ef977c9a4c551180252d3acfe43e21b09a6ed4a5167c06d2867b99598ce52cd2"
+    },
+    {
+      "file": "web/ids-document.js",
+      "sha256": "362d7246d1d29b2b6dad012186a7ae5bbe9e0467ea9d19964afb7a8f525a1b03"
+    },
+    {
+      "file": "web/ids-loader.js",
+      "sha256": "98a8afb4199d3b034e711f40ba5737b2c1e7b031b22d628ded56b54813e53eaa"
+    },
+    {
+      "file": "web/ids-revisions.js",
+      "sha256": "8dd3a3ae7fefceda34e68dbccac2ab8d34c28e90d68c43d4490f3b9246a89228"
+    },
+    {
+      "file": "web/ids-ui.js",
+      "sha256": "774c949a8ff0092e07fc220c562043cc5f220c6de03ab297317d008bfcc3fdc2"
+    },
+    {
+      "file": "web/ids-worker.js",
+      "sha256": "7b4eba9a53dc77cc734e920a577a748cc631895188bbf1be33ef6631dcbbd266"
+    },
+    {
+      "file": "web/ids-workflow.js",
+      "sha256": "0102db722eefd19b21bd0aed67b8a19ca8ccab7f28f742f2b55427fca19edeb2"
+    },
+    {
+      "file": "web/ids.js",
+      "sha256": "a82cf9e9257f231233af9ab0d991adc97a08da962219f24b58fcb1e6ecc8ee9a"
+    },
+    {
+      "file": "web/index.html",
+      "sha256": "2d5aa9f16a553a47f0ed5c1c7b34e59f5bb3c7d37d803c734bd093f2b7030fb1"
+    },
+    {
+      "file": "web/initial.json",
+      "sha256": "76c2fdc0a88374fa1b958864c7f7a26664727b92dabb6dbeed729ac7b4ca40ba"
+    },
+    {
+      "file": "web/libraries.js",
+      "sha256": "8cafaca3df7885012f1ea280ae4bdb531a78e5a3045b4daa7ce9dfca84387c52"
+    },
+    {
+      "file": "web/linked-data.js",
+      "sha256": "4d145f5d258e9887ad85a030fb7205485e50eb70bf9c8bad1f534a6d30c4677b"
+    },
+    {
+      "file": "web/mapping-ui.js",
+      "sha256": "ee32927577b0c208c5b0254cc60c737f688596c6600b314b83ae0d715534ba52"
+    },
+    {
+      "file": "web/mapping.js",
+      "sha256": "0f4f8c9b38dcd1a0d76376ad8cf59e9640925408c8b105f4186758f162313823"
+    },
+    {
+      "file": "web/products.js",
+      "sha256": "5dc471b79973f76df8288c4b243af7029a45fff08309d4202f6643c2520ec6e5"
+    },
+    {
+      "file": "web/project-storage.js",
+      "sha256": "05c61df1e33d7381f17d4170060d52dd7bc4b57d8ced81dd86161844ccc96a32"
+    },
+    {
+      "file": "web/property-loader.js",
+      "sha256": "f7203bb037a5df93752e921037b5a5a822f6722cf321ee6af669a733c19662c3"
+    },
+    {
+      "file": "web/relations.json",
+      "sha256": "b6a98f8170625396d2cc3ffc2fdbf9ddf7f5bdd441ff84399fb36f28d4387a13"
+    },
+    {
+      "file": "web/source-store.js",
+      "sha256": "912a14f6d0aee9eeaf1df282e3c286df250a3cf8a7aaaeaeacd0c290450c5931"
+    },
+    {
+      "file": "web/sources-ui.js",
+      "sha256": "c30b02aa5b6f255b9ce5a4d7ba34d01d6150abbac4a3cda1b5398380755dbcbc"
+    },
+    {
+      "file": "web/sources.js",
+      "sha256": "d09635bb822efa6750e152e142d5937097c0704c8465a24db59f79a6e7946f02"
+    },
+    {
+      "file": "web/style.css",
+      "sha256": "d3f2c5aa313f8385310707a1497689dbbb72865cddd7ebc5c605d45d69028077"
+    },
+    {
+      "file": "web/uniform-ui.js",
+      "sha256": "3dbf080a045637a0a96789829082ace09df9452e4dce4ec33d2f4455adb01216"
+    },
+    {
+      "file": "web/uniform.js",
+      "sha256": "a790939aca158e57b29b18c2aa51f3782632a33a7df6bb476ed882bd73891ed6"
+    },
+    {
+      "file": "web/vendor/ids-audit/COPYING-xmllint.txt",
+      "sha256": "74f6fb26dabad238799d4c3bf65c26bbb1c82b7cbaefe6e9443cd7d091947cc9"
+    },
+    {
+      "file": "web/vendor/ids-audit/LICENSE-IDS.txt",
+      "sha256": "e0af6597dc57ac8e0bc46ace941da3ee5a746b0ad43b89a2e83514e7fce28190"
+    },
+    {
+      "file": "web/vendor/ids-audit/LICENSE-audit-support.txt",
+      "sha256": "9066ba021f387b0da16c7c5b463644b365e2858c09e21edf406aaee87a6270fa"
+    },
+    {
+      "file": "web/vendor/ids-audit/README.md",
+      "sha256": "60a29afc3966c1d035e96bff72dc04a8f1cbd9334688ac0cc4bbd874fc3512c4"
+    },
+    {
+      "file": "web/vendor/ids-audit/provenance.json",
+      "sha256": "d8fbd65a6cf8fc35212c3b355ad08f5e9aa6861509521a6ec1ef2193391c15c8"
+    },
+    {
+      "file": "web/vendor/ids-audit/schemas/XMLSchema.xsd",
+      "sha256": "06095bd2a5f7cb881824da508d696ef0656cbd1080d2c8701bd015a27e67ca3b"
+    },
+    {
+      "file": "web/vendor/ids-audit/schemas/ids.xsd",
+      "sha256": "01d24814a8583d06433c736724f6178a5ff4d2f7c48e00758db581b70126e601"
+    },
+    {
+      "file": "web/vendor/ids-audit/schemas/xml.xsd",
+      "sha256": "a95eb5c39d8c370bce24f285f816c79576f3254c9bb038382a031d1f3e6ac071"
+    },
+    {
+      "file": "web/vendor/ids-audit/xmllint-browser.mjs",
+      "sha256": "5f5a2c17be12d398c640f3b494e7ded8cd8c9b0175d2c65e6f197a28b77fd01e"
+    },
+    {
+      "file": "web/vendor/ids-audit/xmllint-node.cjs",
+      "sha256": "135ef53a1f3be23e850ab262e39c15732c4b19df5538e6e15891aa64c7bc0f30"
+    },
+    {
+      "file": "web/vendor/ids-audit/xmllint.wasm",
+      "sha256": "4e3cc21a67e8dd40ccb59822e4193fd1923b4cda08b40fe8ff8973de5eed9515"
+    },
+    {
+      "file": "web/vendor/ids-parser/LICENSE",
+      "sha256": "4da724fc305d81606b245b324d4d2586916b9d248b23d82183df753ace0fdf71"
+    },
+    {
+      "file": "web/vendor/ids-parser/provenance.json",
+      "sha256": "8dc3175f8f774faf8fe689cefe14c168a79b5a7ca4ee897114a49dc13ba9ae9a"
+    },
+    {
+      "file": "web/vendor/ids-parser/xmldom.js",
+      "sha256": "77c252d6343abff3063b66798c2fc89933dc7d8d0237db5f37712930e0692bcb"
+    },
+    {
+      "file": "web/view.js",
+      "sha256": "94bc78ed391ac224daebc28a507a62ed2395df2a2e57ab78a8594a24e781d32e"
+    }
+  ]
+}

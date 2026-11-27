@@ -1,0 +1,24 @@
+{
+  "format": "udps-library",
+  "schema": 1,
+  "id": "ids-browserproef",
+  "name": "IDS browserproef",
+  "version": "1.0",
+  "classes": [
+    {
+      "code": "class-1",
+      "name": "Eigen eigenschappen",
+      "ifcEntities": [
+        "IfcWall"
+      ],
+      "properties": [
+        {
+          "code": "Foo",
+          "name": "Foo",
+          "propertySet": "Foo_Bar",
+          "dataType": "Label"
+        }
+      ]
+    }
+  ]
+}

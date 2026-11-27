@@ -1,0 +1,106 @@
+/* Shared control alignment; dimensions and responsive touch targets stay in style.css. */
+.button,
+.text-button,
+.cell-button {
+  line-height: 18px;
+}
+
+/* Compact actions use one text line beside the existing 14/16px icons. */
+.toolbar :is(.button, .text-button),
+.project-actions .button,
+.workspace-panel :is(.button, .text-button),
+.start .button,
+.dialog-actions :is(.button, .text-button),
+.column-options-actions .text-button,
+.inline-edit-actions :is(.button, .text-button),
+.parameter-secondary .text-button,
+.matrix-group-edit,
+.entity-action {
+  line-height: 16px;
+}
+
+/* SVGs in these controls are flex/grid items, without an inline baseline gap. */
+.ui-icon {
+  display: block;
+}
+
+.field,
+.field :is(input, select),
+.search,
+.set-filter,
+.inline-edit input {
+  line-height: 18px;
+}
+
+.inline-field-label {
+  line-height: 16px;
+}
+
+.state {
+  gap: 4px;
+  line-height: 14px;
+}
+
+/* Keep a wrapped set name attached to its first-line disclosure icon. */
+.propertyset-name {
+  align-items: flex-start;
+  line-height: 18px;
+}
+
+.propertyset-name > .ui-icon {
+  margin-top: 1px;
+}
+
+/* Native checkbox controls share a 16px box and lose browser-added margins. */
+.source-choice > input[type="checkbox"],
+.column-option > input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  margin: 1px 0 0;
+}
+
+/* Long source/column descriptions start at the same line as their checkbox. */
+.source-choice,
+.source-row:not(.is-selectable),
+.column-option {
+  align-items: flex-start;
+}
+
+.source-row .copy > strong {
+  display: block;
+  line-height: 18px;
+}
+
+.column-option > :is(strong, small) {
+  line-height: 18px;
+}
+
+.source-status {
+  align-items: flex-start;
+  line-height: 18px;
+}
+
+.source-status > .ui-icon {
+  margin-top: 2px;
+}
+
+/* Disclosure text and its generated +/- use the same line box. */
+.export-text-preview summary {
+  line-height: 18px;
+}
+
+.export-text-preview summary::after {
+  line-height: 18px;
+}
+
+/* Warm neutral borders apply only to the existing custom export control.
+   Native source/column controls and the forced-colours fallback stay native. */
+@media (forced-colors: none) {
+  .export-cell input,
+  .export-cell input:indeterminate {
+    border-color: var(--check-ink);
+  }
+}
+
+/* The optically reviewed issue-button-label translateY(-.5px) is inherited unchanged. */

@@ -1,0 +1,26 @@
+{
+  "index.html": {
+    "live_sha256": "2d5aa9f16a553a47f0ed5c1c7b34e59f5bb3c7d37d803c734bd093f2b7030fb1",
+    "source_sha256": "2d5aa9f16a553a47f0ed5c1c7b34e59f5bb3c7d37d803c734bd093f2b7030fb1"
+  },
+  "app.js": {
+    "live_sha256": "403b08d31d1ca0023fef4ff8372fb1bbc46de55bd352116cf1517ab07fd5fb74",
+    "source_sha256": "403b08d31d1ca0023fef4ff8372fb1bbc46de55bd352116cf1517ab07fd5fb74"
+  },
+  "core.js": {
+    "live_sha256": "29dadd26287c3bc3075da4fe08eb88f11b57bf1f2f7f1042f7bdd9ff7879bc76",
+    "source_sha256": "29dadd26287c3bc3075da4fe08eb88f11b57bf1f2f7f1042f7bdd9ff7879bc76"
+  },
+  "style.css": {
+    "live_sha256": "d3f2c5aa313f8385310707a1497689dbbb72865cddd7ebc5c605d45d69028077",
+    "source_sha256": "d3f2c5aa313f8385310707a1497689dbbb72865cddd7ebc5c605d45d69028077"
+  },
+  "ids-ui.js": {
+    "live_sha256": "774c949a8ff0092e07fc220c562043cc5f220c6de03ab297317d008bfcc3fdc2",
+    "source_sha256": "774c949a8ff0092e07fc220c562043cc5f220c6de03ab297317d008bfcc3fdc2"
+  },
+  "project-storage.js": {
+    "live_sha256": "05c61df1e33d7381f17d4170060d52dd7bc4b57d8ced81dd86161844ccc96a32",
+    "source_sha256": "05c61df1e33d7381f17d4170060d52dd7bc4b57d8ced81dd86161844ccc96a32"
+  }
+}

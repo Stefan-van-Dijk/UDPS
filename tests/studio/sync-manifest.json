@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "source": "Sites/tests",
+  "sourceCommit": "d998e5511903e2a428cf115aaef239a88f2af53a",
+  "sourceTestsDirty": false,
+  "excluded": [
+    "studio-werkblad-model.test.cjs"
+  ],
+  "files": [
+    {
+      "file": "bronbeheer.test.cjs",
+      "sourceSha256": "32108c913d7a612d1da27c87efeaba37bd23cf8518e1f590fe2a731f9393eb81",
+      "sha256": "e261e48ddb4af91b1de6061a34aa0545cec1b19a7efc9aafca69d77d6983ea43"
+    },
+    {
+      "file": "ids-project.test.mjs",
+      "sourceSha256": "980d3bfa7a98bbdfe910e88e10115cdb56837dfe4c72ab970c6b7639a941f3d5",
+      "sha256": "b83fda28e8008388246a7f7cae8bc5d6d6aae57c3e0cec6a547f05079aabf7d0"
+    },
+    {
+      "file": "ifc-entity-catalog.test.cjs",
+      "sourceSha256": "8dadabdf510da301fe10025f12c50f50a77480995fba74a94ccf9e08cf58f0e0",
+      "sha256": "64bf16da48d15da3fccfae63258f81519a8ab3239c19b9146b9a41ec5f38e9d5"
+    },
+    {
+      "file": "library-files.test.mjs",
+      "sourceSha256": "f59dabe88fcc42f78b127eb72850a68ec1c880cd176977975e828cca927cf56b",
+      "sha256": "14fea1e7e6ade3f1a834dbadc4c8006fecb4610a254bd4174e9b6f8f6a51c924"
+    },
+    {
+      "file": "mapping-rows.test.cjs",
+      "sourceSha256": "985967a31feadc2f52aa1b0b0a4d2e095afc5014bf3b4e3d02836dc7c6d2e86d",
+      "sha256": "e1bda943222600340cbffb692b0a7eb923bc403752a28dd5db2e2752a150b74f"
+    },
+    {
+      "file": "project-files.test.cjs",
+      "sourceSha256": "ce33cfc07adfbfb7c786d3a64a00eed9a3ee272599734000f637ab6c9942d2d8",
+      "sha256": "df9084aa462e2343dcd738be98bf0b612a38483eaae66e2c18c2cb6c352cb6ee"
+    },
+    {
+      "file": "rule-fields.test.cjs",
+      "sourceSha256": "3aeb3731b74e846647cf65f292d4cd1c0b7814d6905ec450760029d48e3ab91a",
+      "sha256": "b5919e545c96a50b61b9b82e75ed3f33e87f4152c663d8b4aaef7469d17803f0"
+    },
+    {
+      "file": "studio-ids-integration.test.mjs",
+      "sourceSha256": "4240f946fbf7ea5c8ff6b579ba02e5a1010f10af34b7aab63fb902e9924a1857",
+      "sha256": "4d329ad92bc65514f7ee7ed6c5c138adf60dafd0ab15c8f69bb541e72bc847ef"
+    },
+    {
+      "file": "studio-project-files.test.cjs",
+      "sourceSha256": "b37596219f6dfa896bca00e95af527daaaffc405b1f61e89c904683a568a24c6",
+      "sha256": "b3dfc5eddfb36c8cc09ee657a72c11ea41de0292072493acbabba5fa0903d29c"
+    },
+    {
+      "file": "studio-shell.test.cjs",
+      "sourceSha256": "d0edf3b59e343f0f0235def9d4ef2f46c593adbe9746bf800ef1ed5a4fd4e0c5",
+      "sha256": "0e3296ed94472ce7885af71933e5690f4d614a90c41108d7d3c79ed789e31440"
+    },
+    {
+      "file": "studio-sources.test.cjs",
+      "sourceSha256": "11529b575d02e9ec912a69ce4b0ed6bbec3e64b78705df6a547d7a5962a18666",
+      "sha256": "db6a5e144ee13d8a177d938505b9cc4925c022ca6adad9f238bb75250c8f49f9"
+    },
+    {
+      "file": "studio-storage.test.cjs",
+      "sourceSha256": "1d45d82104fba1bf251e29a653b526d2da17fa8d08020beacf0bde9de2aa3a52",
+      "sha256": "f2d746c44124e1644a6971ab07b0200c1b388e5b06167def20207af274c79bbc"
+    },
+    {
+      "file": "studio-workspace.test.cjs",
+      "sourceSha256": "75368fab26bde32f3f8f691c6c7b6b5e23e10732b8036ba7eb9fd2a8089e59ea",
+      "sha256": "26047cb7a2b8dc63986ef55ac21cd1cd2c9ca238286f6db231bd45939f103c97"
+    }
+  ]
+}
